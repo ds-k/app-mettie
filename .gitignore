@@ -5,6 +5,16 @@
 *.swp
 .DS_Store
 .atom/
+.buildlog/
+.history
+.svn/
+.env
+.env*
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
 .build/
 .buildlog/
 .history

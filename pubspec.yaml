@@ -21,13 +21,13 @@ dependencies:
   supabase_flutter: ^2.12.4
 
   # 아이콘 — 앱 전체에서 이것만 사용 (Material Icons 금지)
-  lucide_icons: ^0.257.0
-
   # 폰트 (Pretendard 로컬 에셋 방식 사용)
   google_fonts: ^6.2.1
 
   # 파일 시스템 (모델 파일 경로 등)
   path_provider: ^2.1.5
+  lucide_icons_flutter: ^3.1.14+1
+  flutter_dotenv: ^6.0.1
 
 dev_dependencies:
   flutter_test:
@@ -39,6 +39,7 @@ flutter:
 
   assets:
     - assets/fonts/
+    - .env
 
   fonts:
     - family: Pretendard
