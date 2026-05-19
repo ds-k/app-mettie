@@ -97,9 +97,12 @@ class AuthRepository {
       // 4. Supabase 프로필 업데이트 (Apple OAuth 시 이름 정보 동기화)
       if (credential.givenName != null || credential.familyName != null) {
         final nameParts = <String>[];
-        if (credential.givenName != null) nameParts.add(credential.givenName!);
-        if (credential.familyName != null)
+        if (credential.givenName != null) {
+          nameParts.add(credential.givenName!);
+        }
+        if (credential.familyName != null) {
           nameParts.add(credential.familyName!);
+        }
         final fullName = nameParts.join(' ');
         await _client.auth.updateUser(
           UserAttributes(
@@ -117,6 +120,25 @@ class AuthRepository {
         redirectTo: 'com.mettie.app://login-callback',
       );
     }
+  }
+
+  Future<void> signInWithEmailPassword(String email, String password) async {
+    await _client.auth.signInWithPassword(
+      email: email,
+      password: password,
+    );
+  }
+
+  Future<void> signUpWithEmailPassword(
+    String email,
+    String password, {
+    String? fullName,
+  }) async {
+    await _client.auth.signUp(
+      email: email,
+      password: password,
+      data: fullName != null ? {'full_name': fullName} : null,
+    );
   }
 
   Future<void> signOut() async {
