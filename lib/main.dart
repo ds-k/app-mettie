@@ -10,7 +10,7 @@ import 'core/router/app_router.dart';
 // ─── 진입점 ────────────────────────────────────────────────────────────────────
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   await dotenv.load(fileName: ".env");
 
   await Supabase.initialize(
@@ -18,11 +18,7 @@ Future<void> main() async {
     anonKey: dotenv.env['SUPABASE_PUBLISHABLE_KEY'] ?? '',
   );
 
-  runApp(
-    const ProviderScope(
-      child: MettieApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: MettieApp()));
 }
 
 // ─── 루트 위젯 ─────────────────────────────────────────────────────────────────
