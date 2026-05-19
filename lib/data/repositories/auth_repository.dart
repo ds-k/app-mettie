@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -70,42 +71,50 @@ class AuthRepository {
 
   Future<void> signInWithApple() async {
     // 1. Supabase에서 Raw Nonce 생성 및 해싱 (Replay 공격 방지)
-    final rawNonce = _client.auth.generateRawNonce();
-    final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
+    if (Platform.isIOS) {
+      final rawNonce = _client.auth.generateRawNonce();
+      final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
 
-    // 2. Apple 인증창 호출
-    final credential = await SignInWithApple.getAppleIDCredential(
-      scopes: [
-        AppleIDAuthorizationScopes.email,
-        AppleIDAuthorizationScopes.fullName,
-      ],
-      nonce: hashedNonce,
-    );
+      // 2. Apple 인증창 호출
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: hashedNonce,
+      );
 
-    final idToken = credential.identityToken;
-    if (idToken == null) throw '애플 ID 토큰을 찾을 수 없습니다.';
+      final idToken = credential.identityToken;
+      if (idToken == null) throw '애플 ID 토큰을 찾을 수 없습니다.';
 
-    // 3. Supabase로 ID 토큰 전송하여 세션 생성
-    await _client.auth.signInWithIdToken(
-      provider: OAuthProvider.apple,
-      idToken: idToken,
-      nonce: rawNonce,
-    );
+      // 3. Supabase로 ID 토큰 전송하여 세션 생성
+      await _client.auth.signInWithIdToken(
+        provider: OAuthProvider.apple,
+        idToken: idToken,
+        nonce: rawNonce,
+      );
 
-    // 4. Supabase 프로필 업데이트 (Apple OAuth 시 이름 정보 동기화)
-    if (credential.givenName != null || credential.familyName != null) {
-      final nameParts = <String>[];
-      if (credential.givenName != null) nameParts.add(credential.givenName!);
-      if (credential.familyName != null) nameParts.add(credential.familyName!);
-      final fullName = nameParts.join(' ');
-      await _client.auth.updateUser(
-        UserAttributes(
-          data: {
-            'full_name': fullName,
-            'given_name': credential.givenName,
-            'family_name': credential.familyName,
-          },
-        ),
+      // 4. Supabase 프로필 업데이트 (Apple OAuth 시 이름 정보 동기화)
+      if (credential.givenName != null || credential.familyName != null) {
+        final nameParts = <String>[];
+        if (credential.givenName != null) nameParts.add(credential.givenName!);
+        if (credential.familyName != null)
+          nameParts.add(credential.familyName!);
+        final fullName = nameParts.join(' ');
+        await _client.auth.updateUser(
+          UserAttributes(
+            data: {
+              'full_name': fullName,
+              'given_name': credential.givenName,
+              'family_name': credential.familyName,
+            },
+          ),
+        );
+      }
+    } else {
+      await Supabase.instance.client.auth.signInWithOAuth(
+        OAuthProvider.apple,
+        redirectTo: 'com.mettie.app://login-callback',
       );
     }
   }
