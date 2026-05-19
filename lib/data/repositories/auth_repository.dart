@@ -91,6 +91,23 @@ class AuthRepository {
       idToken: idToken,
       nonce: rawNonce,
     );
+
+    // 4. Supabase 프로필 업데이트 (Apple OAuth 시 이름 정보 동기화)
+    if (credential.givenName != null || credential.familyName != null) {
+      final nameParts = <String>[];
+      if (credential.givenName != null) nameParts.add(credential.givenName!);
+      if (credential.familyName != null) nameParts.add(credential.familyName!);
+      final fullName = nameParts.join(' ');
+      await _client.auth.updateUser(
+        UserAttributes(
+          data: {
+            'full_name': fullName,
+            'given_name': credential.givenName,
+            'family_name': credential.familyName,
+          },
+        ),
+      );
+    }
   }
 
   Future<void> signOut() async {
