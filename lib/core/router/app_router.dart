@@ -6,6 +6,7 @@ import '../../ui/views/splash_view.dart';
 import '../../ui/views/login_view.dart';
 import '../../ui/views/email_login_view.dart';
 import '../../ui/views/home_view.dart';
+import '../../ui/views/pet_management_view.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
@@ -45,6 +46,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
       GoRoute(path: '/home', builder: (context, state) => const HomeView()),
+      GoRoute(
+        path: '/pet-management', 
+        builder: (context, state) => const PetManagementView(),
+      ),
     ],
   );
 });
