@@ -353,6 +353,7 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                               minimumSize: const Size.fromHeight(48),
                               backgroundColor: kInk,
                               foregroundColor: kOnDark,
+                              shape: const StadiumBorder(),
                             ),
                             child: Text(_isSignUpMode ? '이메일로 회원가입' : '이메일로 로그인'),
                           ),

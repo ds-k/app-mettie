@@ -4,11 +4,35 @@ import '../../data/models/pet.dart';
 import '../../data/repositories/record_repository.dart';
 import 'pet_management_view_model.dart'; // petsProvider 가져오기
 
-// 현재 선택된 Pet을 제공하는 Provider (단일 펫이라고 가정, 여러 마리일 경우 선택 로직 추가 필요)
+final selectedPetIdProvider = NotifierProvider<SelectedPetIdNotifier, String?>(() {
+  return SelectedPetIdNotifier();
+});
+
+class SelectedPetIdNotifier extends Notifier<String?> {
+  @override
+  String? build() => null;
+
+  void selectPet(String id) {
+    state = id;
+  }
+}
+
 final currentPetProvider = Provider<Pet?>((ref) {
   final petsAsync = ref.watch(petsProvider);
+  final selectedPetId = ref.watch(selectedPetIdProvider);
+
   return petsAsync.maybeWhen(
-    data: (pets) => pets.isNotEmpty ? pets.first : null,
+    data: (pets) {
+      if (pets.isEmpty) return null;
+      if (selectedPetId != null) {
+        try {
+          return pets.firstWhere((p) => p.id == selectedPetId);
+        } catch (_) {
+          return pets.first;
+        }
+      }
+      return pets.first;
+    },
     orElse: () => null,
   );
 });

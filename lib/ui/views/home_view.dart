@@ -20,20 +20,15 @@ class HomeView extends ConsumerStatefulWidget {
 class _HomeViewState extends ConsumerState<HomeView> {
   int _currentIndex = 0;
 
-  // 뷰 인덱스 매핑 (FAB 위치인 2번은 제외하고 매핑)
+  // 뷰 인덱스 매핑
   final List<Widget> _views = const [
     DashboardView(),
     AiCoachView(),
-    SizedBox.shrink(), // Index 2 (FAB 자리 - 표시되지 않음)
     PetManagementView(),
     ProfileView(),
   ];
 
   void _onTabTapped(int index) {
-    if (index == 2) {
-      _showRecordEntryBottomSheet();
-      return;
-    }
     setState(() {
       _currentIndex = index;
     });
@@ -108,6 +103,18 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _views),
+      floatingActionButton: SizedBox(
+        width: 54,
+        height: 54,
+        child: FloatingActionButton(
+          onPressed: _showRecordEntryBottomSheet,
+          backgroundColor: kBrandTeal,
+          elevation: 4,
+          shape: const CircleBorder(), // 원형 (rounded.full)
+          child: const Icon(LucideIcons.plus, color: Colors.white, size: 28),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onTabTapped,
@@ -116,23 +123,19 @@ class _HomeViewState extends ConsumerState<HomeView> {
         unselectedItemColor: kStone,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(LucideIcons.barChart2), // chart_bar 유사
+            icon: Icon(LucideIcons.layoutDashboard),
             label: '대시보드',
           ),
           BottomNavigationBarItem(
-            icon: Icon(LucideIcons.sparkles), // auto_awesome 유사
+            icon: Icon(LucideIcons.bot),
             label: 'AI 코칭',
           ),
           BottomNavigationBarItem(
-            icon: Icon(LucideIcons.plusCircle, size: 36, color: kBrandTeal),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(LucideIcons.cat), // pets 유사
+            icon: Icon(LucideIcons.pawPrint),
             label: '반려동물',
           ),
           BottomNavigationBarItem(
-            icon: Icon(LucideIcons.user), // person 유사
+            icon: Icon(LucideIcons.userCircle),
             label: '프로필',
           ),
         ],

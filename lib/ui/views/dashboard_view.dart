@@ -8,6 +8,7 @@ import '../view_models/dashboard_view_model.dart';
 import '../view_models/pet_management_view_model.dart';
 import '../../core/constants/app_colors.dart';
 import '../../data/models/record.dart';
+import 'widgets/pet_selector_bottom_sheet.dart';
 
 class DashboardView extends ConsumerWidget {
   const DashboardView({super.key});
@@ -38,19 +39,19 @@ class DashboardView extends ConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
-                  LucideIcons.cat,
-                  color: kStone,
-                  size: 64,
-                ),
+                const Icon(LucideIcons.cat, color: kStone, size: 64),
                 const SizedBox(height: 24),
                 const Text(
                   '아직 등록된 반려동물이 없어요.',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: kInk),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: kInk,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 const Text(
-                  '반려동물을 등록하고\\n맞춤형 혈당 관리와 AI 코칭을 시작해보세요!',
+                  '반려동물을 등록하고\n맞춤형 혈당 관리와 AI 코칭을 시작해보세요!',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 15, color: kSlate, height: 1.5),
                 ),
@@ -64,10 +65,11 @@ class DashboardView extends ConsumerWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: kBrandTeal,
                     foregroundColor: kOnDark,
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(kRadiusMd),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 16,
                     ),
+                    shape: const StadiumBorder(),
                   ),
                 ),
               ],
@@ -82,9 +84,29 @@ class DashboardView extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: kSurface,
         elevation: 0,
-        title: Text(
-          '${pet.name}의 대시보드',
-          style: const TextStyle(color: kInk, fontWeight: FontWeight.bold),
+        title: GestureDetector(
+          onTap: () {
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (context) => const PetSelectorBottomSheet(),
+            );
+          },
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '${pet.name}의 대시보드',
+                style: const TextStyle(
+                  color: kInk,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(width: 4),
+              const Icon(LucideIcons.chevronDown, color: kInk, size: 20),
+            ],
+          ),
         ),
       ),
       body: CustomScrollView(
@@ -97,14 +119,18 @@ class DashboardView extends ConsumerWidget {
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: state.activeAlarm == 'hypoglycemia' ? kBrandError : kBrandWarn,
+                  color: state.activeAlarm == 'hypoglycemia'
+                      ? kBrandError
+                      : kBrandWarn,
                   borderRadius: BorderRadius.circular(kRadiusMd),
                 ),
                 child: Row(
                   children: [
                     Icon(
                       LucideIcons.alertTriangle,
-                      color: state.activeAlarm == 'hypoglycemia' ? kOnDark : kInk,
+                      color: state.activeAlarm == 'hypoglycemia'
+                          ? kOnDark
+                          : kInk,
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -113,7 +139,9 @@ class DashboardView extends ConsumerWidget {
                             ? '저혈당 위험! 즉시 조치가 필요합니다.'
                             : '고혈당 경고! 목표 범위를 초과했습니다.',
                         style: TextStyle(
-                          color: state.activeAlarm == 'hypoglycemia' ? kOnDark : kInk,
+                          color: state.activeAlarm == 'hypoglycemia'
+                              ? kOnDark
+                              : kInk,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -148,15 +176,28 @@ class DashboardView extends ConsumerWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildSummaryStat('평균', state.avgGlucose?.round().toString() ?? '-'),
-                        _buildSummaryStat('최저', state.nadirGlucose?.toString() ?? '-'),
-                        _buildSummaryStat('최고', state.peakGlucose?.toString() ?? '-'),
+                        _buildSummaryStat(
+                          '평균',
+                          state.avgGlucose?.round().toString() ?? '-',
+                        ),
+                        _buildSummaryStat(
+                          '최저',
+                          state.nadirGlucose?.toString() ?? '-',
+                        ),
+                        _buildSummaryStat(
+                          '최고',
+                          state.peakGlucose?.toString() ?? '-',
+                        ),
                       ],
                     ),
                     const Divider(color: Colors.white24, height: 32),
                     Row(
                       children: [
-                        const Icon(LucideIcons.syringe, color: kOnDark, size: 20),
+                        const Icon(
+                          LucideIcons.syringe,
+                          color: kOnDark,
+                          size: 20,
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           '마지막 인슐린: ${state.lastInsulinDose != null ? '${state.lastInsulinDose} IU' : '기록 없음'}',
@@ -166,9 +207,12 @@ class DashboardView extends ConsumerWidget {
                           const Spacer(),
                           Text(
                             _formatTimeAgo(state.lastInsulinTime!),
-                            style: const TextStyle(color: Colors.white70, fontSize: 12),
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 12,
+                            ),
                           ),
-                        ]
+                        ],
                       ],
                     ),
                   ],
@@ -183,11 +227,15 @@ class DashboardView extends ConsumerWidget {
               padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               child: Text(
                 '최근 기록',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: kCharcoal),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: kCharcoal,
+                ),
               ),
             ),
           ),
-          
+
           recordsAsync.when(
             data: (records) {
               if (records.isEmpty) {
@@ -195,30 +243,34 @@ class DashboardView extends ConsumerWidget {
                   child: Padding(
                     padding: EdgeInsets.all(32.0),
                     child: Center(
-                      child: Text('아직 기록이 없습니다.\n아래 + 버튼을 눌러 기록을 추가해보세요.', textAlign: TextAlign.center, style: TextStyle(color: kSlate)),
+                      child: Text(
+                        '아직 기록이 없습니다.\n아래 + 버튼을 눌러 기록을 추가해보세요.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: kSlate),
+                      ),
                     ),
                   ),
                 );
               }
-              
+
               // 최신순 정렬
               final sortedRecords = List<Record>.from(records)
                 ..sort((a, b) => b.recordedAt.compareTo(a.recordedAt));
-                
+
               return SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final record = sortedRecords[index];
-                    return _buildRecordCard(record);
-                  },
-                  childCount: sortedRecords.length,
-                ),
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  final record = sortedRecords[index];
+                  return _buildRecordCard(record);
+                }, childCount: sortedRecords.length),
               );
             },
-            loading: () => const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator())),
-            error: (err, stack) => SliverToBoxAdapter(child: Center(child: Text('Error: $err'))),
+            loading: () => const SliverToBoxAdapter(
+              child: Center(child: CircularProgressIndicator()),
+            ),
+            error: (err, stack) =>
+                SliverToBoxAdapter(child: Center(child: Text('Error: $err'))),
           ),
-          
+
           // 하단 여백 (FAB를 가리지 않기 위해)
           const SliverToBoxAdapter(child: SizedBox(height: 100)),
         ],
@@ -229,7 +281,10 @@ class DashboardView extends ConsumerWidget {
   Widget _buildSummaryStat(String label, String value) {
     return Column(
       children: [
-        Text(label, style: const TextStyle(color: Colors.white70, fontSize: 12)),
+        Text(
+          label,
+          style: const TextStyle(color: Colors.white70, fontSize: 12),
+        ),
         const SizedBox(height: 4),
         Text(
           value,
@@ -275,15 +330,30 @@ class DashboardView extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (record.glucoseValue != null)
-                  _buildRecordItem(LucideIcons.activity, '혈당: ${record.glucoseValue} mg/dL', kBrandWarn),
+                  _buildRecordItem(
+                    LucideIcons.activity,
+                    '혈당: ${record.glucoseValue} mg/dL',
+                    kBrandWarn,
+                  ),
                 if (record.insulinDose != null)
-                  _buildRecordItem(LucideIcons.syringe, '인슐린: ${record.insulinDose} IU', kBrandTeal),
+                  _buildRecordItem(
+                    LucideIcons.syringe,
+                    '인슐린: ${record.insulinDose} IU',
+                    kBrandTeal,
+                  ),
                 if (record.foodAmountG != null || record.foodBrand != null)
-                  _buildRecordItem(LucideIcons.bone, '사료: ${record.foodBrand ?? ''} ${record.foodAmountG ?? ''}g', kWarmCoral),
+                  _buildRecordItem(
+                    LucideIcons.bone,
+                    '사료: ${record.foodBrand ?? ''} ${record.foodAmountG ?? ''}g',
+                    kWarmCoral,
+                  ),
                 if (record.notes != null && record.notes!.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(record.notes!, style: const TextStyle(color: kCharcoal, fontSize: 14)),
+                    child: Text(
+                      record.notes!,
+                      style: const TextStyle(color: kCharcoal, fontSize: 14),
+                    ),
                   ),
               ],
             ),
