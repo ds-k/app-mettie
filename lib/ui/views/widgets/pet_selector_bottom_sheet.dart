@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:go_router/go_router.dart';
+
 
 import '../../../core/constants/app_colors.dart';
 import '../../view_models/pet_management_view_model.dart';
@@ -79,7 +79,7 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                         return ListTile(
                           contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                           leading: CircleAvatar(
-                            backgroundColor: isSelected ? kBrandTeal.withOpacity(0.1) : kCanvas,
+                            backgroundColor: isSelected ? kBrandTeal.withValues(alpha: 0.1) : kCanvas,
                             backgroundImage: pet.avatarUrl != null ? NetworkImage(pet.avatarUrl!) : null,
                             child: pet.avatarUrl == null
                                 ? Icon(

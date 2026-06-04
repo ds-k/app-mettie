@@ -230,7 +230,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: kBrandTeal.withOpacity(0.1),
+                          color: kBrandTeal.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(kRadiusMd),
                         ),
                         child: Row(

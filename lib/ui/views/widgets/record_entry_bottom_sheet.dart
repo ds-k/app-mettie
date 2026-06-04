@@ -40,7 +40,7 @@ class _RecordEntryBottomSheetState
   String? _waterIntake;
   String? _urination;
   String? _appetite;
-  double _activityLevel = 3;
+  int _activityLevel = 3;
 
   final _vomitCountController = TextEditingController(text: '0');
   String? _stoolStatus;
@@ -269,7 +269,7 @@ class _RecordEntryBottomSheetState
                               Expanded(
                                 flex: 1,
                                 child: DropdownButtonFormField<String>(
-                                  value: _glucoseType,
+                                  initialValue: _glucoseType,
                                   decoration: _inputDecoration('상태', null),
                                   items: const [
                                     DropdownMenuItem(
@@ -320,7 +320,7 @@ class _RecordEntryBottomSheetState
                               const SizedBox(width: 12),
                               Expanded(
                                 child: DropdownButtonFormField<String>(
-                                  value: _injectionStatus,
+                                  initialValue: _injectionStatus,
                                   decoration: _inputDecoration('투여 상태', null),
                                   items: const [
                                     DropdownMenuItem(

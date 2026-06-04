@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_colors.dart';
-import '../../data/repositories/auth_repository.dart';
+import '../view_models/splash_view_model.dart';
 
 class SplashView extends ConsumerStatefulWidget {
   const SplashView({super.key});
@@ -29,23 +29,11 @@ class _SplashViewState extends ConsumerState<SplashView>
     );
 
     _controller.forward();
-    _checkAuthAndRedirect();
-  }
-
-  Future<void> _checkAuthAndRedirect() async {
-    // 2초 대기 애니메이션 효과
-    await Future.delayed(const Duration(seconds: 2));
-
-    if (!mounted) return;
-
-    final authState = ref.read(authStateProvider);
-    final isAuth = authState.value?.session != null;
-
-    if (isAuth) {
-      context.go('/home');
-    } else {
-      context.go('/login');
-    }
+    
+    // 초기화 트리거
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(splashViewModelProvider.notifier).initializeApp();
+    });
   }
 
   @override
@@ -56,6 +44,20 @@ class _SplashViewState extends ConsumerState<SplashView>
 
   @override
   Widget build(BuildContext context) {
+    // 상태 구독
+    final splashState = ref.watch(splashViewModelProvider);
+    
+    // 완료 시 라우팅
+    ref.listen<SplashState>(splashViewModelProvider, (previous, next) {
+      if (next.status == SplashStatus.complete) {
+        if (next.isAuth) {
+          context.go('/home');
+        } else {
+          context.go('/login');
+        }
+      }
+    });
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -71,7 +73,6 @@ class _SplashViewState extends ConsumerState<SplashView>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // 로고 대신 텍스트로 Mettie 표시 (임시 로고)
                 Text(
                   'Mettie',
                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
@@ -81,9 +82,58 @@ class _SplashViewState extends ConsumerState<SplashView>
                       ),
                 ),
                 const SizedBox(height: 16),
-                const CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(kBrandTeal),
-                ),
+                
+                if (splashState.status == SplashStatus.downloadingModel) ...[
+                  const Text(
+                    'AI 코칭 모델을 준비 중입니다...\n(최초 1회, 약 1.5GB 다운로드)',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: kBrandTealDeep,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Wi-Fi 환경에서의 다운로드를 권장합니다.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: kStone,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: 200,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: LinearProgressIndicator(
+                        value: splashState.downloadProgress > 0 
+                               ? splashState.downloadProgress / 100 
+                               : null, // 진행률 0일 때는 애니메이션 표시
+                        backgroundColor: kBrandTeal.withValues(alpha: 0.2),
+                        valueColor: const AlwaysStoppedAnimation<Color>(kBrandTeal),
+                        minHeight: 8,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  if (splashState.downloadProgress > 0)
+                    Text(
+                      '${splashState.downloadProgress}%',
+                      style: const TextStyle(
+                        color: kBrandTealDeep,
+                        fontWeight: FontWeight.bold,
+                        fontFeatures: const [
+                          FontFeature.tabularFigures()
+                        ],
+                      ),
+                    ),
+                ] else ...[
+                  const CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(kBrandTeal),
+                  ),
+                ],
               ],
             ),
           ),
