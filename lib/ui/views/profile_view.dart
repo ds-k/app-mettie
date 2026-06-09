@@ -75,13 +75,15 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                 final success = await ref
                     .read(profileViewModelProvider.notifier)
                     .joinFamily(code);
-                if (success && mounted) {
+                if (!context.mounted) return;
+
+                if (success) {
                   Navigator.pop(context);
                   _joinCodeController.clear();
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('가족에 성공적으로 참여했습니다.')),
                   );
-                } else if (mounted) {
+                } else {
                   final error = ref.read(profileViewModelProvider).error;
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

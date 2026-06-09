@@ -1,4 +1,4 @@
-import 'dart:math' as _math;
+import 'dart:math' as math;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/pet.dart';
@@ -44,7 +44,7 @@ class PetRepository {
 
   Future<String> createInvitationCode(String familyId) async {
     // 1. 6자리 영문대문자/숫자 조합 코드 생성
-    final random = _math.Random();
+    final random = math.Random();
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     final code = String.fromCharCodes(Iterable.generate(
       6, (_) => chars.codeUnitAt(random.nextInt(chars.length))));

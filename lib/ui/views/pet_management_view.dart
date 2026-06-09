@@ -56,8 +56,17 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
           vetClinic: _vetClinicController.text.trim(),
         );
 
-    if (success && mounted) {
-      context.go('/home'); // 등록 완료 시 홈(대시보드)으로 리다이렉트
+    if (!context.mounted) return;
+
+    if (success) {
+      context.pop();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(ref.read(petManagementViewModelProvider).error ?? '저장에 실패했습니다.'),
+          backgroundColor: kBrandError,
+        ),
+      );
     }
   }
 

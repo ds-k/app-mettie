@@ -32,7 +32,9 @@ class _SplashViewState extends ConsumerState<SplashView>
     
     // 초기화 트리거
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(splashViewModelProvider.notifier).initializeApp();
+      if (mounted) {
+        ref.read(splashViewModelProvider.notifier).initializeApp();
+      }
     });
   }
 
@@ -124,7 +126,7 @@ class _SplashViewState extends ConsumerState<SplashView>
                       style: const TextStyle(
                         color: kBrandTealDeep,
                         fontWeight: FontWeight.bold,
-                        fontFeatures: const [
+                        fontFeatures: [
                           FontFeature.tabularFigures()
                         ],
                       ),

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_gemma/flutter_gemma.dart';
 
 final llmRepositoryProvider = Provider<LlmRepository>((ref) {
@@ -14,14 +15,14 @@ class LlmRepository {
 
   // HuggingFace CDN URL for Gemma-4-E2B-it-int4
   static const String _modelUrl =
-      'https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-e2b-it-int4.litertlm';
+      'https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it.litertlm';
 
   /// 앱 기동 시 모델을 초기화하거나 다운로드합니다.
   Future<void> initialize({Function(int progress)? onProgress}) async {
     try {
       await FlutterGemma.initialize();
 
-      final isInstalled = await FlutterGemma.isModelInstalled('gemma-4-e2b-it-int4.litertlm');
+      final isInstalled = await FlutterGemma.isModelInstalled('gemma-4-E2B-it.litertlm');
       
       if (!isInstalled) {
         // Download model from HuggingFace
@@ -42,7 +43,7 @@ class LlmRepository {
       _useFallback = false;
     } catch (e) {
       // OOM, 다운로드 실패, 지원하지 않는 기기 등의 경우 Fallback 모드 활성화
-      print('LLM Initialization Failed: $e');
+      debugPrint('LLM Initialization Failed: $e');
       _isInitialized = false;
       _useFallback = true;
     }

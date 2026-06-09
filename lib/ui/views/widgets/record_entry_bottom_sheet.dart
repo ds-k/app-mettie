@@ -40,7 +40,7 @@ class _RecordEntryBottomSheetState
   String? _waterIntake;
   String? _urination;
   String? _appetite;
-  int _activityLevel = 3;
+  final int _activityLevel = 3;
 
   final _vomitCountController = TextEditingController(text: '0');
   String? _stoolStatus;
