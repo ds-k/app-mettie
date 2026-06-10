@@ -1,4 +1,5 @@
 {
+  "originHash" : "b570b3c62082110129e6b4b59328e103c3e232d8d9daebfd70045f933f79cea2",
   "pins" : [
     {
       "identity" : "app-check",
@@ -59,10 +60,10 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/promises.git",
       "state" : {
-        "revision" : "540318ecedd63d883069ae7f1ed811a2df00b6ac",
-        "version" : "2.4.0"
+        "revision" : "f4a19a3c313dc2616c70bb49d29a799fb16be837",
+        "version" : "2.4.1"
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
