@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../view_models/ai_coach_view_model.dart';
@@ -43,6 +44,15 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
         title: const Text('AI 코칭', style: TextStyle(fontWeight: FontWeight.w600)),
         backgroundColor: kCanvas,
         scrolledUnderElevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(LucideIcons.messageSquarePlus, color: kBrandTeal),
+            tooltip: '새 채팅 시작',
+            onPressed: () {
+              ref.read(aiCoachViewModelProvider.notifier).clearChat();
+            },
+          ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(40),
           child: Container(
@@ -120,7 +130,7 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
                   ],
                 ),
               ),
-            _buildInputArea(),
+            _buildInputArea(state.isGenerating),
           ],
         );
     }
@@ -224,19 +234,28 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.75,
         ),
-        child: Text(
-          content,
-          style: TextStyle(
-            color: isUser ? Colors.white : kInk,
-            fontSize: 16,
-            height: 1.5,
-          ),
-        ),
+        child: isUser
+            ? Text(
+                content,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  height: 1.5,
+                ),
+              )
+            : MarkdownBody(
+                data: content,
+                styleSheet: MarkdownStyleSheet(
+                  p: const TextStyle(color: kInk, fontSize: 16, height: 1.5),
+                  strong: const TextStyle(color: kBrandTealDeep, fontSize: 16, height: 1.5, fontWeight: FontWeight.bold),
+                  listBullet: const TextStyle(color: kInk, fontSize: 16),
+                ),
+              ),
       ),
     );
   }
 
-  Widget _buildInputArea() {
+  Widget _buildInputArea(bool isGenerating) {
     return Container(
       padding: const EdgeInsets.only(left: 16, right: 16, bottom: 32, top: 16), // Safe area bottom 대신 넉넉히
       decoration: const BoxDecoration(
@@ -249,7 +268,7 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
             child: TextField(
               controller: _textController,
               decoration: InputDecoration(
-                hintText: '혈당 수치나 상태를 질문해보세요',
+                hintText: isGenerating ? '메티가 답변 중입니다...' : '혈당 수치나 상태를 질문해보세요',
                 hintStyle: const TextStyle(color: kStone),
                 filled: true,
                 fillColor: kCanvas,
@@ -259,18 +278,21 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
                   borderSide: BorderSide.none,
                 ),
               ),
+              enabled: !isGenerating,
               onSubmitted: (_) => _sendMessage(),
             ),
           ),
           const SizedBox(width: 8),
           Container(
-            decoration: const BoxDecoration(
-              color: kBrandTeal,
+            decoration: BoxDecoration(
+              color: isGenerating ? kBrandWarn : kBrandTeal,
               shape: BoxShape.circle,
             ),
             child: IconButton(
-              icon: const Icon(LucideIcons.send, color: Colors.white, size: 20),
-              onPressed: _sendMessage,
+              icon: Icon(isGenerating ? LucideIcons.square : LucideIcons.send, color: Colors.white, size: 20),
+              onPressed: isGenerating 
+                  ? () => ref.read(aiCoachViewModelProvider.notifier).stopGeneration()
+                  : _sendMessage,
             ),
           ),
         ],

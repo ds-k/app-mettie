@@ -101,9 +101,11 @@ class _HomeViewState extends ConsumerState<HomeView> {
       );
     }
 
+    final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
+
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _views),
-      floatingActionButton: SizedBox(
+      floatingActionButton: isKeyboardOpen || _currentIndex == 1 ? null : SizedBox(
         width: 54,
         height: 54,
         child: FloatingActionButton(
@@ -115,7 +117,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: isKeyboardOpen ? null : BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onTabTapped,
         type: BottomNavigationBarType.fixed,

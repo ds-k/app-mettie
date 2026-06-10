@@ -11,6 +11,7 @@ class LlmRepository {
   bool _useFallback = false;
 
   bool _isModelReady = false;
+  InferenceChat? _activeChat;
 
   bool get isInitialized => _isInitialized;
   bool get useFallback => _useFallback;
@@ -43,7 +44,7 @@ class LlmRepository {
       if (isInstalled) {
         // 이미 설치되어 있으면 다운로드를 건너뛰고 바로 활성화(Active Model Set) 됩니다.
         await FlutterGemma.installModel(
-          modelType: ModelType.gemmaIt,
+          modelType: ModelType.gemma4,
           fileType: ModelFileType.litertlm,
         ).fromNetwork(_modelUrl).install();
 
@@ -63,7 +64,7 @@ class LlmRepository {
 
     try {
       await FlutterGemma.installModel(
-        modelType: ModelType.gemmaIt,
+        modelType: ModelType.gemma4,
         fileType: ModelFileType.litertlm,
       ).fromNetwork(_modelUrl).withProgress((progress) {
         if (onProgress != null) {
@@ -81,8 +82,11 @@ class LlmRepository {
     }
   }
 
-  /// 컨텍스트가 주입된 프롬프트를 입력받아 스트리밍 응답 반환
-  Stream<String> generateCoreResponse(String fullPrompt) async* {
+  /// 시스템 인스트럭션과 사용자 입력을 받아 채팅 세션을 유지하며 스트리밍 응답 반환
+  Stream<String> generateCoreResponse({
+    required String userText,
+    String? systemInstruction,
+  }) async* {
     if (_useFallback || !_isModelReady) {
       // Fallback 로직 (현재는 더미 또는 향후 Cloud API 연동)
       yield "⚠️ 온디바이스 AI가 준비되지 않아 응답할 수 없습니다. 모델을 먼저 다운로드 해주세요.";
@@ -90,17 +94,34 @@ class LlmRepository {
     }
 
     try {
-      final model = await FlutterGemma.getActiveModel(maxTokens: 1024);
-      final session = await model.createSession();
-      // getAsyncResponse() or generateStream()?
-      // flutter_gemma has getAsyncResponse(prompt) which returns Stream<String>?
-      // Let's verify flutter_gemma stream API.
-      await session.addQueryChunk(Message(text: fullPrompt, isUser: true));
-      await for (final chunk in session.getResponseAsync()) {
-        yield chunk;
+      if (_activeChat == null) {
+        final model = await FlutterGemma.getActiveModel(
+          maxTokens: 2048,
+        );
+        _activeChat = await model.createChat(
+          modelType: ModelType.gemma4,
+          temperature: 0.1,
+          systemInstruction: systemInstruction,
+        );
+      }
+
+      await _activeChat!.addQueryChunk(Message(text: userText, isUser: true));
+      await for (final response in _activeChat!.generateChatResponseAsync()) {
+        if (response is TextResponse) {
+          yield response.token;
+        }
       }
     } catch (e) {
       yield "\n⚠️ 응답 생성 중 오류가 발생했습니다: $e";
     }
+  }
+
+  void stopGeneration() {
+    _activeChat?.stopGeneration();
+  }
+
+  Future<void> clearChat() async {
+    await _activeChat?.close();
+    _activeChat = null;
   }
 }

@@ -45,6 +45,8 @@ final aiCoachViewModelProvider = NotifierProvider<AiCoachViewModel, AiCoachState
 });
 
 class AiCoachViewModel extends Notifier<AiCoachState> {
+  bool _cancelRequested = false;
+
   @override
   AiCoachState build() {
     // 뷰모델 생성 시 바로 모델 상태 확인
@@ -81,6 +83,8 @@ class AiCoachViewModel extends Notifier<AiCoachState> {
   Future<void> sendMessage(String text) async {
     if (text.trim().isEmpty || state.isGenerating) return;
 
+    _cancelRequested = false;
+
     // 1. 유저 메시지 즉시 추가
     final userMsg = ChatMessage(role: 'user', content: text);
     state = state.copyWith(
@@ -106,11 +110,11 @@ class AiCoachViewModel extends Notifier<AiCoachState> {
       final recentRecords = recordsAsync.value?.take(5).toList() ?? [];
 
       // 3. RAG 텍스트 조합
-      final fullPrompt = RagContextInjector.buildPrompt(
-        userInput: text,
+      final systemInstruction = RagContextInjector.buildSystemInstruction(
         pet: currentPet,
         recentRecords: recentRecords,
       );
+      final userText = RagContextInjector.buildUserPrompt(text);
 
       // 4. 빈 AI 메시지 홀더 추가
       final aiMsgIndex = state.messages.length;
@@ -118,18 +122,34 @@ class AiCoachViewModel extends Notifier<AiCoachState> {
         messages: [...state.messages, ChatMessage(role: 'ai', content: '')],
       );
 
-      // 5. 스트리밍 응답 렌더링
+      // 5. 스트리밍 응답 렌더링 최적화 (UI 버벅임 방지)
       final llmRepo = ref.read(llmRepositoryProvider);
       final buffer = StringBuffer();
+      
+      int lastUpdate = DateTime.now().millisecondsSinceEpoch;
 
-      await for (final token in llmRepo.generateCoreResponse(fullPrompt)) {
+      await for (final token in llmRepo.generateCoreResponse(
+        userText: userText,
+        systemInstruction: systemInstruction,
+      )) {
+        if (_cancelRequested) break;
+
         buffer.write(token);
 
-        final updatedMessages = List<ChatMessage>.from(state.messages);
-        updatedMessages[aiMsgIndex] = ChatMessage(role: 'ai', content: buffer.toString());
-
-        state = state.copyWith(messages: updatedMessages);
+        final now = DateTime.now().millisecondsSinceEpoch;
+        // 50ms 마다 한 번씩만 UI 갱신 (너무 잦은 렌더링으로 인한 속도 저하 방지)
+        if (now - lastUpdate > 50) {
+          final updatedMessages = List<ChatMessage>.from(state.messages);
+          updatedMessages[aiMsgIndex] = ChatMessage(role: 'ai', content: buffer.toString());
+          state = state.copyWith(messages: updatedMessages);
+          lastUpdate = now;
+        }
       }
+      
+      // 스트림 종료 후 마지막으로 최종 내용 확실히 갱신
+      final finalMessages = List<ChatMessage>.from(state.messages);
+      finalMessages[aiMsgIndex] = ChatMessage(role: 'ai', content: buffer.toString());
+      state = state.copyWith(messages: finalMessages);
     } catch (e) {
       final aiMsgIndex = state.messages.length - 1;
       final updatedMessages = List<ChatMessage>.from(state.messages);
@@ -137,6 +157,19 @@ class AiCoachViewModel extends Notifier<AiCoachState> {
       state = state.copyWith(messages: updatedMessages);
     } finally {
       state = state.copyWith(isGenerating: false);
+      _cancelRequested = false;
     }
+  }
+
+  void stopGeneration() {
+    if (state.isGenerating) {
+      _cancelRequested = true;
+      ref.read(llmRepositoryProvider).stopGeneration();
+    }
+  }
+
+  Future<void> clearChat() async {
+    state = state.copyWith(messages: []);
+    await ref.read(llmRepositoryProvider).clearChat();
   }
 }

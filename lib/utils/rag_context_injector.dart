@@ -64,9 +64,8 @@ class RagContextInjector {
     return buffer.toString().trim();
   }
 
-  /// 전체 프롬프트를 생성합니다.
-  static String buildPrompt({
-    required String userInput,
+  /// 챗 세션 생성 시 한 번만 주입되는 시스템 프롬프트(페르소나 및 전체 컨텍스트)
+  static String buildSystemInstruction({
     required Pet pet,
     required List<Record> recentRecords,
   }) {
@@ -82,19 +81,25 @@ class RagContextInjector {
 
     final contextStr = serializeRecords(recentRecords);
 
-    return '''
-[System] 당신은 대사질환(당뇨 등) 반려동물을 돌보는 보호자를 돕는 전문 수의사 AI '메티'입니다.
-반려동물 정보: $speciesStr종 / 품종: $breedStr / 진단: $diagnosisStr / 처방 인슐린: $insulinTypeStr ${insulinUnitStr}IU / 목표 혈당: $targetMin~$targetMax mg/dL
-아래 제공되는 동물의 실제 최신 생체 데이터를 '반드시' 최우선으로 참고하여 답변하세요.
-외부 서버 통신 없이 폰 안에서 안전하게 작동 중입니다.
+    return '''당신은 반려견/반려묘 대사질환(당뇨 등) 보호자를 돕는 전문 '데이터 분석가 AI 코치, 메티'입니다.
+단순히 "수의사에게 가세요"라는 회피성 답변을 지양하고, 주어진 기록의 '추세(Trend)'와 '통계'를 바탕으로 실질적이고 유용한 인사이트를 제공하세요.
+단, 의료적 결정을 내릴 때는 "인슐린 수치를 올리는 것이 권장되지만, 수의사와 상담 후 진행하는 것이 좋습니다"와 같이 방어적이지만 명확한 경향성을 함께 제시해야 합니다.
+답변은 구체적인 데이터 분석(현재 상태 진단 및 추세)과 향후 권고사항을 포함하되, 모바일 화면에서 읽기 편하도록 5~7문장 내외의 적절한 길이로 친절하고 논리적이게 설명하세요. 너무 짧거나 불필요하게 길어지지 않게 주의하세요.
 
-<Context>
+[현재 반려동물 정보]
+- 종/품종: $speciesStr / $breedStr
+- 진단명: $diagnosisStr
+- 처방 인슐린: $insulinTypeStr ${insulinUnitStr}IU
+- 목표 혈당 범위: $targetMin ~ $targetMax mg/dL
+
+[최근 생체 기록]
 $contextStr
-</Context>
 
-[User]
-$userInput
-'''
-        .trim();
+위 정보를 바탕으로 보호자의 질문에 친절하고 분석적으로 답변하세요. 마크다운(Markdown) 문법을 적극 활용하여 가독성을 높이세요.'''.trim();
+  }
+
+  /// 사용자의 입력만을 전달하는 단순 래퍼 (미래 확장성 고려)
+  static String buildUserPrompt(String userInput) {
+    return userInput.trim();
   }
 }
