@@ -5,6 +5,8 @@ import '../../data/repositories/pet_repository.dart';
 import '../../data/repositories/auth_repository.dart';
 
 final petsProvider = FutureProvider<List<Pet>>((ref) async {
+  // 인증 상태가 변경(로그인/로그아웃)되면 반려동물 목록도 다시 가져옵니다.
+  ref.watch(currentUserProvider);
   final repo = ref.watch(petRepositoryProvider);
   return repo.getPets();
 });

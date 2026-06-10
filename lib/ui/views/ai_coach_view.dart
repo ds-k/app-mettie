@@ -72,40 +72,141 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
                 style: TextStyle(color: kStone, fontSize: 16),
               ),
             )
-          : Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    reverse: true, // 하단부터 스크롤
-                    padding: const EdgeInsets.all(16),
-                    itemCount: state.messages.length,
-                    itemBuilder: (context, index) {
-                      // reverse이므로 최신 메시지가 배열 마지막에 있지만 index 0에 그려짐
-                      final msg = state.messages[state.messages.length - 1 - index];
-                      final isUser = msg.role == 'user';
-                      
-                      return _buildMessageBubble(msg.content, isUser);
-                    },
-                  ),
-                ),
-                if (state.isGenerating)
-                  const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: kBrandTeal),
-                        ),
-                        SizedBox(width: 8),
-                        Text('메티가 답변을 작성 중입니다...', style: TextStyle(color: kStone, fontSize: 12)),
-                      ],
-                    ),
-                  ),
-                _buildInputArea(),
-              ],
+          : _buildBodyContent(state),
+    );
+  }
+
+  Widget _buildBodyContent(AiCoachState state) {
+    switch (state.status) {
+      case AiCoachStatus.uninitialized:
+        return const Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(kBrandTeal),
+          ),
+        );
+      case AiCoachStatus.needsDownload:
+        return _buildDownloadPrompt();
+      case AiCoachStatus.downloading:
+        return _buildDownloadProgress(state.downloadProgress);
+      case AiCoachStatus.ready:
+        return Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                reverse: true, // 하단부터 스크롤
+                padding: const EdgeInsets.all(16),
+                itemCount: state.messages.length,
+                itemBuilder: (context, index) {
+                  // reverse이므로 최신 메시지가 배열 마지막에 있지만 index 0에 그려짐
+                  final msg = state.messages[state.messages.length - 1 - index];
+                  final isUser = msg.role == 'user';
+                  
+                  return _buildMessageBubble(msg.content, isUser);
+                },
+              ),
             ),
+            if (state.isGenerating)
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: kBrandTeal),
+                    ),
+                    SizedBox(width: 8),
+                    Text('메티가 답변을 작성 중입니다...', style: TextStyle(color: kStone, fontSize: 12)),
+                  ],
+                ),
+              ),
+            _buildInputArea(),
+          ],
+        );
+    }
+  }
+
+  Widget _buildDownloadPrompt() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(LucideIcons.bot, size: 64, color: kBrandTeal),
+            const SizedBox(height: 24),
+            const Text(
+              '온디바이스 AI 코치',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: kBrandTealDeep),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              '메티의 AI 코치는 인터넷 연결 없이도\n기기 내부에서 안전하게 동작합니다.\n\n이를 위해 최초 1회, AI 모델 파일(약 2GB)을\n다운로드해야 합니다.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16, color: kInk, height: 1.5),
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton(
+              onPressed: () {
+                ref.read(aiCoachViewModelProvider.notifier).startDownload();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kBrandTeal,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                shape: const StadiumBorder(),
+              ),
+              child: const Text('Wi-Fi 환경에서 다운로드 시작', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDownloadProgress(int progress) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(kBrandTeal)),
+            const SizedBox(height: 32),
+            const Text(
+              'AI 코칭 모델을 다운로드 중입니다...',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: kBrandTealDeep),
+            ),
+            const SizedBox(height: 16),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: LinearProgressIndicator(
+                value: progress > 0 ? progress / 100 : null,
+                backgroundColor: kBrandTeal.withValues(alpha: 0.2),
+                valueColor: const AlwaysStoppedAnimation<Color>(kBrandTeal),
+                minHeight: 8,
+              ),
+            ),
+            const SizedBox(height: 16),
+            if (progress > 0)
+              Text(
+                '$progress%',
+                style: const TextStyle(
+                  color: kBrandTealDeep,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  fontFeatures: [FontFeature.tabularFigures()],
+                ),
+              ),
+            const SizedBox(height: 16),
+            const Text(
+              '앱을 백그라운드로 내리거나 이 화면을 벗어나면\n다운로드가 중단될 수 있습니다.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: kStone, fontSize: 12),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

@@ -59,7 +59,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
     if (!context.mounted) return;
 
     if (success) {
-      context.pop();
+      context.go('/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

@@ -10,20 +10,30 @@ class ChatMessage {
   ChatMessage({required this.role, required this.content});
 }
 
+enum AiCoachStatus { uninitialized, needsDownload, downloading, ready }
+
 class AiCoachState {
+  final AiCoachStatus status;
+  final int downloadProgress;
   final List<ChatMessage> messages;
   final bool isGenerating;
 
   AiCoachState({
+    this.status = AiCoachStatus.uninitialized,
+    this.downloadProgress = 0,
     this.messages = const [],
     this.isGenerating = false,
   });
 
   AiCoachState copyWith({
+    AiCoachStatus? status,
+    int? downloadProgress,
     List<ChatMessage>? messages,
     bool? isGenerating,
   }) {
     return AiCoachState(
+      status: status ?? this.status,
+      downloadProgress: downloadProgress ?? this.downloadProgress,
       messages: messages ?? this.messages,
       isGenerating: isGenerating ?? this.isGenerating,
     );
@@ -37,7 +47,35 @@ final aiCoachViewModelProvider = NotifierProvider<AiCoachViewModel, AiCoachState
 class AiCoachViewModel extends Notifier<AiCoachState> {
   @override
   AiCoachState build() {
+    // 뷰모델 생성 시 바로 모델 상태 확인
+    Future.microtask(() => checkModelStatus());
     return AiCoachState();
+  }
+
+  Future<void> checkModelStatus() async {
+    final llmRepo = ref.read(llmRepositoryProvider);
+    final isReady = await llmRepo.checkModelStatus();
+    if (isReady) {
+      state = state.copyWith(status: AiCoachStatus.ready);
+    } else {
+      state = state.copyWith(status: AiCoachStatus.needsDownload);
+    }
+  }
+
+  Future<void> startDownload() async {
+    final llmRepo = ref.read(llmRepositoryProvider);
+    state = state.copyWith(status: AiCoachStatus.downloading, downloadProgress: 0);
+    try {
+      await llmRepo.downloadModel(
+        onProgress: (progress) {
+          state = state.copyWith(downloadProgress: progress);
+        },
+      );
+      state = state.copyWith(status: AiCoachStatus.ready);
+    } catch (e) {
+      // 실패 시 다시 다운로드 유도 상태로 변경
+      state = state.copyWith(status: AiCoachStatus.needsDownload);
+    }
   }
 
   Future<void> sendMessage(String text) async {

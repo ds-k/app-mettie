@@ -84,58 +84,9 @@ class _SplashViewState extends ConsumerState<SplashView>
                       ),
                 ),
                 const SizedBox(height: 16),
-                
-                if (splashState.status == SplashStatus.downloadingModel) ...[
-                  const Text(
-                    'AI 코칭 모델을 준비 중입니다...\n(최초 1회, 약 1.5GB 다운로드)',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: kBrandTealDeep,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Wi-Fi 환경에서의 다운로드를 권장합니다.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: kStone,
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: 200,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: LinearProgressIndicator(
-                        value: splashState.downloadProgress > 0 
-                               ? splashState.downloadProgress / 100 
-                               : null, // 진행률 0일 때는 애니메이션 표시
-                        backgroundColor: kBrandTeal.withValues(alpha: 0.2),
-                        valueColor: const AlwaysStoppedAnimation<Color>(kBrandTeal),
-                        minHeight: 8,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  if (splashState.downloadProgress > 0)
-                    Text(
-                      '${splashState.downloadProgress}%',
-                      style: const TextStyle(
-                        color: kBrandTealDeep,
-                        fontWeight: FontWeight.bold,
-                        fontFeatures: [
-                          FontFeature.tabularFigures()
-                        ],
-                      ),
-                    ),
-                ] else ...[
-                  const CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(kBrandTeal),
-                  ),
-                ],
+                const CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(kBrandTeal),
+                ),
               ],
             ),
           ),
