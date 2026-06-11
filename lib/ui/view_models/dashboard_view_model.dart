@@ -12,7 +12,7 @@ class SelectedPetIdNotifier extends Notifier<String?> {
   @override
   String? build() => null;
 
-  void selectPet(String id) {
+  void selectPet(String? id) {
     state = id;
   }
 }

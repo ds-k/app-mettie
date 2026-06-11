@@ -18,6 +18,7 @@ class Pet {
   final String? vetClinic;
   final String? vetMemo;
   final String? avatarUrl;
+  final String? role; // e.g. 'owner', 'partner'
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -41,6 +42,7 @@ class Pet {
     this.vetClinic,
     this.vetMemo,
     this.avatarUrl,
+    this.role,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -65,6 +67,7 @@ class Pet {
     String? vetClinic,
     String? vetMemo,
     String? avatarUrl,
+    String? role,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -88,12 +91,21 @@ class Pet {
       vetClinic: vetClinic ?? this.vetClinic,
       vetMemo: vetMemo ?? this.vetMemo,
       avatarUrl: avatarUrl ?? this.avatarUrl,
+      role: role ?? this.role,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
   factory Pet.fromJson(Map<String, dynamic> json) {
+    String? parsedRole;
+    if (json['families'] != null && json['families']['user_families'] != null) {
+      final userFamilies = json['families']['user_families'] as List;
+      if (userFamilies.isNotEmpty) {
+        parsedRole = userFamilies.first['role'] as String?;
+      }
+    }
+
     return Pet(
       id: json['id'] as String,
       familyId: json['family_id'] as String,
@@ -114,6 +126,7 @@ class Pet {
       vetClinic: json['vet_clinic'] as String?,
       vetMemo: json['vet_memo'] as String?,
       avatarUrl: json['avatar_url'] as String?,
+      role: json['role'] as String? ?? parsedRole,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
@@ -140,7 +153,7 @@ class Pet {
       'vet_clinic': vetClinic,
       'vet_memo': vetMemo,
       'avatar_url': avatarUrl,
-      // created_at, updated_at are generally handled by DB default or triggers, but can be provided
+      // role is purely client-side/joined, do not send back to pets table on insert/update
     };
   }
 }

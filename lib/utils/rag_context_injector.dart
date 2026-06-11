@@ -43,9 +43,15 @@ class RagContextInjector {
         parts.add('인슐린 ${record.insulinDose} IU 투여');
       }
 
-      if (record.foodAmountG != null) {
-        final foodName = record.foodBrand ?? '사료';
-        parts.add('$foodName ${record.foodAmountG}g');
+      if (record.foodAmountG != null || (record.foodBrand != null && record.foodBrand!.isNotEmpty)) {
+        final foodParts = <String>[];
+        if (record.foodBrand != null && record.foodBrand!.isNotEmpty) {
+          foodParts.add(record.foodBrand!);
+        }
+        if (record.foodAmountG != null) {
+          foodParts.add('${record.foodAmountG}g');
+        }
+        parts.add('사료: ${foodParts.join(' ')}');
       }
 
       if (record.activityLevel != null) {

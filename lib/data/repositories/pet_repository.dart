@@ -13,7 +13,18 @@ class PetRepository {
   PetRepository(this._client);
 
   Future<List<Pet>> getPets() async {
-    final response = await _client.from('pets').select().order('created_at');
+    final userId = _client.auth.currentUser!.id;
+    final response = await _client.from('pets').select('''
+      *,
+      families!inner (
+        user_families!inner (
+          role
+        )
+      )
+    ''')
+    .eq('families.user_families.user_id', userId)
+    .order('created_at');
+    
     return response.map((json) => Pet.fromJson(json)).toList();
   }
 
@@ -39,7 +50,16 @@ class PetRepository {
   }
 
   Future<void> deletePet(String id) async {
+    // cascade on delete will handle records and other tables if configured properly.
     await _client.from('pets').delete().eq('id', id);
+  }
+
+  Future<void> leaveFamily(String familyId) async {
+    final userId = _client.auth.currentUser!.id;
+    await _client.from('user_families')
+      .delete()
+      .eq('family_id', familyId)
+      .eq('user_id', userId);
   }
 
   Future<String> createInvitationCode(String familyId) async {

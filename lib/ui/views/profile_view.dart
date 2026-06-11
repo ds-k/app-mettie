@@ -108,6 +108,18 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<ProfileState>(profileViewModelProvider, (previous, next) {
+      if (next.error != null && next.error != previous?.error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(next.error!),
+            backgroundColor: kBrandError,
+          ),
+        );
+        ref.read(profileViewModelProvider.notifier).clearError();
+      }
+    });
+
     final user = ref.watch(currentUserProvider);
     final currentPet = ref.watch(currentPetProvider);
     final profileState = ref.watch(profileViewModelProvider);

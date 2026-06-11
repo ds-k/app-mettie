@@ -75,37 +75,92 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                       itemBuilder: (context, index) {
                         final pet = pets[index];
                         final isSelected = pet.id == activeId;
+                        final isOwner = pet.role == 'owner';
 
-                        return ListTile(
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                          leading: CircleAvatar(
-                            backgroundColor: isSelected ? kBrandTeal.withValues(alpha: 0.1) : kCanvas,
-                            backgroundImage: pet.avatarUrl != null ? NetworkImage(pet.avatarUrl!) : null,
-                            child: pet.avatarUrl == null
-                                ? Icon(
-                                    pet.species == 'cat' ? LucideIcons.cat : LucideIcons.dog,
-                                    color: isSelected ? kBrandTeal : kStone,
-                                  )
-                                : null,
-                          ),
-                          title: Text(
-                            pet.name,
-                            style: TextStyle(
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                              color: isSelected ? kBrandTeal : kInk,
+                        return Material(
+                          color: Colors.transparent,
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                            leading: CircleAvatar(
+                              backgroundColor: isSelected ? kBrandTeal.withOpacity(0.1) : kCanvas,
+                              backgroundImage: pet.avatarUrl != null ? NetworkImage(pet.avatarUrl!) : null,
+                              child: pet.avatarUrl == null
+                                  ? Icon(
+                                      pet.species == 'cat' ? LucideIcons.cat : LucideIcons.dog,
+                                      color: isSelected ? kBrandTeal : kStone,
+                                    )
+                                  : null,
                             ),
+                            title: Text(
+                              pet.name,
+                              style: TextStyle(
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                color: isSelected ? kBrandTeal : kInk,
+                              ),
+                            ),
+                            subtitle: Text(
+                              '${pet.species == 'cat' ? '고양이' : '강아지'} / ${pet.breed ?? '품종 모름'}',
+                              style: const TextStyle(color: kSlate, fontSize: 13),
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (isSelected)
+                                  const Icon(LucideIcons.check, color: kBrandTeal),
+                                PopupMenuButton<String>(
+                                  icon: const Icon(LucideIcons.moreVertical, color: kStone),
+                                  onSelected: (value) async {
+                                    if (value == 'delete') {
+                                      final title = isOwner ? '반려동물 삭제' : '가족 나가기';
+                                      final content = isOwner 
+                                          ? '${pet.name}의 모든 데이터를 정말 삭제하시겠습니까?'
+                                          : '${pet.name}의 가족 공간에서 나가시겠습니까?';
+                                      
+                                      final notifier = ref.read(petManagementViewModelProvider.notifier);
+                                      
+                                      final confirm = await showDialog<bool>(
+                                        context: context,
+                                        builder: (ctx) => AlertDialog(
+                                          title: Text(title),
+                                          content: Text(content),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Navigator.pop(ctx, false),
+                                              child: const Text('취소', style: TextStyle(color: kSlate)),
+                                            ),
+                                            TextButton(
+                                              onPressed: () => Navigator.pop(ctx, true),
+                                              child: Text(isOwner ? '삭제' : '나가기', style: const TextStyle(color: kBrandError, fontWeight: FontWeight.bold)),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+
+                                      if (confirm == true) {
+                                        await notifier.deletePetOrLeave(pet);
+                                        if (context.mounted) {
+                                          Navigator.pop(context);
+                                        }
+                                      }
+                                    }
+                                  },
+                                  itemBuilder: (context) => [
+                                    PopupMenuItem(
+                                      value: 'delete',
+                                      child: Text(
+                                        isOwner ? '삭제하기' : '나가기',
+                                        style: const TextStyle(color: kBrandError),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            onTap: () {
+                              ref.read(selectedPetIdProvider.notifier).selectPet(pet.id);
+                              Navigator.pop(context);
+                            },
                           ),
-                          subtitle: Text(
-                            '${pet.species == 'cat' ? '고양이' : '강아지'} / ${pet.breed ?? '품종 모름'}',
-                            style: const TextStyle(color: kSlate, fontSize: 13),
-                          ),
-                          trailing: isSelected
-                              ? const Icon(LucideIcons.check, color: kBrandTeal)
-                              : null,
-                          onTap: () {
-                            ref.read(selectedPetIdProvider.notifier).selectPet(pet.id);
-                            Navigator.pop(context);
-                          },
                         );
                       },
                     );

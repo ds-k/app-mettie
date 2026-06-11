@@ -341,10 +341,10 @@ class DashboardView extends ConsumerWidget {
                     '인슐린: ${record.insulinDose} IU',
                     kBrandTeal,
                   ),
-                if (record.foodAmountG != null || record.foodBrand != null)
+                if (record.foodAmountG != null || (record.foodBrand != null && record.foodBrand!.isNotEmpty))
                   _buildRecordItem(
                     LucideIcons.bone,
-                    '사료: ${record.foodBrand ?? ''} ${record.foodAmountG ?? ''}g',
+                    '사료: ${[if (record.foodBrand != null && record.foodBrand!.isNotEmpty) record.foodBrand, if (record.foodAmountG != null) '${record.foodAmountG}g'].join(' ')}',
                     kWarmCoral,
                   ),
                 if (record.notes != null && record.notes!.isNotEmpty)

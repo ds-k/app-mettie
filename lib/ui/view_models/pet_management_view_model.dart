@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../data/models/pet.dart';
 import '../../data/repositories/pet_repository.dart';
 import '../../data/repositories/auth_repository.dart';
+import 'dashboard_view_model.dart';
 
 final petsProvider = FutureProvider<List<Pet>>((ref) async {
   // 인증 상태가 변경(로그인/로그아웃)되면 반려동물 목록도 다시 가져옵니다.
@@ -141,6 +142,32 @@ class PetManagementViewModel extends Notifier<PetManagementState> {
 
       await repo.createPet(newPet);
       ref.invalidate(petsProvider); // 목록 갱신
+      state = state.copyWith(isLoading: false);
+      return true;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      return false;
+    }
+  }
+
+  Future<bool> deletePetOrLeave(Pet pet) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final repo = ref.read(petRepositoryProvider);
+      if (pet.role == 'owner') {
+        await repo.deletePet(pet.id);
+      } else {
+        await repo.leaveFamily(pet.familyId);
+      }
+      
+      // Select a different pet or clear selection if empty
+      ref.invalidate(petsProvider);
+      
+      final currentSelected = ref.read(selectedPetIdProvider);
+      if (currentSelected == pet.id) {
+        ref.read(selectedPetIdProvider.notifier).selectPet(null);
+      }
+
       state = state.copyWith(isLoading: false);
       return true;
     } catch (e) {
