@@ -79,7 +79,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 ElevatedButton(
                   onPressed: () => ref.refresh(petsProvider),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: kBrandTeal,
+                    backgroundColor: kBrandBlue,
                     foregroundColor: kOnDark,
                   ),
                   child: const Text('다시 시도'),
@@ -97,7 +97,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
     if (petsAsync.isLoading) {
       return const Scaffold(
         backgroundColor: kSurface,
-        body: Center(child: CircularProgressIndicator(color: kBrandTeal)),
+        body: Center(child: CircularProgressIndicator(color: kBrandBlue)),
       );
     }
 
@@ -110,7 +110,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
         height: 54,
         child: FloatingActionButton(
           onPressed: _showRecordEntryBottomSheet,
-          backgroundColor: kBrandTeal,
+          backgroundColor: kBrandBlue,
           elevation: 4,
           shape: const CircleBorder(), // 원형 (rounded.full)
           child: const Icon(LucideIcons.plus, color: Colors.white, size: 28),
@@ -121,7 +121,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
         currentIndex: _currentIndex,
         onTap: _onTabTapped,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: kBrandTeal,
+        selectedItemColor: kBrandBlue,
         unselectedItemColor: kStone,
         items: const [
           BottomNavigationBarItem(

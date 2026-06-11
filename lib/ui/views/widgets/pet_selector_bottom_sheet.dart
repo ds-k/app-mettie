@@ -82,12 +82,12 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                           child: ListTile(
                             contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                             leading: CircleAvatar(
-                              backgroundColor: isSelected ? kBrandTeal.withOpacity(0.1) : kCanvas,
+                              backgroundColor: isSelected ? kBrandBlue.withOpacity(0.1) : kCanvas,
                               backgroundImage: pet.avatarUrl != null ? NetworkImage(pet.avatarUrl!) : null,
                               child: pet.avatarUrl == null
                                   ? Icon(
                                       pet.species == 'cat' ? LucideIcons.cat : LucideIcons.dog,
-                                      color: isSelected ? kBrandTeal : kStone,
+                                      color: isSelected ? kBrandBlue : kStone,
                                     )
                                   : null,
                             ),
@@ -95,7 +95,7 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                               pet.name,
                               style: TextStyle(
                                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                color: isSelected ? kBrandTeal : kInk,
+                                color: isSelected ? kBrandBlue : kInk,
                               ),
                             ),
                             subtitle: Text(
@@ -106,7 +106,7 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 if (isSelected)
-                                  const Icon(LucideIcons.check, color: kBrandTeal),
+                                  const Icon(LucideIcons.check, color: kBrandBlue),
                                 PopupMenuButton<String>(
                                   icon: const Icon(LucideIcons.moreVertical, color: kStone),
                                   onSelected: (value) async {
@@ -165,7 +165,7 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                       },
                     );
                   },
-                  loading: () => const Center(child: CircularProgressIndicator(color: kBrandTeal)),
+                  loading: () => const Center(child: CircularProgressIndicator(color: kBrandBlue)),
                   error: (error, stack) => Center(child: Text('오류 발생: $error')),
                 ),
               ),
@@ -190,12 +190,12 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(LucideIcons.plusCircle, color: kBrandTeal),
+                      const Icon(LucideIcons.plusCircle, color: kBrandBlue),
                       const SizedBox(width: 8),
                       const Text(
                         '새 반려동물 추가',
                         style: TextStyle(
-                          color: kBrandTeal,
+                          color: kBrandBlue,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),

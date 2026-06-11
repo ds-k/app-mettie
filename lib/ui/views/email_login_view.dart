@@ -70,7 +70,7 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
               ),
               title: Row(
                 children: [
-                  const Icon(LucideIcons.mailCheck, color: kBrandTeal, size: 28),
+                  const Icon(LucideIcons.mailCheck, color: kBrandBlue, size: 28),
                   const SizedBox(width: 10),
                   Text(
                     '이메일 인증 안내',
@@ -93,7 +93,7 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                       children: [
                         TextSpan(
                           text: email,
-                          style: const TextStyle(fontWeight: FontWeight.bold, color: kBrandTealDeep),
+                          style: const TextStyle(fontWeight: FontWeight.bold, color: kBrandBlueDeep),
                         ),
                         const TextSpan(
                           text: ' 이메일로 가입 승인을 위한 링크를 발송했습니다.',
@@ -111,7 +111,7 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
               actions: [
                 FilledButton(
                   style: FilledButton.styleFrom(
-                    backgroundColor: kBrandTeal,
+                    backgroundColor: kBrandBlue,
                     foregroundColor: kOnDark,
                     shape: const StadiumBorder(),
                   ),
@@ -284,7 +284,7 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                                   height: 24,
                                   child: Checkbox(
                                     value: _agreeToTerms,
-                                    activeColor: kBrandTeal,
+                                    activeColor: kBrandBlue,
                                     onChanged: (value) {
                                       setState(() {
                                         _agreeToTerms = value ?? false;
@@ -310,7 +310,7 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                                         child: Text(
                                           '서비스 이용약관',
                                           style: kCaption.copyWith(
-                                            color: kBrandTeal,
+                                            color: kBrandBlue,
                                             decoration: TextDecoration.underline,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -329,7 +329,7 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                                         child: Text(
                                           '개인정보처리방침',
                                           style: kCaption.copyWith(
-                                            color: kBrandTeal,
+                                            color: kBrandBlue,
                                             decoration: TextDecoration.underline,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -369,7 +369,7 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                             },
                             child: Text(
                               _isSignUpMode ? '이미 계정이 있으신가요? 로그인' : '계정이 없으신가요? 회원가입',
-                              style: kButtonMd.copyWith(color: kBrandTealDeep),
+                              style: kButtonMd.copyWith(color: kBrandBlueDeep),
                             ),
                           ),
                         ],
@@ -387,7 +387,7 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                 color: Colors.black.withValues(alpha: 0.3),
                 child: const Center(
                   child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(kBrandTeal),
+                    valueColor: AlwaysStoppedAnimation<Color>(kBrandBlue),
                   ),
                 ),
               ),

@@ -3,9 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 // ─── Brand & Accent ───────────────────────────────────────────────────────────
-const Color kBrandTeal = Color(0xFF0D9488);
-const Color kBrandTealDeep = Color(0xFF0F766E);
-const Color kBrandTealSoft = Color(0xFFCCFBF1);
+const Color kBrandBlue = Color(0xFF139CE1);
+const Color kBrandBlueDeep = Color(0xFF0284C7);
+const Color kBrandBlueSoft = Color(0xFFE0F2FE);
 const Color kBrandWarn = Color(0xFFF59E0B);
 const Color kBrandError = Color(0xFFE11D48);
 const Color kWarmCoral = Color(0xFFF97316);
@@ -21,8 +21,8 @@ const Color kHairlineSoft = Color(0xFFF1F5F9);
 // ─── Hero Atmospheric Gradients ───────────────────────────────────────────────
 const Color kHeroSkyFrom = Color(0xFFE0F2FE);
 const Color kHeroSkyTo = Color(0xFFFAFAF9);
-const Color kHeroDarkFrom = Color(0xFF0F766E);
-const Color kHeroDarkTo = Color(0xFF0D9488);
+const Color kHeroDarkFrom = Color(0xFF0284C7);
+const Color kHeroDarkTo = Color(0xFF139CE1);
 
 // ─── Text ─────────────────────────────────────────────────────────────────────
 const Color kInk = Color(0xFF020617);

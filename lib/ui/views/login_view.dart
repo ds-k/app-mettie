@@ -51,7 +51,7 @@ class LoginView extends ConsumerWidget {
                                 '반려동물 대사질환 케어\n온디바이스 AI 솔루션',
                                 textAlign: TextAlign.center,
                                 style: kHeading2.copyWith(
-                                  color: kBrandTealDeep,
+                                  color: kBrandBlueDeep,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -91,7 +91,7 @@ class LoginView extends ConsumerWidget {
                                 label: const Text('이메일로 계속하기'),
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: const Size.fromHeight(52),
-                                  backgroundColor: kBrandTeal,
+                                  backgroundColor: kBrandBlue,
                                   foregroundColor: kOnDark,
                                   elevation: 0,
                                   shape: const StadiumBorder(),

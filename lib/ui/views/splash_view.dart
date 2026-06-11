@@ -78,14 +78,14 @@ class _SplashViewState extends ConsumerState<SplashView>
                 Text(
                   'Mettie',
                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                        color: kBrandTealDeep,
+                        color: kBrandBlueDeep,
                         fontWeight: FontWeight.w900,
                         fontSize: 48,
                       ),
                 ),
                 const SizedBox(height: 16),
                 const CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(kBrandTeal),
+                  valueColor: AlwaysStoppedAnimation<Color>(kBrandBlue),
                 ),
               ],
             ),

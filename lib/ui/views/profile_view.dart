@@ -94,7 +94,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: kBrandTeal,
+                backgroundColor: kBrandBlue,
                 foregroundColor: kOnDark,
                 shape: const StadiumBorder(),
               ),
@@ -159,7 +159,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
               child: Row(
                 children: [
                   const CircleAvatar(
-                    backgroundColor: kBrandTeal,
+                    backgroundColor: kBrandBlue,
                     child: Icon(LucideIcons.user, color: kOnDark),
                   ),
                   const SizedBox(width: 16),
@@ -223,7 +223,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                   children: [
                     const Row(
                       children: [
-                        Icon(LucideIcons.userPlus, color: kBrandTeal, size: 20),
+                        Icon(LucideIcons.userPlus, color: kBrandBlue, size: 20),
                         SizedBox(width: 8),
                         Text(
                           '가족 초대하기',
@@ -244,7 +244,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: kBrandTeal.withValues(alpha: 0.1),
+                          color: kBrandBlue.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(kRadiusMd),
                         ),
                         child: Row(
@@ -255,14 +255,14 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                               style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
-                                color: kBrandTeal,
+                                color: kBrandBlue,
                                 letterSpacing: 4,
                               ),
                             ),
                             IconButton(
                               icon: const Icon(
                                 LucideIcons.copy,
-                                color: kBrandTeal,
+                                color: kBrandBlue,
                               ),
                               onPressed: () {
                                 Clipboard.setData(
@@ -290,7 +290,7 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                                     .read(profileViewModelProvider.notifier)
                                     .createInvitation(currentPet.familyId),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: kBrandTeal,
+                            backgroundColor: kBrandBlue,
                             foregroundColor: kOnDark,
                             shape: const StadiumBorder(),
                           ),

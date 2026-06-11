@@ -147,10 +147,10 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                   contentPadding: const EdgeInsets.all(16),
                   leading: CircleAvatar(
                     radius: 24,
-                    backgroundColor: kBrandTeal.withOpacity(0.1),
+                    backgroundColor: kBrandBlue.withOpacity(0.1),
                     backgroundImage: pet.avatarUrl != null ? NetworkImage(pet.avatarUrl!) : null,
                     child: pet.avatarUrl == null
-                        ? Icon(pet.species == 'cat' ? LucideIcons.cat : LucideIcons.dog, color: kBrandTeal)
+                        ? Icon(pet.species == 'cat' ? LucideIcons.cat : LucideIcons.dog, color: kBrandBlue)
                         : null,
                   ),
                   title: Row(
@@ -163,14 +163,14 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: isOwner ? kBrandTeal.withOpacity(0.1) : kStone.withOpacity(0.1),
+                          color: isOwner ? kBrandBlue.withOpacity(0.1) : kStone.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
                           isOwner ? '보호자' : '공동양육자',
                           style: TextStyle(
                             fontSize: 12,
-                            color: isOwner ? kBrandTeal : kStone,
+                            color: isOwner ? kBrandBlue : kStone,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -195,7 +195,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                         icon: const Icon(LucideIcons.userPlus, size: 16),
                         label: const Text('초대 코드 발급'),
                         style: TextButton.styleFrom(
-                          foregroundColor: kBrandTeal,
+                          foregroundColor: kBrandBlue,
                           padding: EdgeInsets.zero,
                           minimumSize: Size.zero,
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -236,7 +236,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                                     icon: const Icon(LucideIcons.copy, size: 18),
                                     label: const Text('복사하기'),
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: kBrandTeal,
+                                      backgroundColor: kBrandBlue,
                                       foregroundColor: kOnDark,
                                     ),
                                     onPressed: () {
@@ -267,7 +267,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
             _isCreatingNew = true;
           });
         },
-        backgroundColor: kBrandTeal,
+        backgroundColor: kBrandBlue,
         foregroundColor: kOnDark,
         icon: const Icon(LucideIcons.plus),
         label: const Text('새 반려동물 등록', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -425,7 +425,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                       child: SwitchListTile(
                         title: const Text('중성화 완료'),
                         value: _isNeutered,
-                        activeThumbColor: kBrandTeal,
+                        activeThumbColor: kBrandBlue,
                         onChanged: (val) => setState(() => _isNeutered = val),
                         contentPadding: EdgeInsets.zero,
                       ),
@@ -477,7 +477,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: kBrandTeal,
+                        color: kBrandBlue,
                       ),
                     ),
                     RangeSlider(
@@ -488,7 +488,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                       min: 50,
                       max: 600,
                       divisions: 550,
-                      activeColor: kBrandTeal,
+                      activeColor: kBrandBlue,
                       labels: RangeLabels(
                         '${state.targetGlucoseMin}',
                         '${state.targetGlucoseMax}',
@@ -511,7 +511,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                       height: 48,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: kBrandTeal,
+                          backgroundColor: kBrandBlue,
                           foregroundColor: kOnDark,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
@@ -573,7 +573,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(kRadiusMd),
-        borderSide: const BorderSide(color: kBrandTeal, width: 2),
+        borderSide: const BorderSide(color: kBrandBlue, width: 2),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );
@@ -606,7 +606,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
           return _buildPetList(pets);
         }
       },
-      loading: () => const Scaffold(backgroundColor: kSurface, body: Center(child: CircularProgressIndicator(color: kBrandTeal))),
+      loading: () => const Scaffold(backgroundColor: kSurface, body: Center(child: CircularProgressIndicator(color: kBrandBlue))),
       error: (err, stack) => Scaffold(backgroundColor: kSurface, body: Center(child: Text('Error: $err', style: const TextStyle(color: kBrandError)))),
     );
   }

@@ -236,7 +236,7 @@ class _RecordEntryBottomSheetState
                                   const Icon(
                                     LucideIcons.calendar,
                                     size: 20,
-                                    color: kBrandTeal,
+                                    color: kBrandBlue,
                                   ),
                                   const SizedBox(width: 12),
                                   Text(
@@ -420,7 +420,7 @@ class _RecordEntryBottomSheetState
                             height: 48,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: kBrandTeal,
+                                backgroundColor: kBrandBlue,
                                 foregroundColor: kOnDark,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
@@ -488,7 +488,7 @@ class _RecordEntryBottomSheetState
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(kRadiusMd),
-        borderSide: const BorderSide(color: kBrandTeal, width: 2),
+        borderSide: const BorderSide(color: kBrandBlue, width: 2),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );

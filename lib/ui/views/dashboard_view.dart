@@ -25,7 +25,7 @@ class DashboardView extends ConsumerWidget {
     if (petsAsync.isLoading) {
       return const Scaffold(
         backgroundColor: kSurface,
-        body: Center(child: CircularProgressIndicator(color: kBrandTeal)),
+        body: Center(child: CircularProgressIndicator(color: kBrandBlue)),
       );
     }
 
@@ -63,7 +63,7 @@ class DashboardView extends ConsumerWidget {
                   icon: const Icon(LucideIcons.plus),
                   label: const Text('새 반려동물 등록하기'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: kBrandTeal,
+                    backgroundColor: kBrandBlue,
                     foregroundColor: kOnDark,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 24,
@@ -339,7 +339,7 @@ class DashboardView extends ConsumerWidget {
                   _buildRecordItem(
                     LucideIcons.syringe,
                     '인슐린: ${record.insulinDose} IU',
-                    kBrandTeal,
+                    kBrandBlue,
                   ),
                 if (record.foodAmountG != null || (record.foodBrand != null && record.foodBrand!.isNotEmpty))
                   _buildRecordItem(

@@ -10,9 +10,9 @@ class AppTheme {
         fontFamily: kFontFamily,
         scaffoldBackgroundColor: kCanvas,
         colorScheme: const ColorScheme.light(
-          primary: kBrandTeal,
+          primary: kBrandBlue,
           onPrimary: kOnDark,
-          secondary: kBrandTealDeep,
+          secondary: kBrandBlueDeep,
           onSecondary: kOnDark,
           error: kBrandError,
           surface: kSurface,
@@ -47,10 +47,10 @@ class AppTheme {
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           ),
         ),
-        // FilledButton — Teal-pill (button-accent)
+        // FilledButton — Blue-pill (button-accent)
         filledButtonTheme: FilledButtonThemeData(
           style: FilledButton.styleFrom(
-            backgroundColor: kBrandTeal,
+            backgroundColor: kBrandBlue,
             foregroundColor: kOnDark,
             elevation: 0,
             textStyle: kButtonMd,
@@ -74,7 +74,7 @@ class AppTheme {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(kRadiusMd),
-            borderSide: const BorderSide(color: kBrandTeal, width: 1.5),
+            borderSide: const BorderSide(color: kBrandBlue, width: 1.5),
           ),
           hintStyle: kBodyMd.copyWith(color: kStone),
           labelStyle: kBodyMd.copyWith(color: kSlate),
@@ -82,7 +82,7 @@ class AppTheme {
         // BottomNavigationBar — 높이 64px, hairline 상단 테두리
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: kCanvas,
-          selectedItemColor: kBrandTeal,
+          selectedItemColor: kBrandBlue,
           unselectedItemColor: kStone,
           selectedLabelStyle: TextStyle(
             fontFamily: kFontFamily,
