@@ -8,7 +8,7 @@ class AppTheme {
   static ThemeData get light => ThemeData(
         useMaterial3: true,
         fontFamily: kFontFamily,
-        scaffoldBackgroundColor: kCanvas,
+        scaffoldBackgroundColor: Colors.transparent,
         colorScheme: const ColorScheme.light(
           primary: kBrandBlue,
           onPrimary: kOnDark,
@@ -18,9 +18,9 @@ class AppTheme {
           surface: kSurface,
           onSurface: kInk,
         ),
-        // 앱 바 — 플랫, 테두리 없음
+        // 앱 바 — 플랫, 테두리 없음, 투명 배경
         appBarTheme: const AppBarTheme(
-          backgroundColor: kCanvas,
+          backgroundColor: Colors.transparent,
           foregroundColor: kInk,
           elevation: 0,
           scrolledUnderElevation: 0,

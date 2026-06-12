@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -103,44 +104,115 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
     final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 
-    return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _views),
-      floatingActionButton: isKeyboardOpen || _currentIndex == 1 ? null : SizedBox(
-        width: 54,
-        height: 54,
-        child: FloatingActionButton(
-          onPressed: _showRecordEntryBottomSheet,
-          backgroundColor: kBrandBlue,
-          elevation: 4,
-          shape: const CircleBorder(), // 원형 (rounded.full)
-          child: const Icon(LucideIcons.plus, color: Colors.white, size: 28),
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [kHeroSkyFrom, kHeroSkyTo],
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: isKeyboardOpen ? null : BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onTabTapped,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: kBrandBlue,
-        unselectedItemColor: kStone,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(LucideIcons.layoutDashboard),
-            label: '대시보드',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(LucideIcons.bot),
-            label: 'AI 코칭',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(LucideIcons.pawPrint),
-            label: '반려동물',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(LucideIcons.userCircle),
-            label: '프로필',
-          ),
-        ],
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        extendBody: true, // 바텀 네비게이션 아래로 배경이 들어가도록
+        body: IndexedStack(index: _currentIndex, children: _views),
+        bottomNavigationBar: isKeyboardOpen
+            ? null
+            : SafeArea(
+                child: Container(
+                  margin: const EdgeInsets.only(left: 24, right: 24, bottom: 24),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(100),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.5),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _buildNavItem(0, LucideIcons.layoutDashboard, '대시보드'),
+                            _buildNavItem(1, LucideIcons.bot, 'AI 코칭'),
+                            _buildAddButton(),
+                            _buildNavItem(2, LucideIcons.pawPrint, '반려동물'),
+                            _buildNavItem(3, LucideIcons.userCircle, '프로필'),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(int index, IconData icon, String label) {
+    final isSelected = _currentIndex == index;
+    return GestureDetector(
+      onTap: () => _onTabTapped(index),
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? kBrandBlue.withOpacity(0.1) : Colors.transparent,
+          borderRadius: BorderRadius.circular(100),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: isSelected ? kBrandBlue : kStone,
+              size: 24,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                color: isSelected ? kBrandBlue : kStone,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAddButton() {
+    return GestureDetector(
+      onTap: _showRecordEntryBottomSheet,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: const BoxDecoration(
+          color: kBrandBlue,
+          shape: BoxShape.circle,
+        ),
+        child: const Icon(
+          LucideIcons.plus,
+          color: Colors.white,
+          size: 28,
+        ),
       ),
     );
   }

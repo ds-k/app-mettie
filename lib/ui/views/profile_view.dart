@@ -7,6 +7,7 @@ import '../../core/constants/app_colors.dart';
 import '../../data/repositories/auth_repository.dart';
 import '../view_models/dashboard_view_model.dart';
 import '../view_models/profile_view_model.dart';
+import 'widgets/glass_card.dart';
 
 class ProfileView extends ConsumerStatefulWidget {
   const ProfileView({super.key});
@@ -125,13 +126,13 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
     final profileState = ref.watch(profileViewModelProvider);
 
     return Scaffold(
-      backgroundColor: kSurface,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: const Text(
           '프로필',
           style: TextStyle(color: kInk, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: kSurface,
+        backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -149,13 +150,8 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
               ),
             ),
             const SizedBox(height: 16),
-            Container(
+            GlassCard(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: kCanvas,
-                borderRadius: BorderRadius.circular(kRadiusMd),
-                border: Border.all(color: kHairline),
-              ),
               child: Row(
                 children: [
                   const CircleAvatar(
@@ -211,13 +207,8 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
 
             // 가족 초대하기 (코드 발급)
             if (currentPet != null) ...[
-              Container(
+              GlassCard(
                 padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: kCanvas,
-                  borderRadius: BorderRadius.circular(kRadiusMd),
-                  border: Border.all(color: kHairline),
-                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -313,13 +304,8 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
             ],
 
             // 가족 참여하기 (코드 입력)
-            Container(
+            GlassCard(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: kCanvas,
-                borderRadius: BorderRadius.circular(kRadiusMd),
-                border: Border.all(color: kHairline),
-              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

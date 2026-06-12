@@ -8,6 +8,7 @@ import '../view_models/pet_management_view_model.dart';
 import '../../core/constants/app_colors.dart';
 import '../../data/models/pet.dart';
 import '../view_models/profile_view_model.dart';
+import 'widgets/glass_card.dart';
 
 class PetManagementView extends ConsumerStatefulWidget {
   const PetManagementView({super.key});
@@ -121,10 +122,10 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
 
   Widget _buildPetList(List<Pet> pets) {
     return Scaffold(
-      backgroundColor: kSurface,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: const Text('반려동물 관리', style: TextStyle(color: kInk, fontWeight: FontWeight.bold)),
-        backgroundColor: kSurface,
+        backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: ListView.separated(
@@ -135,12 +136,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
           final pet = pets[index];
           final isOwner = pet.role == 'owner';
 
-          return Container(
-            decoration: BoxDecoration(
-              color: kCanvas,
-              borderRadius: BorderRadius.circular(kRadiusMd),
-              border: Border.all(color: kHairline),
-            ),
+          return GlassCard(
             child: Column(
               children: [
                 ListTile(
@@ -279,7 +275,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
     final state = ref.watch(petManagementViewModelProvider);
 
     return Scaffold(
-      backgroundColor: kSurface,
+      backgroundColor: Colors.transparent,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -606,8 +602,8 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
           return _buildPetList(pets);
         }
       },
-      loading: () => const Scaffold(backgroundColor: kSurface, body: Center(child: CircularProgressIndicator(color: kBrandBlue))),
-      error: (err, stack) => Scaffold(backgroundColor: kSurface, body: Center(child: Text('Error: $err', style: const TextStyle(color: kBrandError)))),
+      loading: () => const Scaffold(backgroundColor: Colors.transparent, body: Center(child: CircularProgressIndicator(color: kBrandBlue))),
+      error: (err, stack) => Scaffold(backgroundColor: Colors.transparent, body: Center(child: Text('Error: $err', style: const TextStyle(color: kBrandError)))),
     );
   }
 }

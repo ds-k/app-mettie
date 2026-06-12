@@ -9,6 +9,7 @@ import '../view_models/pet_management_view_model.dart';
 import '../../core/constants/app_colors.dart';
 import '../../data/models/record.dart';
 import 'widgets/pet_selector_bottom_sheet.dart';
+import 'widgets/glass_card.dart';
 
 class DashboardView extends ConsumerWidget {
   const DashboardView({super.key});
@@ -24,7 +25,7 @@ class DashboardView extends ConsumerWidget {
     // 로딩 상태 처리
     if (petsAsync.isLoading) {
       return const Scaffold(
-        backgroundColor: kSurface,
+        backgroundColor: Colors.transparent,
         body: Center(child: CircularProgressIndicator(color: kBrandBlue)),
       );
     }
@@ -32,7 +33,7 @@ class DashboardView extends ConsumerWidget {
     // 빈 화면 (Empty State) 처리
     if (pet == null) {
       return Scaffold(
-        backgroundColor: kSurface,
+        backgroundColor: Colors.transparent,
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
@@ -80,9 +81,9 @@ class DashboardView extends ConsumerWidget {
     }
 
     return Scaffold(
-      backgroundColor: kSurface,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: kSurface,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         title: GestureDetector(
           onTap: () {
@@ -300,14 +301,9 @@ class DashboardView extends ConsumerWidget {
   }
 
   Widget _buildRecordCard(Record record) {
-    return Container(
+    return GlassCard(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: kCanvas,
-        borderRadius: BorderRadius.circular(kRadiusMd),
-        border: Border.all(color: kHairline),
-      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

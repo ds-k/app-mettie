@@ -6,6 +6,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../core/constants/app_colors.dart';
 import '../view_models/ai_coach_view_model.dart';
 import '../view_models/dashboard_view_model.dart';
+import 'widgets/glass_card.dart';
 
 class AiCoachView extends ConsumerStatefulWidget {
   const AiCoachView({super.key});
@@ -39,10 +40,10 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
     final currentPet = ref.watch(currentPetProvider);
 
     return Scaffold(
-      backgroundColor: kCanvas,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: const Text('AI 코칭', style: TextStyle(fontWeight: FontWeight.w600)),
-        backgroundColor: kCanvas,
+        backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
         actions: [
           IconButton(
@@ -138,7 +139,8 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
 
   Widget _buildDownloadPrompt() {
     return Center(
-      child: Padding(
+      child: GlassCard(
+        margin: const EdgeInsets.all(32.0),
         padding: const EdgeInsets.all(32.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -176,7 +178,8 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
 
   Widget _buildDownloadProgress(int progress) {
     return Center(
-      child: Padding(
+      child: GlassCard(
+        margin: const EdgeInsets.all(32.0),
         padding: const EdgeInsets.all(32.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -221,46 +224,53 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
   }
 
   Widget _buildMessageBubble(String content, bool isUser) {
+    Widget bubbleContent = isUser
+        ? Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: kBrandBlue,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Text(
+              content,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                height: 1.5,
+              ),
+            ),
+          )
+        : GlassCard(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            borderRadius: 16.0,
+            child: MarkdownBody(
+              data: content,
+              styleSheet: MarkdownStyleSheet(
+                p: const TextStyle(color: kInk, fontSize: 16, height: 1.5),
+                strong: const TextStyle(color: kBrandBlueDeep, fontSize: 16, height: 1.5, fontWeight: FontWeight.bold),
+                listBullet: const TextStyle(color: kInk, fontSize: 16),
+              ),
+            ),
+          );
+
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: isUser ? kBrandBlue : kSurface,
-          borderRadius: BorderRadius.circular(16),
-          border: isUser ? null : Border.all(color: kHairline),
-        ),
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.75,
         ),
-        child: isUser
-            ? Text(
-                content,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  height: 1.5,
-                ),
-              )
-            : MarkdownBody(
-                data: content,
-                styleSheet: MarkdownStyleSheet(
-                  p: const TextStyle(color: kInk, fontSize: 16, height: 1.5),
-                  strong: const TextStyle(color: kBrandBlueDeep, fontSize: 16, height: 1.5, fontWeight: FontWeight.bold),
-                  listBullet: const TextStyle(color: kInk, fontSize: 16),
-                ),
-              ),
+        child: bubbleContent,
       ),
     );
   }
 
   Widget _buildInputArea(bool isGenerating) {
     return Container(
-      padding: const EdgeInsets.only(left: 16, right: 16, bottom: 32, top: 16), // Safe area bottom 대신 넉넉히
-      decoration: const BoxDecoration(
-        color: kSurface,
-        border: Border(top: BorderSide(color: kHairline)),
+      padding: const EdgeInsets.only(left: 16, right: 16, bottom: 120, top: 16), // Bottom nav 고려 넉넉히
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.3),
+        border: const Border(top: BorderSide(color: Colors.white54)),
       ),
       child: Row(
         children: [
