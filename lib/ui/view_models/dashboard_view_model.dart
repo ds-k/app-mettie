@@ -89,11 +89,9 @@ class DashboardViewModel extends Notifier<DashboardState> {
       return;
     }
 
-    final today = DateTime.now();
+    final twoWeeksAgo = DateTime.now().subtract(const Duration(days: 14));
     final todayRecords = records.where((r) => 
-      r.recordedAt.year == today.year &&
-      r.recordedAt.month == today.month &&
-      r.recordedAt.day == today.day
+      r.recordedAt.isAfter(twoWeeksAgo) || r.recordedAt.isAtSameMomentAs(twoWeeksAgo)
     ).toList();
 
     double? avgGlucose;

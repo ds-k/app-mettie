@@ -63,11 +63,7 @@ class _SplashViewState extends ConsumerState<SplashView>
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [kHeroSkyFrom, kHeroSkyTo],
-          ),
+          color: kHeroSkyFrom,
         ),
         child: Center(
           child: FadeTransition(

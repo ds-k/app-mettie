@@ -382,8 +382,8 @@ class _RecordEntryBottomSheetState
                           ),
                           const SizedBox(height: 24),
 
-                          // 5. 사진 및 메모 UI (Storage 연동은 이후 Phase)
-                          _buildSectionTitle('사진 및 메모 (선택)'),
+                          // 5. 메모 UI
+                          _buildSectionTitle('메모 (선택)'),
                           const SizedBox(height: 8),
                           _buildTextField(
                             controller: _notesController,
@@ -391,26 +391,7 @@ class _RecordEntryBottomSheetState
                             icon: LucideIcons.fileText,
                             maxLines: 3,
                           ),
-                          const SizedBox(height: 12),
-                          Container(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: BoxDecoration(
-                              color: kCanvas,
-                              border: Border.all(color: kHairline),
-                              borderRadius: BorderRadius.circular(kRadiusMd),
-                            ),
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(LucideIcons.camera, color: kSlate),
-                                SizedBox(width: 8),
-                                Text(
-                                  '사진 첨부 (준비 중)',
-                                  style: TextStyle(color: kSlate),
-                                ),
-                              ],
-                            ),
-                          ),
+
 
                           const SizedBox(height: 40),
 

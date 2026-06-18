@@ -127,6 +127,18 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
         title: const Text('반려동물 관리', style: TextStyle(color: kInk, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(LucideIcons.plus, color: kInk),
+            onPressed: () {
+              setState(() {
+                _isCreatingNew = true;
+              });
+            },
+            tooltip: '새 반려동물 등록',
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: ListView.separated(
         padding: const EdgeInsets.all(24.0),
@@ -257,17 +269,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          setState(() {
-            _isCreatingNew = true;
-          });
-        },
-        backgroundColor: kBrandBlue,
-        foregroundColor: kOnDark,
-        icon: const Icon(LucideIcons.plus),
-        label: const Text('새 반려동물 등록', style: TextStyle(fontWeight: FontWeight.bold)),
-      ),
+
     );
   }
 

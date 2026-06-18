@@ -48,7 +48,7 @@ class LoginView extends ConsumerWidget {
                             children: [
                               const SizedBox(height: 80),
                               Text(
-                                '반려동물 대사질환 케어\n온디바이스 AI 솔루션',
+                                '우리 아이 혈당 기록\n스마트한 AI 가이드',
                                 textAlign: TextAlign.center,
                                 style: kHeading2.copyWith(
                                   color: kBrandBlueDeep,
@@ -73,7 +73,7 @@ class LoginView extends ConsumerWidget {
                               ),
                               const SizedBox(height: 24),
                               Text(
-                                '대사질환 분석부터 맞춤형 영양 케어까지\nMettie AI가 함께합니다.',
+                                '간편한 혈당 체크부터 일상 기록까지\nMettie AI가 도와드립니다.',
                                 textAlign: TextAlign.center,
                                 style: kBodyMd.copyWith(
                                   color: kSlate,

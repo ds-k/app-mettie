@@ -8,6 +8,7 @@
     <application
         android:label="Mettie"
         android:name="${applicationName}"
+        android:usesCleartextTraffic="false"
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"

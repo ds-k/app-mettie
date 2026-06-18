@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:mettie/data/repositories/record_repository.dart';
 
 import '../view_models/dashboard_view_model.dart';
 import '../view_models/pet_management_view_model.dart';
@@ -170,7 +171,7 @@ class DashboardView extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      '오늘의 혈당 요약',
+                      '최근 14일 혈당 요약',
                       style: TextStyle(color: kOnDark, fontSize: 16),
                     ),
                     const SizedBox(height: 16),
@@ -261,7 +262,7 @@ class DashboardView extends ConsumerWidget {
               return SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
                   final record = sortedRecords[index];
-                  return _buildRecordCard(record);
+                  return _buildRecordCard(context, ref, record);
                 }, childCount: sortedRecords.length),
               );
             },
@@ -300,61 +301,93 @@ class DashboardView extends ConsumerWidget {
     );
   }
 
-  Widget _buildRecordCard(Record record) {
-    return GlassCard(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 시간 표기
-          SizedBox(
-            width: 50,
-            child: Text(
-              DateFormat('HH:mm').format(record.recordedAt),
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: kSlate,
-                fontFeatures: kTabularFigures,
+  Widget _buildRecordCard(BuildContext context, WidgetRef ref, Record record) {
+    return Dismissible(
+      key: Key(record.id),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        decoration: BoxDecoration(
+          color: kBrandError,
+          borderRadius: BorderRadius.circular(kRadiusLg),
+        ),
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 20),
+        child: const Icon(LucideIcons.trash2, color: kOnDark),
+      ),
+      onDismissed: (direction) async {
+        try {
+          await ref.read(recordRepositoryProvider).deleteRecord(record.id);
+          if (context.mounted) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(const SnackBar(content: Text('기록이 삭제되었습니다.')));
+          }
+        } catch (e) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(const SnackBar(content: Text('삭제 중 오류가 발생했습니다.')));
+          }
+        }
+      },
+      child: GlassCard(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 시간 표기
+            SizedBox(
+              width: 50,
+              child: Text(
+                DateFormat('HH:mm').format(record.recordedAt),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: kSlate,
+                  fontFeatures: kTabularFigures,
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 12),
-          // 내용
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (record.glucoseValue != null)
-                  _buildRecordItem(
-                    LucideIcons.activity,
-                    '혈당: ${record.glucoseValue} mg/dL',
-                    kBrandWarn,
-                  ),
-                if (record.insulinDose != null)
-                  _buildRecordItem(
-                    LucideIcons.syringe,
-                    '인슐린: ${record.insulinDose} IU',
-                    kBrandBlue,
-                  ),
-                if (record.foodAmountG != null || (record.foodBrand != null && record.foodBrand!.isNotEmpty))
-                  _buildRecordItem(
-                    LucideIcons.bone,
-                    '사료: ${[if (record.foodBrand != null && record.foodBrand!.isNotEmpty) record.foodBrand, if (record.foodAmountG != null) '${record.foodAmountG}g'].join(' ')}',
-                    kWarmCoral,
-                  ),
-                if (record.notes != null && record.notes!.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
-                      record.notes!,
-                      style: const TextStyle(color: kCharcoal, fontSize: 14),
+            const SizedBox(width: 12),
+            // 내용
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (record.glucoseValue != null)
+                    _buildRecordItem(
+                      LucideIcons.activity,
+                      '혈당: ${record.glucoseValue} mg/dL',
+                      kBrandWarn,
                     ),
-                  ),
-              ],
+                  if (record.insulinDose != null)
+                    _buildRecordItem(
+                      LucideIcons.syringe,
+                      '인슐린: ${record.insulinDose} IU',
+                      kBrandBlue,
+                    ),
+                  if (record.foodAmountG != null ||
+                      (record.foodBrand != null &&
+                          record.foodBrand!.isNotEmpty))
+                    _buildRecordItem(
+                      LucideIcons.bone,
+                      '사료: ${[if (record.foodBrand != null && record.foodBrand!.isNotEmpty) record.foodBrand, if (record.foodAmountG != null) '${record.foodAmountG}g'].join(' ')}',
+                      kWarmCoral,
+                    ),
+                  if (record.notes != null && record.notes!.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        record.notes!,
+                        style: const TextStyle(color: kCharcoal, fontSize: 14),
+                      ),
+                    ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

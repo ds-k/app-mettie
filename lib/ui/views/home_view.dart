@@ -23,8 +23,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   // 뷰 인덱스 매핑
   final List<Widget> _views = const [
-    DashboardView(),
     AiCoachView(),
+    DashboardView(),
     PetManagementView(),
     ProfileView(),
   ];
@@ -114,45 +114,51 @@ class _HomeViewState extends ConsumerState<HomeView> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        extendBody: true, // 바텀 네비게이션 아래로 배경이 들어가도록
+        extendBody: true, // 바텀 네비게이션이 콘텐츠 위에 플로팅되도록 true 설정
         body: IndexedStack(index: _currentIndex, children: _views),
         bottomNavigationBar: isKeyboardOpen
             ? null
             : SafeArea(
                 child: Container(
-                  margin: const EdgeInsets.only(left: 24, right: 24, bottom: 24),
+                  margin: const EdgeInsets.only(left: 20, right: 20),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(100),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
+                        color: Colors.black.withValues(alpha: 0.08),
+                        blurRadius: 24,
+                        offset: const Offset(0, 8),
                       ),
                     ],
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(100),
                     child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                      filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 8,
+                        ),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(100),
+                          color: Colors.white.withValues(alpha: 0.65),
                           border: Border.all(
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.white.withValues(alpha: 0.4),
                             width: 1,
                           ),
+                          borderRadius: BorderRadius.circular(100),
                         ),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            _buildNavItem(0, LucideIcons.layoutDashboard, '대시보드'),
-                            _buildNavItem(1, LucideIcons.bot, 'AI 코칭'),
+                            _buildNavItem(0, LucideIcons.sparkle), // AI 코칭
+                            _buildNavItem(
+                              1,
+                              LucideIcons.layoutDashboard,
+                            ), // 대시보드
                             _buildAddButton(),
-                            _buildNavItem(2, LucideIcons.pawPrint, '반려동물'),
-                            _buildNavItem(3, LucideIcons.userCircle, '프로필'),
+                            _buildNavItem(2, LucideIcons.pawPrint), // 반려동물
+                            _buildNavItem(3, LucideIcons.userCircle), // 프로필
                           ],
                         ),
                       ),
@@ -164,37 +170,20 @@ class _HomeViewState extends ConsumerState<HomeView> {
     );
   }
 
-  Widget _buildNavItem(int index, IconData icon, String label) {
+  Widget _buildNavItem(int index, IconData icon) {
     final isSelected = _currentIndex == index;
     return GestureDetector(
       onTap: () => _onTabTapped(index),
       behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? kBrandBlue.withOpacity(0.1) : Colors.transparent,
+          color: isSelected
+              ? kSlate.withValues(alpha: 0.15)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(100),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              color: isSelected ? kBrandBlue : kStone,
-              size: 24,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                color: isSelected ? kBrandBlue : kStone,
-              ),
-            ),
-          ],
-        ),
+        child: Icon(icon, color: isSelected ? kInk : kSlate, size: 26),
       ),
     );
   }
@@ -202,17 +191,10 @@ class _HomeViewState extends ConsumerState<HomeView> {
   Widget _buildAddButton() {
     return GestureDetector(
       onTap: _showRecordEntryBottomSheet,
+      behavior: HitTestBehavior.opaque,
       child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: const BoxDecoration(
-          color: kBrandBlue,
-          shape: BoxShape.circle,
-        ),
-        child: const Icon(
-          LucideIcons.plus,
-          color: Colors.white,
-          size: 28,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+        child: const Icon(LucideIcons.plusSquare, color: kSlate, size: 26),
       ),
     );
   }
