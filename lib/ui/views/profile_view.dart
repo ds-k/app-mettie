@@ -450,9 +450,19 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                             TextButton(
                               onPressed: () async {
                                 Navigator.pop(context);
-                                await ref
-                                    .read(authRepositoryProvider)
-                                    .deleteAccount();
+                                try {
+                                  await ref
+                                      .read(authRepositoryProvider)
+                                      .deleteAccount();
+                                } catch (e) {
+                                  if (!context.mounted) return;
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(e.toString()),
+                                      backgroundColor: kBrandError,
+                                    ),
+                                  );
+                                }
                               },
                               child: const Text(
                                 '탈퇴하기',

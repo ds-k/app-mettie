@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -23,8 +24,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   // 뷰 인덱스 매핑
   final List<Widget> _views = const [
-    AiCoachView(),
     DashboardView(),
+    AiCoachView(),
     PetManagementView(),
     ProfileView(),
   ];
@@ -104,15 +105,17 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
     final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [kHeroSkyFrom, kHeroSkyTo],
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark, // 상태표시줄 아이콘 검정색(어두운 색)으로 변경
+      child: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [kHeroSkyFrom, kHeroSkyTo],
+          ),
         ),
-      ),
-      child: Scaffold(
+        child: Scaffold(
         backgroundColor: Colors.transparent,
         extendBody: true, // 바텀 네비게이션이 콘텐츠 위에 플로팅되도록 true 설정
         body: IndexedStack(index: _currentIndex, children: _views),
@@ -151,11 +154,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            _buildNavItem(0, LucideIcons.sparkle), // AI 코칭
-                            _buildNavItem(
-                              1,
-                              LucideIcons.layoutDashboard,
-                            ), // 대시보드
+                            _buildNavItem(0, LucideIcons.layoutDashboard), // 대시보드
+                            _buildNavItem(1, LucideIcons.sparkle), // AI 코칭
                             _buildAddButton(),
                             _buildNavItem(2, LucideIcons.pawPrint), // 반려동물
                             _buildNavItem(3, LucideIcons.userCircle), // 프로필
@@ -166,6 +166,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   ),
                 ),
               ),
+            ),
       ),
     );
   }
@@ -194,7 +195,18 @@ class _HomeViewState extends ConsumerState<HomeView> {
       behavior: HitTestBehavior.opaque,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-        child: const Icon(LucideIcons.plusSquare, color: kSlate, size: 26),
+        decoration: BoxDecoration(
+          color: kBrandBlue,
+          borderRadius: BorderRadius.circular(100),
+          boxShadow: [
+            BoxShadow(
+              color: kBrandBlue.withValues(alpha: 0.35),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: const Icon(LucideIcons.plus, color: Colors.white, size: 26),
       ),
     );
   }

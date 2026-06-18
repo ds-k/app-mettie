@@ -30,7 +30,7 @@ class MettieApp extends ConsumerWidget {
     final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
-      title: 'Mettie',
+      title: '메티',
       theme: AppTheme.light,
       routerConfig: router,
       debugShowCheckedModeBanner: false,

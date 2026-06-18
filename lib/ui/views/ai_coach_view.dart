@@ -21,10 +21,10 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
   void _sendMessage() {
     final text = _textController.text;
     if (text.trim().isEmpty) return;
-    
+
     _textController.clear();
     FocusScope.of(context).unfocus();
-    
+
     ref.read(aiCoachViewModelProvider.notifier).sendMessage(text);
   }
 
@@ -42,7 +42,10 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text('AI 코칭', style: TextStyle(fontWeight: FontWeight.w600)),
+        title: const Text(
+          'AI 코칭',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
         backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
         actions: [
@@ -111,7 +114,7 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
                   // reverse이므로 최신 메시지가 배열 마지막에 있지만 index 0에 그려짐
                   final msg = state.messages[state.messages.length - 1 - index];
                   final isUser = msg.role == 'user';
-                  
+
                   return _buildMessageBubble(msg.content, isUser);
                 },
               ),
@@ -124,10 +127,16 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
                     SizedBox(
                       width: 16,
                       height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: kBrandBlue),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: kBrandBlue,
+                      ),
                     ),
                     SizedBox(width: 8),
-                    Text('메티가 답변을 작성 중입니다...', style: TextStyle(color: kStone, fontSize: 12)),
+                    Text(
+                      '메티가 답변을 작성 중입니다...',
+                      style: TextStyle(color: kStone, fontSize: 12),
+                    ),
                   ],
                 ),
               ),
@@ -145,11 +154,15 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(LucideIcons.bot, size: 64, color: kBrandBlue),
+            const Icon(LucideIcons.sparkle, size: 64, color: kBrandBlue),
             const SizedBox(height: 24),
             const Text(
-              '온디바이스 AI 코치',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: kBrandBlueDeep),
+              '온디바이스 AI 어시스턴트',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: kBrandBlueDeep,
+              ),
             ),
             const SizedBox(height: 16),
             const Text(
@@ -165,10 +178,16 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: kBrandBlue,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
                 shape: const StadiumBorder(),
               ),
-              child: const Text('Wi-Fi 환경에서 다운로드 시작', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+              child: const Text(
+                'Wi-Fi 환경에서 다운로드 시작',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
             ),
           ],
         ),
@@ -184,11 +203,17 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(kBrandBlue)),
+            const CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(kBrandBlue),
+            ),
             const SizedBox(height: 32),
             const Text(
               'AI 코칭 모델을 다운로드 중입니다...',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: kBrandBlueDeep),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: kBrandBlueDeep,
+              ),
             ),
             const SizedBox(height: 16),
             ClipRRect(
@@ -247,7 +272,12 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
               data: content,
               styleSheet: MarkdownStyleSheet(
                 p: const TextStyle(color: kInk, fontSize: 16, height: 1.5),
-                strong: const TextStyle(color: kBrandBlueDeep, fontSize: 16, height: 1.5, fontWeight: FontWeight.bold),
+                strong: const TextStyle(
+                  color: kBrandBlueDeep,
+                  fontSize: 16,
+                  height: 1.5,
+                  fontWeight: FontWeight.bold,
+                ),
                 listBullet: const TextStyle(color: kInk, fontSize: 16),
               ),
             ),
@@ -267,7 +297,12 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
 
   Widget _buildInputArea(bool isGenerating) {
     return Container(
-      padding: const EdgeInsets.only(left: 16, right: 16, bottom: 120, top: 16), // Bottom nav 고려 넉넉히
+      padding: const EdgeInsets.only(
+        left: 16,
+        right: 16,
+        bottom: 120,
+        top: 16,
+      ), // Bottom nav 고려 넉넉히
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.3),
         border: const Border(top: BorderSide(color: Colors.white54)),
@@ -282,7 +317,10 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
                 hintStyle: const TextStyle(color: kStone),
                 filled: true,
                 fillColor: kCanvas,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
                   borderSide: BorderSide.none,
@@ -299,9 +337,15 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
               shape: BoxShape.circle,
             ),
             child: IconButton(
-              icon: Icon(isGenerating ? LucideIcons.square : LucideIcons.send, color: Colors.white, size: 20),
-              onPressed: isGenerating 
-                  ? () => ref.read(aiCoachViewModelProvider.notifier).stopGeneration()
+              icon: Icon(
+                isGenerating ? LucideIcons.square : LucideIcons.send,
+                color: Colors.white,
+                size: 20,
+              ),
+              onPressed: isGenerating
+                  ? () => ref
+                        .read(aiCoachViewModelProvider.notifier)
+                        .stopGeneration()
                   : _sendMessage,
             ),
           ),

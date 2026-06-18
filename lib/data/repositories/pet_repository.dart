@@ -69,54 +69,38 @@ class PetRepository {
     final code = String.fromCharCodes(Iterable.generate(
       6, (_) => chars.codeUnitAt(random.nextInt(chars.length))));
       
-    // 2. invitations 테이블에 저장 (24시간 만료)
-    await _client.from('invitations').insert({
-      'code': code,
-      'family_id': familyId,
-      'created_by': _client.auth.currentUser!.id,
-      'expires_at': DateTime.now().add(const Duration(hours: 24)).toIso8601String(),
-    });
-    
-    return code;
+    try {
+      // 2. invitations 테이블에 저장 (24시간 만료)
+      await _client.from('invitations').insert({
+        'code': code,
+        'family_id': familyId,
+        'created_by': _client.auth.currentUser!.id,
+        'expires_at': DateTime.now().toUtc().add(const Duration(hours: 24)).toIso8601String(),
+      });
+      
+      return code;
+    } on PostgrestException catch (e) {
+      throw '초대 코드 생성 중 데이터베이스 오류가 발생했습니다: ${e.message}';
+    } catch (e) {
+      throw '초대 코드를 생성할 수 없습니다. 네트워크를 확인해주세요.';
+    }
   }
 
   Future<void> joinFamilyWithCode(String code) async {
-    // 1. 코드 조회
-    final response = await _client
-        .from('invitations')
-        .select('family_id, expires_at')
-        .eq('code', code)
-        .maybeSingle();
-        
-    if (response == null) {
-      throw '유효하지 않은 초대 코드입니다.';
+    try {
+      // 보안을 위해 프론트엔드에서 직접 INSERT하지 않고 DB의 검증 함수(RPC)를 호출합니다.
+      await _client.rpc('join_family_with_code', params: {'invite_code': code});
+    } on PostgrestException catch (e) {
+      if (e.message.contains('유효하지 않은')) {
+        throw '유효하지 않은 초대 코드입니다.';
+      } else if (e.message.contains('만료된')) {
+        throw '만료된 초대 코드입니다.';
+      } else if (e.message.contains('이미 연결된')) {
+        throw '이미 연결된 가족입니다.';
+      }
+      throw '가족 참여 처리 중 오류가 발생했습니다.';
+    } catch (e) {
+      throw '가족 참여에 실패했습니다. 네트워크를 확인해주세요.';
     }
-    
-    final expiresAt = DateTime.parse(response['expires_at'] as String);
-    if (expiresAt.isBefore(DateTime.now())) {
-      throw '만료된 초대 코드입니다.';
-    }
-    
-    final familyId = response['family_id'] as String;
-    final userId = _client.auth.currentUser!.id;
-    
-    // 이미 소속된 가족인지 확인
-    final existing = await _client
-        .from('user_families')
-        .select()
-        .eq('user_id', userId)
-        .eq('family_id', familyId)
-        .maybeSingle();
-        
-    if (existing != null) {
-      throw '이미 연결된 가족입니다.';
-    }
-    
-    // 2. user_families에 조인
-    await _client.from('user_families').insert({
-      'user_id': userId,
-      'family_id': familyId,
-      'role': 'partner'
-    });
   }
 }

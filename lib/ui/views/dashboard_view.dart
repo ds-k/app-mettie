@@ -259,11 +259,36 @@ class DashboardView extends ConsumerWidget {
               final sortedRecords = List<Record>.from(records)
                 ..sort((a, b) => b.recordedAt.compareTo(a.recordedAt));
 
+              final List<dynamic> flattenedItems = [];
+              String? currentDateStr;
+
+              for (final r in sortedRecords) {
+                final dateStr = _formatDateHeader(r.recordedAt);
+                if (dateStr != currentDateStr) {
+                  flattenedItems.add(dateStr);
+                  currentDateStr = dateStr;
+                }
+                flattenedItems.add(r);
+              }
+
               return SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
-                  final record = sortedRecords[index];
-                  return _buildRecordCard(context, ref, record);
-                }, childCount: sortedRecords.length),
+                  final item = flattenedItems[index];
+                  if (item is String) {
+                    return _buildDateHeader(item);
+                  } else if (item is Record) {
+                    return Column(
+                      children: [
+                        _buildRecordRow(context, ref, item),
+                        // 마지막 항목이 아니면서 다음 항목도 Record(같은 날짜)라면 구분선 추가
+                        if (index < flattenedItems.length - 1 &&
+                            flattenedItems[index + 1] is Record)
+                          const Divider(height: 1, color: kHairline),
+                      ],
+                    );
+                  }
+                  return const SizedBox.shrink();
+                }, childCount: flattenedItems.length),
               );
             },
             loading: () => const SliverToBoxAdapter(
@@ -301,16 +326,65 @@ class DashboardView extends ConsumerWidget {
     );
   }
 
-  Widget _buildRecordCard(BuildContext context, WidgetRef ref, Record record) {
+  String _formatDateHeader(DateTime date) {
+    final weekday = ['월', '화', '수', '목', '금', '토', '일'][date.weekday - 1];
+    return '${DateFormat('yyyy. MM. dd.').format(date)} $weekday요일';
+  }
+
+  String _getRecordTitle(Record record) {
+    final hour = record.recordedAt.hour;
+    String timeStr = '기타';
+    if (hour >= 5 && hour < 11) {
+      timeStr = '아침';
+    } else if (hour >= 11 && hour < 16) {
+      timeStr = '점심';
+    } else if (hour >= 16 && hour < 22) {
+      timeStr = '저녁';
+    } else {
+      timeStr = '야간';
+    }
+
+    if (record.glucoseType == 'pre_meal') return '$timeStr 식전';
+    if (record.glucoseType == 'post_meal') return '$timeStr 식후';
+    if (record.glucoseType == 'fasting') return '공복';
+    if (record.glucoseType == 'nadir') return '최저 혈당(Nadir)';
+
+    if (record.insulinDose != null && record.glucoseValue == null)
+      return '$timeStr 인슐린';
+    if (record.foodAmountG != null && record.glucoseValue == null)
+      return '$timeStr 식사';
+
+    return timeStr;
+  }
+
+  Widget _buildDateHeader(String dateStr) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: const BoxDecoration(
+        color: kSurfaceSoft,
+        border: Border(
+          top: BorderSide(color: kHairline),
+          bottom: BorderSide(color: kHairline),
+        ),
+      ),
+      child: Text(
+        dateStr,
+        style: const TextStyle(
+          color: kSlate,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRecordRow(BuildContext context, WidgetRef ref, Record record) {
     return Dismissible(
       key: Key(record.id),
       direction: DismissDirection.endToStart,
       background: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        decoration: BoxDecoration(
-          color: kBrandError,
-          borderRadius: BorderRadius.circular(kRadiusLg),
-        ),
+        color: kBrandError,
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
         child: const Icon(LucideIcons.trash2, color: kOnDark),
@@ -331,56 +405,100 @@ class DashboardView extends ConsumerWidget {
           }
         }
       },
-      child: GlassCard(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        padding: const EdgeInsets.all(16),
+      child: Container(
+        color: Colors.transparent,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 시간 표기
+            // 시간 표시
             SizedBox(
               width: 50,
-              child: Text(
-                DateFormat('HH:mm').format(record.recordedAt),
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: kSlate,
-                  fontFeatures: kTabularFigures,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 32), // Title 영역만큼 내리기
+                  Text(
+                    DateFormat('HH:mm').format(record.recordedAt),
+                    style: const TextStyle(
+                      color: kSlate,
+                      fontSize: 13,
+                      fontFeatures: [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(width: 12),
-            // 내용
+            const SizedBox(width: 8),
+            // 내용 박스들
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    _getRecordTitle(record),
+                    style: const TextStyle(
+                      color: kBrandBlue,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
                   if (record.glucoseValue != null)
-                    _buildRecordItem(
-                      LucideIcons.activity,
-                      '혈당: ${record.glucoseValue} mg/dL',
-                      kBrandWarn,
+                    _buildHighlightBox(
+                      icon: LucideIcons.droplet,
+                      boxColor: kBrandWarn, // 오렌지색
+                      label: '혈당',
+                      value: '${record.glucoseValue}',
+                      unit: 'mg/dL',
                     ),
                   if (record.insulinDose != null)
-                    _buildRecordItem(
-                      LucideIcons.syringe,
-                      '인슐린: ${record.insulinDose} IU',
-                      kBrandBlue,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: _buildHighlightBox(
+                        icon: LucideIcons.syringe,
+                        boxColor: kBrandBlue,
+                        label: '인슐린',
+                        value: '${record.insulinDose}',
+                        unit: 'IU',
+                      ),
                     ),
                   if (record.foodAmountG != null ||
                       (record.foodBrand != null &&
                           record.foodBrand!.isNotEmpty))
-                    _buildRecordItem(
-                      LucideIcons.bone,
-                      '사료: ${[if (record.foodBrand != null && record.foodBrand!.isNotEmpty) record.foodBrand, if (record.foodAmountG != null) '${record.foodAmountG}g'].join(' ')}',
-                      kWarmCoral,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: _buildHighlightBox(
+                        icon: LucideIcons.bone,
+                        boxColor: kWarmCoral,
+                        label: '사료',
+                        value: [
+                          if (record.foodBrand != null &&
+                              record.foodBrand!.isNotEmpty)
+                            record.foodBrand,
+                          if (record.foodAmountG != null)
+                            '${record.foodAmountG}g',
+                        ].join(' '),
+                        unit: '',
+                      ),
+                    ),
+                  if (record.weightKg != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: _buildHighlightBox(
+                        icon: LucideIcons.activity, // 체중용 아이콘 대체
+                        boxColor: kCharcoal,
+                        label: '체중',
+                        value: '${record.weightKg}',
+                        unit: 'kg',
+                      ),
                     ),
                   if (record.notes != null && record.notes!.isNotEmpty)
                     Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
+                      padding: const EdgeInsets.only(top: 12),
                       child: Text(
                         record.notes!,
-                        style: const TextStyle(color: kCharcoal, fontSize: 14),
+                        style: const TextStyle(color: kSlate, fontSize: 14),
                       ),
                     ),
                 ],
@@ -392,16 +510,58 @@ class DashboardView extends ConsumerWidget {
     );
   }
 
-  Widget _buildRecordItem(IconData icon, String text, Color color) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4.0),
-      child: Row(
-        children: [
-          Icon(icon, size: 16, color: color),
-          const SizedBox(width: 6),
-          Text(text, style: const TextStyle(fontSize: 15, color: kInk)),
+  Widget _buildHighlightBox({
+    IconData? icon,
+    required Color boxColor,
+    required String label,
+    required String value,
+    required String unit,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        if (icon != null) ...[
+          Padding(
+            padding: const EdgeInsets.only(top: 16), // 텍스트 베이스라인에 맞추기 위한 미세 조정
+            child: Icon(icon, color: boxColor, size: 20),
+          ),
+          const SizedBox(width: 8),
         ],
-      ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  color: kSlate,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(
+                    value,
+                    style: TextStyle(
+                      color: boxColor,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                  if (unit.isNotEmpty) ...[
+                    const SizedBox(width: 4),
+                    Text(unit, style: TextStyle(color: boxColor, fontSize: 14)),
+                  ],
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

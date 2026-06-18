@@ -64,8 +64,11 @@ class AuthRepository {
         idToken: idToken,
       );
     } catch (e) {
-      // 사용자가 취소하거나 기타 인증 오류 발생
-      return;
+      // 사용자가 직접 취소한 경우는 예외를 던지지 않고 조용히 종료합니다.
+      if (e.toString().contains('Canceled') || e.toString().contains('canceled')) {
+        return;
+      }
+      throw '구글 로그인에 실패했습니다. 다시 시도해주세요.';
     }
   }
 
@@ -75,44 +78,53 @@ class AuthRepository {
       final rawNonce = _client.auth.generateRawNonce();
       final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
 
-      // 2. Apple 인증창 호출
-      final credential = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-        nonce: hashedNonce,
-      );
-
-      final idToken = credential.identityToken;
-      if (idToken == null) throw '애플 ID 토큰을 찾을 수 없습니다.';
-
-      // 3. Supabase로 ID 토큰 전송하여 세션 생성
-      await _client.auth.signInWithIdToken(
-        provider: OAuthProvider.apple,
-        idToken: idToken,
-        nonce: rawNonce,
-      );
-
-      // 4. Supabase 프로필 업데이트 (Apple OAuth 시 이름 정보 동기화)
-      if (credential.givenName != null || credential.familyName != null) {
-        final nameParts = <String>[];
-        if (credential.givenName != null) {
-          nameParts.add(credential.givenName!);
-        }
-        if (credential.familyName != null) {
-          nameParts.add(credential.familyName!);
-        }
-        final fullName = nameParts.join(' ');
-        await _client.auth.updateUser(
-          UserAttributes(
-            data: {
-              'full_name': fullName,
-              'given_name': credential.givenName,
-              'family_name': credential.familyName,
-            },
-          ),
+      try {
+        // 2. Apple 인증창 호출
+        final credential = await SignInWithApple.getAppleIDCredential(
+          scopes: [
+            AppleIDAuthorizationScopes.email,
+            AppleIDAuthorizationScopes.fullName,
+          ],
+          nonce: hashedNonce,
         );
+
+        final idToken = credential.identityToken;
+        if (idToken == null) throw '애플 ID 토큰을 찾을 수 없습니다.';
+
+        // 3. Supabase로 ID 토큰 전송하여 세션 생성
+        await _client.auth.signInWithIdToken(
+          provider: OAuthProvider.apple,
+          idToken: idToken,
+          nonce: rawNonce,
+        );
+
+        // 4. Supabase 프로필 업데이트 (Apple OAuth 시 이름 정보 동기화)
+        if (credential.givenName != null || credential.familyName != null) {
+          final nameParts = <String>[];
+          if (credential.givenName != null) {
+            nameParts.add(credential.givenName!);
+          }
+          if (credential.familyName != null) {
+            nameParts.add(credential.familyName!);
+          }
+          final fullName = nameParts.join(' ');
+          await _client.auth.updateUser(
+            UserAttributes(
+              data: {
+                'full_name': fullName,
+                'given_name': credential.givenName,
+                'family_name': credential.familyName,
+              },
+            ),
+          );
+        }
+      } on SignInWithAppleAuthorizationException catch (e) {
+        if (e.code == AuthorizationErrorCode.canceled) {
+          return; // 사용자가 취소한 경우 조용히 종료
+        }
+        throw '애플 로그인에 실패했습니다: ${e.message}';
+      } catch (e) {
+        throw '애플 로그인에 실패했습니다. 다시 시도해주세요.';
       }
     } else {
       await Supabase.instance.client.auth.signInWithOAuth(
@@ -147,13 +159,13 @@ class AuthRepository {
 
   Future<void> deleteAccount() async {
     try {
-      // Supabase RPC를 통한 회원 탈퇴 (edge function 또는 rpc 'delete_user'가 세팅되어 있다고 가정)
-      // 만약 세팅되지 않았다면 에러가 나지만, 앱 심사를 위한 UI/동작 처리가 우선입니다.
+      // Supabase RPC를 통한 회원 탈퇴 시도
       await _client.rpc('delete_user');
-    } catch (e) {
-      // RPC가 없더라도 최소한 로컬에서는 로그아웃 처리하여 탈퇴된 것처럼 UX 제공 (프로덕션 핫픽스)
-    } finally {
+      // 백엔드 탈퇴 성공 시에만 기기에서 로그아웃 처리
       await _client.auth.signOut();
+    } catch (e) {
+      // 에러 발생 시(RPC 없음, 네트워크 오류 등) 강제 로그아웃하지 않고 에러를 던짐
+      throw '회원탈퇴에 실패했습니다. 데이터베이스 설정을 확인하거나 네트워크 연결을 확인해주세요.';
     }
   }
 }

@@ -181,7 +181,7 @@ class _RecordEntryBottomSheetState
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
-                  vertical: 16,
+                  vertical: 8,
                 ),
                 decoration: const BoxDecoration(
                   border: Border(bottom: BorderSide(color: kHairline)),
@@ -391,7 +391,6 @@ class _RecordEntryBottomSheetState
                             icon: LucideIcons.fileText,
                             maxLines: 3,
                           ),
-
 
                           const SizedBox(height: 40),
 
