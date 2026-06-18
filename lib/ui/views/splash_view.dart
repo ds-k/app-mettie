@@ -75,6 +75,11 @@ class _SplashViewState extends ConsumerState<SplashView>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Image.asset(
+                  'assets/icons/mettie_logo.png',
+                  width: 140,
+                ),
+                const SizedBox(height: 24),
                 Text(
                   'Mettie',
                   style: Theme.of(context).textTheme.displayLarge?.copyWith(

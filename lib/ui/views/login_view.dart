@@ -55,18 +55,23 @@ class LoginView extends ConsumerWidget {
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
+                              const SizedBox(height: 24),
+                              Image.asset(
+                                'assets/icons/mettie_logo.png',
+                                height: 80,
+                              ),
                               const SizedBox(height: 16),
                               Text(
                                 'Mettie',
                                 textAlign: TextAlign.center,
                                 style: kDisplay.copyWith(
-                                  fontSize: 56,
+                                  fontSize: 48,
                                   fontWeight: FontWeight.w900,
                                   color: kInk,
-                                  letterSpacing: -1.5,
+                                  letterSpacing: -1.0,
                                 ),
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 24),
                               Text(
                                 '대사질환 분석부터 맞춤형 영양 케어까지\nMettie AI가 함께합니다.',
                                 textAlign: TextAlign.center,

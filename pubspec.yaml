@@ -1,6 +1,6 @@
 name: mettie
 description: "Mettie — 반려동물 대사질환 케어 온디바이스 AI 솔루션"
-publish_to: 'none'
+publish_to: "none"
 
 version: 1.0.0+1
 
@@ -40,6 +40,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   uses-material-design: true
@@ -47,6 +48,7 @@ flutter:
   assets:
     - assets/fonts/
     - .env
+    - assets/icons/
 
   fonts:
     - family: Pretendard
@@ -59,3 +61,8 @@ flutter:
           weight: 600
         - asset: assets/fonts/Pretendard-Bold.otf
           weight: 700
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: false
+  image_path: "assets/icons/android_icon.png"
