@@ -150,6 +150,7 @@ class AuthRepository {
       email: email,
       password: password,
       data: fullName != null ? {'full_name': fullName} : null,
+      emailRedirectTo: 'com.mettie.app://login-callback',
     );
   }
 

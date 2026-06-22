@@ -48,7 +48,7 @@ class ProfileAppSettings extends ConsumerWidget {
                 ),
                 onTap: () async {
                   final baseUrl =
-                      dotenv.env['WEB_BASE_URL'] ?? 'http://localhost:3000';
+                      dotenv.env['WEB_BASE_URL'] ?? 'https://mettieapp.com';
                   final url = Uri.parse('$baseUrl/terms');
                   if (await canLaunchUrl(url)) {
                     await launchUrl(url, mode: LaunchMode.inAppWebView);
@@ -72,7 +72,7 @@ class ProfileAppSettings extends ConsumerWidget {
                 ),
                 onTap: () async {
                   final baseUrl =
-                      dotenv.env['WEB_BASE_URL'] ?? 'http://localhost:3000';
+                      dotenv.env['WEB_BASE_URL'] ?? 'https://mettieapp.com';
                   final url = Uri.parse('$baseUrl/privacy');
                   if (await canLaunchUrl(url)) {
                     await launchUrl(url, mode: LaunchMode.inAppWebView);

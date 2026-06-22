@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
@@ -302,10 +304,12 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                                         style: kCaption.copyWith(color: kCharcoal),
                                       ),
                                       GestureDetector(
-                                        onTap: () {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            const SnackBar(content: Text('서비스 이용약관 조회')),
-                                          );
+                                        onTap: () async {
+                                          final baseUrl = dotenv.env['WEB_BASE_URL'] ?? 'https://mettieapp.com';
+                                          final url = Uri.parse('$baseUrl/terms');
+                                          if (await canLaunchUrl(url)) {
+                                            await launchUrl(url, mode: LaunchMode.inAppWebView);
+                                          }
                                         },
                                         child: Text(
                                           '서비스 이용약관',
@@ -321,10 +325,12 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                                         style: kCaption.copyWith(color: kCharcoal),
                                       ),
                                       GestureDetector(
-                                        onTap: () {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            const SnackBar(content: Text('개인정보처리방침 조회')),
-                                          );
+                                        onTap: () async {
+                                          final baseUrl = dotenv.env['WEB_BASE_URL'] ?? 'https://mettieapp.com';
+                                          final url = Uri.parse('$baseUrl/privacy');
+                                          if (await canLaunchUrl(url)) {
+                                            await launchUrl(url, mode: LaunchMode.inAppWebView);
+                                          }
                                         },
                                         child: Text(
                                           '개인정보처리방침',
