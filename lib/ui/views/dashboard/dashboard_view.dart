@@ -3,14 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:mettie/data/repositories/record_repository.dart';
 
-import '../view_models/dashboard_view_model.dart';
-import '../view_models/pet_management_view_model.dart';
-import '../../core/constants/app_colors.dart';
-import '../../data/models/record.dart';
+import '../../view_models/dashboard_view_model.dart';
+import '../../view_models/pet_management_view_model.dart';
+import 'widgets/dashboard_summary_stat.dart';
+import 'widgets/dashboard_record_row.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../data/models/record.dart';
 import 'widgets/pet_selector_bottom_sheet.dart';
-import 'widgets/glass_card.dart';
 
 class DashboardView extends ConsumerWidget {
   const DashboardView({super.key});
@@ -178,17 +178,17 @@ class DashboardView extends ConsumerWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildSummaryStat(
-                          '평균',
-                          state.avgGlucose?.round().toString() ?? '-',
+                        DashboardSummaryStat(
+                          label: '평균',
+                          value: state.avgGlucose?.round().toString() ?? '-',
                         ),
-                        _buildSummaryStat(
-                          '최저',
-                          state.nadirGlucose?.toString() ?? '-',
+                        DashboardSummaryStat(
+                          label: '최저',
+                          value: state.nadirGlucose?.toString() ?? '-',
                         ),
-                        _buildSummaryStat(
-                          '최고',
-                          state.peakGlucose?.toString() ?? '-',
+                        DashboardSummaryStat(
+                          label: '최고',
+                          value: state.peakGlucose?.toString() ?? '-',
                         ),
                       ],
                     ),
@@ -279,7 +279,7 @@ class DashboardView extends ConsumerWidget {
                   } else if (item is Record) {
                     return Column(
                       children: [
-                        _buildRecordRow(context, ref, item),
+                        DashboardRecordRow(record: item),
                         // 마지막 항목이 아니면서 다음 항목도 Record(같은 날짜)라면 구분선 추가
                         if (index < flattenedItems.length - 1 &&
                             flattenedItems[index + 1] is Record)
@@ -305,56 +305,9 @@ class DashboardView extends ConsumerWidget {
     );
   }
 
-  Widget _buildSummaryStat(String label, String value) {
-    return Column(
-      children: [
-        Text(
-          label,
-          style: const TextStyle(color: Colors.white70, fontSize: 12),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(
-            color: kOnDark,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            fontFeatures: kTabularFigures,
-          ),
-        ),
-      ],
-    );
-  }
-
   String _formatDateHeader(DateTime date) {
     final weekday = ['월', '화', '수', '목', '금', '토', '일'][date.weekday - 1];
     return '${DateFormat('yyyy. MM. dd.').format(date)} $weekday요일';
-  }
-
-  String _getRecordTitle(Record record) {
-    final hour = record.recordedAt.hour;
-    String timeStr = '기타';
-    if (hour >= 5 && hour < 11) {
-      timeStr = '아침';
-    } else if (hour >= 11 && hour < 16) {
-      timeStr = '점심';
-    } else if (hour >= 16 && hour < 22) {
-      timeStr = '저녁';
-    } else {
-      timeStr = '야간';
-    }
-
-    if (record.glucoseType == 'pre_meal') return '$timeStr 식전';
-    if (record.glucoseType == 'post_meal') return '$timeStr 식후';
-    if (record.glucoseType == 'fasting') return '공복';
-    if (record.glucoseType == 'nadir') return '최저 혈당(Nadir)';
-
-    if (record.insulinDose != null && record.glucoseValue == null)
-      return '$timeStr 인슐린';
-    if (record.foodAmountG != null && record.glucoseValue == null)
-      return '$timeStr 식사';
-
-    return timeStr;
   }
 
   Widget _buildDateHeader(String dateStr) {
@@ -376,195 +329,6 @@ class DashboardView extends ConsumerWidget {
           fontWeight: FontWeight.w500,
         ),
       ),
-    );
-  }
-
-  Widget _buildRecordRow(BuildContext context, WidgetRef ref, Record record) {
-    return Dismissible(
-      key: Key(record.id),
-      direction: DismissDirection.endToStart,
-      background: Container(
-        color: kBrandError,
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
-        child: const Icon(LucideIcons.trash2, color: kOnDark),
-      ),
-      confirmDismiss: (direction) async {
-        try {
-          // 서버에서 먼저 삭제를 시도합니다.
-          await ref.read(recordRepositoryProvider).deleteRecord(record.id);
-          if (context.mounted) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text('기록이 삭제되었습니다.')));
-          }
-          return true; // 성공 시에만 UI에서 사라짐
-        } catch (e) {
-          if (context.mounted) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text('삭제 중 오류가 발생했습니다: $e')));
-          }
-          return false; // 실패 시 UI에 원래대로 복귀됨
-        }
-      },
-      child: Container(
-        color: Colors.transparent,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 시간 표시
-            SizedBox(
-              width: 50,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 32), // Title 영역만큼 내리기
-                  Text(
-                    DateFormat('HH:mm').format(record.recordedAt),
-                    style: const TextStyle(
-                      color: kSlate,
-                      fontSize: 13,
-                      fontFeatures: [FontFeature.tabularFigures()],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            // 내용 박스들
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _getRecordTitle(record),
-                    style: const TextStyle(
-                      color: kBrandBlue,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  if (record.glucoseValue != null)
-                    _buildHighlightBox(
-                      icon: LucideIcons.droplet,
-                      boxColor: kBrandWarn, // 오렌지색
-                      label: '혈당',
-                      value: '${record.glucoseValue}',
-                      unit: 'mg/dL',
-                    ),
-                  if (record.insulinDose != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 12),
-                      child: _buildHighlightBox(
-                        icon: LucideIcons.syringe,
-                        boxColor: kBrandBlue,
-                        label: '인슐린',
-                        value: '${record.insulinDose}',
-                        unit: 'IU',
-                      ),
-                    ),
-                  if (record.foodAmountG != null ||
-                      (record.foodBrand != null &&
-                          record.foodBrand!.isNotEmpty))
-                    Padding(
-                      padding: const EdgeInsets.only(top: 12),
-                      child: _buildHighlightBox(
-                        icon: LucideIcons.bone,
-                        boxColor: kWarmCoral,
-                        label: '사료',
-                        value: [
-                          if (record.foodBrand != null &&
-                              record.foodBrand!.isNotEmpty)
-                            record.foodBrand,
-                          if (record.foodAmountG != null)
-                            '${record.foodAmountG}g',
-                        ].join(' '),
-                        unit: '',
-                      ),
-                    ),
-                  if (record.weightKg != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 12),
-                      child: _buildHighlightBox(
-                        icon: LucideIcons.activity, // 체중용 아이콘 대체
-                        boxColor: kCharcoal,
-                        label: '체중',
-                        value: '${record.weightKg}',
-                        unit: 'kg',
-                      ),
-                    ),
-                  if (record.notes != null && record.notes!.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 12),
-                      child: Text(
-                        record.notes!,
-                        style: const TextStyle(color: kSlate, fontSize: 14),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHighlightBox({
-    IconData? icon,
-    required Color boxColor,
-    required String label,
-    required String value,
-    required String unit,
-  }) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        if (icon != null) ...[
-          Padding(
-            padding: const EdgeInsets.only(top: 16), // 텍스트 베이스라인에 맞추기 위한 미세 조정
-            child: Icon(icon, color: boxColor, size: 20),
-          ),
-          const SizedBox(width: 8),
-        ],
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: const TextStyle(
-                  color: kSlate,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                textBaseline: TextBaseline.alphabetic,
-                children: [
-                  Text(
-                    value,
-                    style: TextStyle(
-                      color: boxColor,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      fontFeatures: const [FontFeature.tabularFigures()],
-                    ),
-                  ),
-                  if (unit.isNotEmpty) ...[
-                    const SizedBox(width: 4),
-                    Text(unit, style: TextStyle(color: boxColor, fontSize: 14)),
-                  ],
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 

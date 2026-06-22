@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
-import '../../core/constants/app_colors.dart';
-import '../view_models/ai_coach_view_model.dart';
-import '../view_models/dashboard_view_model.dart';
-import 'widgets/glass_card.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../view_models/ai_coach_view_model.dart';
+import '../../view_models/dashboard_view_model.dart';
+import '../../widgets/glass_card.dart';
 
 class AiCoachView extends ConsumerStatefulWidget {
   const AiCoachView({super.key});
@@ -304,7 +304,7 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
         top: 16,
       ), // Bottom nav 고려 넉넉히
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.3),
+        color: Colors.white.withValues(alpha: 0.3),
         border: const Border(top: BorderSide(color: Colors.white54)),
       ),
       child: Row(

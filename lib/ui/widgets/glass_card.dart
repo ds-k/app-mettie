@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
-import '../../../core/constants/app_colors.dart';
+import '../../core/constants/app_colors.dart';
 
 class GlassCard extends StatelessWidget {
   final Widget child;
@@ -32,14 +32,17 @@ class GlassCard extends StatelessWidget {
           child: Container(
             padding: padding,
             decoration: BoxDecoration(
-              color: backgroundColor.withOpacity(0.3),
+              color: backgroundColor.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(borderRadius),
               border: Border.all(
-                color: Colors.white.withOpacity(0.5),
+                color: Colors.white.withValues(alpha: 0.5),
                 width: 1.0,
               ),
             ),
-            child: child,
+            child: Material(
+              type: MaterialType.transparency,
+              child: child,
+            ),
           ),
         ),
       ),

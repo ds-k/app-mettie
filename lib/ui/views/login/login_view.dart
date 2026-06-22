@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_typography.dart';
-import '../../data/repositories/auth_repository.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_typography.dart';
+import '../../../data/repositories/auth_repository.dart';
 
 class LoginView extends ConsumerWidget {
   const LoginView({super.key});

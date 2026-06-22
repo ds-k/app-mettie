@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/constants/app_colors.dart';
-import '../view_models/splash_view_model.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../view_models/splash_view_model.dart';
 
 class SplashView extends ConsumerStatefulWidget {
   const SplashView({super.key});
@@ -46,8 +46,7 @@ class _SplashViewState extends ConsumerState<SplashView>
 
   @override
   Widget build(BuildContext context) {
-    // 상태 구독
-    final splashState = ref.watch(splashViewModelProvider);
+    // 상태 구독 (사용하지 않는 변수 제거)
     
     // 완료 시 라우팅
     ref.listen<SplashState>(splashViewModelProvider, (previous, next) {

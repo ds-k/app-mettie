@@ -4,13 +4,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import 'dashboard_view.dart';
-import 'ai_coach_view.dart';
-import 'pet_management_view.dart';
-import 'profile_view.dart';
+import '../dashboard/dashboard_view.dart';
+import '../ai_coach/ai_coach_view.dart';
+import '../pet_management/pet_management_view.dart';
+import '../profile/profile_view.dart';
 import 'widgets/record_entry_bottom_sheet.dart';
-import '../../core/constants/app_colors.dart';
-import '../view_models/pet_management_view_model.dart';
+import '../../../core/constants/app_colors.dart';
+import '../../view_models/pet_management_view_model.dart';
 
 class HomeView extends ConsumerStatefulWidget {
   const HomeView({super.key});

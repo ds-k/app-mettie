@@ -2,11 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../data/repositories/auth_repository.dart';
-import '../../ui/views/splash_view.dart';
-import '../../ui/views/login_view.dart';
-import '../../ui/views/email_login_view.dart';
-import '../../ui/views/home_view.dart';
-import '../../ui/views/pet_management_view.dart';
+import '../../ui/views/splash/splash_view.dart';
+import '../../ui/views/login/login_view.dart';
+import '../../ui/views/login/email_login_view.dart';
+import '../../ui/views/home/home_view.dart';
+import '../../ui/views/pet_management/pet_management_view.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
