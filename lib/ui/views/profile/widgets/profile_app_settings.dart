@@ -51,7 +51,7 @@ class ProfileAppSettings extends ConsumerWidget {
                       dotenv.env['WEB_BASE_URL'] ?? 'http://localhost:3000';
                   final url = Uri.parse('$baseUrl/terms');
                   if (await canLaunchUrl(url)) {
-                    await launchUrl(url, mode: LaunchMode.externalApplication);
+                    await launchUrl(url, mode: LaunchMode.inAppWebView);
                   } else {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -75,7 +75,7 @@ class ProfileAppSettings extends ConsumerWidget {
                       dotenv.env['WEB_BASE_URL'] ?? 'http://localhost:3000';
                   final url = Uri.parse('$baseUrl/privacy');
                   if (await canLaunchUrl(url)) {
-                    await launchUrl(url, mode: LaunchMode.externalApplication);
+                    await launchUrl(url, mode: LaunchMode.inAppWebView);
                   } else {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
