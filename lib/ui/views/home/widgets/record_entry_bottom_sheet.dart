@@ -168,7 +168,9 @@ class _RecordEntryBottomSheetState
       maxChildSize: 0.95,
       minChildSize: 0.5,
       builder: (context, scrollController) {
-        return Container(
+        return GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Container(
           decoration: const BoxDecoration(
             color: kSurface,
             borderRadius: BorderRadius.vertical(
@@ -435,6 +437,7 @@ class _RecordEntryBottomSheetState
                 ),
               ),
             ],
+          ),
           ),
         );
       },

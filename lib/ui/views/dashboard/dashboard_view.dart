@@ -24,7 +24,7 @@ class DashboardView extends ConsumerWidget {
     final petsAsync = ref.watch(petsProvider);
 
     // 로딩 상태 처리
-    if (petsAsync.isLoading) {
+    if (petsAsync.isLoading || (petsAsync.isRefreshing && !petsAsync.hasValue) || petsAsync.value == null) {
       return const Scaffold(
         backgroundColor: Colors.transparent,
         body: Center(child: CircularProgressIndicator(color: kBrandBlue)),
@@ -111,7 +111,13 @@ class DashboardView extends ConsumerWidget {
           ),
         ),
       ),
-      body: CustomScrollView(
+      body: RefreshIndicator(
+        onRefresh: () async {
+          final _ = ref.refresh(recordsStreamProvider);
+          await Future.delayed(const Duration(milliseconds: 500));
+        },
+        color: kBrandBlue,
+        child: CustomScrollView(
         slivers: [
           // 혈당 알람 배너
           if (state.activeAlarm != null)
@@ -302,6 +308,7 @@ class DashboardView extends ConsumerWidget {
           const SliverToBoxAdapter(child: SizedBox(height: 100)),
         ],
       ),
+    ),
     );
   }
 

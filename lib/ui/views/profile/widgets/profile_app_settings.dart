@@ -95,11 +95,22 @@ class ProfileAppSettings extends ConsumerWidget {
                   size: 20,
                 ),
                 onTap: () {
-                  showLicensePage(
-                    context: context,
-                    applicationName: 'Mettie',
-                    applicationVersion: '1.0.0',
-                  );
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => Theme(
+                      data: Theme.of(context).copyWith(
+                        scaffoldBackgroundColor: Colors.white,
+                        appBarTheme: const AppBarTheme(
+                          backgroundColor: Colors.white,
+                          foregroundColor: kInk,
+                          elevation: 0,
+                        ),
+                      ),
+                      child: const LicensePage(
+                        applicationName: 'Mettie',
+                        applicationVersion: '1.0.0',
+                      ),
+                    ),
+                  ));
                 },
               ),
               const Divider(height: 1, color: kHairline),

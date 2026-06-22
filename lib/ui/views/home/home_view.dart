@@ -96,7 +96,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
     // 강제 리다이렉트를 제거하고, 메인 UI를 항상 렌더링합니다. (Empty State 처리는 개별 뷰에서 담당)
 
     // 로딩 중
-    if (petsAsync.isLoading) {
+    if (petsAsync.isLoading || (petsAsync.isRefreshing && !petsAsync.hasValue) || petsAsync.value == null) {
       return const Scaffold(
         backgroundColor: kSurface,
         body: Center(child: CircularProgressIndicator(color: kBrandBlue)),

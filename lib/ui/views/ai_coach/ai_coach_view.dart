@@ -39,8 +39,10 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
     final state = ref.watch(aiCoachViewModelProvider);
     final currentPet = ref.watch(currentPetProvider);
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: const Text(
           'AI 코칭',
@@ -87,6 +89,7 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
               ),
             )
           : _buildBodyContent(state),
+      ),
     );
   }
 
@@ -297,12 +300,12 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
 
   Widget _buildInputArea(bool isGenerating) {
     return Container(
-      padding: const EdgeInsets.only(
+      padding: EdgeInsets.only(
         left: 16,
         right: 16,
-        bottom: 120,
+        bottom: MediaQuery.of(context).viewInsets.bottom > 0 ? 16 : 120,
         top: 16,
-      ), // Bottom nav 고려 넉넉히
+      ),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.3),
         border: const Border(top: BorderSide(color: Colors.white54)),

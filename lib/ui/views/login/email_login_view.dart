@@ -156,8 +156,10 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
       }
     });
 
-    return Scaffold(
-      appBar: AppBar(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -399,6 +401,7 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
               ),
             ),
         ],
+      ),
       ),
     );
   }
