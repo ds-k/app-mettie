@@ -389,20 +389,23 @@ class DashboardView extends ConsumerWidget {
         padding: const EdgeInsets.only(right: 20),
         child: const Icon(LucideIcons.trash2, color: kOnDark),
       ),
-      onDismissed: (direction) async {
+      confirmDismiss: (direction) async {
         try {
+          // 서버에서 먼저 삭제를 시도합니다.
           await ref.read(recordRepositoryProvider).deleteRecord(record.id);
           if (context.mounted) {
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(const SnackBar(content: Text('기록이 삭제되었습니다.')));
           }
+          return true; // 성공 시에만 UI에서 사라짐
         } catch (e) {
           if (context.mounted) {
             ScaffoldMessenger.of(
               context,
-            ).showSnackBar(const SnackBar(content: Text('삭제 중 오류가 발생했습니다.')));
+            ).showSnackBar(SnackBar(content: Text('삭제 중 오류가 발생했습니다: $e')));
           }
+          return false; // 실패 시 UI에 원래대로 복귀됨
         }
       },
       child: Container(

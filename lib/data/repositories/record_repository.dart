@@ -35,7 +35,10 @@ class RecordRepository {
   }
 
   Future<void> deleteRecord(String id) async {
-    await _client.from('records').delete().eq('id', id);
+    final response = await _client.from('records').delete().eq('id', id).select();
+    if (response.isEmpty) {
+      throw Exception('기록을 찾을 수 없거나 삭제할 권한이 없습니다.');
+    }
   }
   
   // 혈당 알람 조건 판별 로직
