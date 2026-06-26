@@ -301,6 +301,15 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                       FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
                       LengthLimitingTextInputFormatter(5), // 예: 99.99
                     ],
+                    validator: (val) {
+                      if (val != null && val.isNotEmpty) {
+                        final weight = double.tryParse(val);
+                        if (weight == null || weight <= 0 || weight > 150) {
+                          return '올바른 체중을 입력하세요 (0 초과, 150 이하)';
+                        }
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 16),
                   Row(
@@ -324,6 +333,15 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                             FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}')),
                             LengthLimitingTextInputFormatter(4), // 예: 99.9
                           ],
+                          validator: (val) {
+                            if (val != null && val.isNotEmpty) {
+                              final dose = double.tryParse(val);
+                              if (dose == null || dose <= 0 || dose > 150) {
+                                return '올바른 단위(IU)를 입력하세요 (0 초과, 150 이하)';
+                              }
+                            }
+                            return null;
+                          },
                         ),
                       ),
                     ],

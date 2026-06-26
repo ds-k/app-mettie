@@ -33,7 +33,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       if (location == '/splash') return null;
 
       // 미인증 상태에서 /login 또는 /login/email이 아닌 다른 경로에 접속할 때만 /login으로 리다이렉트
-      if (!isAuth && location != '/login' && location != '/login/email') {
+      if (!isAuth && location != '/login' && location != '/login/email' && location != '/login-callback') {
         return '/login';
       }
 
@@ -52,6 +52,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/splash', 
         builder: (context, state) => const SplashView()
+      ),
+      GoRoute(
+        path: '/login-callback',
+        builder: (context, state) => const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        ),
       ),
       GoRoute(
         path: '/login',
