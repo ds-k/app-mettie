@@ -25,7 +25,7 @@ class PetManagementState {
     this.isLoading = false,
     this.error,
     this.targetGlucoseMin = 100,
-    this.targetGlucoseMax = 400,
+    this.targetGlucoseMax = 250,
   });
 
   PetManagementState copyWith({
@@ -43,9 +43,10 @@ class PetManagementState {
   }
 }
 
-final petManagementViewModelProvider = NotifierProvider<PetManagementViewModel, PetManagementState>(() {
-  return PetManagementViewModel();
-});
+final petManagementViewModelProvider =
+    NotifierProvider<PetManagementViewModel, PetManagementState>(() {
+      return PetManagementViewModel();
+    });
 
 class PetManagementViewModel extends Notifier<PetManagementState> {
   @override
@@ -55,9 +56,9 @@ class PetManagementViewModel extends Notifier<PetManagementState> {
 
   void onSpeciesChanged(String species) {
     if (species == 'dog') {
-      state = state.copyWith(targetGlucoseMin: 100, targetGlucoseMax: 400);
+      state = state.copyWith(targetGlucoseMin: 100, targetGlucoseMax: 250);
     } else if (species == 'cat') {
-      state = state.copyWith(targetGlucoseMin: 100, targetGlucoseMax: 350);
+      state = state.copyWith(targetGlucoseMin: 100, targetGlucoseMax: 300);
     }
   }
 
@@ -85,11 +86,11 @@ class PetManagementViewModel extends Notifier<PetManagementState> {
     try {
       final repo = ref.read(petRepositoryProvider);
       final currentUser = ref.read(currentUserProvider);
-      
+
       if (currentUser == null) throw '로그인이 필요합니다.';
-      
+
       final client = Supabase.instance.client;
-      
+
       // 1. user_families 테이블에서 내 family_id 조회
       final userFamiliesRes = await client
           .from('user_families')
@@ -97,7 +98,7 @@ class PetManagementViewModel extends Notifier<PetManagementState> {
           .eq('user_id', currentUser.id)
           .limit(1)
           .maybeSingle();
-          
+
       String? familyId = userFamiliesRes?['family_id'];
 
       // 2. family_id가 없다면 신규 생성 및 연결
@@ -107,17 +108,15 @@ class PetManagementViewModel extends Notifier<PetManagementState> {
             .insert({}) // DEFAULT VALUES로 생성
             .select('id')
             .single();
-            
+
         familyId = familyRes['id'] as String;
-        
+
         // user_families 테이블에 연결 저장
-        await client
-            .from('user_families')
-            .insert({
-              'user_id': currentUser.id,
-              'family_id': familyId,
-              'role': 'owner'
-            });
+        await client.from('user_families').insert({
+          'user_id': currentUser.id,
+          'family_id': familyId,
+          'role': 'owner',
+        });
       }
 
       final newPet = Pet(
@@ -162,10 +161,10 @@ class PetManagementViewModel extends Notifier<PetManagementState> {
       } else {
         await repo.leaveFamily(pet.familyId);
       }
-      
+
       // Select a different pet or clear selection if empty
       ref.invalidate(petsProvider);
-      
+
       final currentSelected = ref.read(selectedPetIdProvider);
       if (currentSelected == pet.id) {
         ref.read(selectedPetIdProvider.notifier).selectPet(null);

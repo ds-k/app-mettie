@@ -9,16 +9,21 @@ import '../../view_models/dashboard_view_model.dart';
 import '../../widgets/glass_card.dart';
 
 class AiCoachView extends ConsumerStatefulWidget {
-  final bool isKeyboardOpen;
-
-  const AiCoachView({super.key, this.isKeyboardOpen = false});
+  const AiCoachView({super.key});
 
   @override
   ConsumerState<AiCoachView> createState() => _AiCoachViewState();
 }
 
-class _AiCoachViewState extends ConsumerState<AiCoachView> {
+class _AiCoachViewState extends ConsumerState<AiCoachView> with WidgetsBindingObserver {
   final TextEditingController _textController = TextEditingController();
+  bool _isKeyboardOpen = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
 
   void _sendMessage() {
     final text = _textController.text;
@@ -32,8 +37,22 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _textController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    // WidgetsBindingObserver를 통해 viewInsets.bottom 변경 감지
+    final bottomInset = View.of(context).viewInsets.bottom;
+    final isOpen = bottomInset > 0.0;
+    if (isOpen != _isKeyboardOpen) {
+      setState(() {
+        _isKeyboardOpen = isOpen;
+      });
+    }
   }
 
   @override
@@ -93,12 +112,12 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
                   style: TextStyle(color: kStone, fontSize: 16),
                 ),
               )
-            : _buildBodyContent(state),
+            : _buildBodyContent(state, _isKeyboardOpen),
       ),
     );
   }
 
-  Widget _buildBodyContent(AiCoachState state) {
+  Widget _buildBodyContent(AiCoachState state, bool isKeyboardOpen) {
     switch (state.status) {
       case AiCoachStatus.uninitialized:
         return const Center(
@@ -148,7 +167,7 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
                   ],
                 ),
               ),
-            _buildInputArea(state.isGenerating),
+            _buildInputArea(state.isGenerating, isKeyboardOpen),
           ],
         );
     }
@@ -345,12 +364,12 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> {
     );
   }
 
-  Widget _buildInputArea(bool isGenerating) {
+  Widget _buildInputArea(bool isGenerating, bool isKeyboardOpen) {
     return Container(
       padding: EdgeInsets.only(
         left: 16,
         right: 16,
-        bottom: widget.isKeyboardOpen ? 16 : 120,
+        bottom: isKeyboardOpen ? 16 : 120,
         top: 16,
       ),
       decoration: BoxDecoration(

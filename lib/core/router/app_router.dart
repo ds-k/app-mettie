@@ -88,10 +88,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: '/home/ai-coach',
-                builder: (context, state) {
-                  final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
-                  return AiCoachView(isKeyboardOpen: isKeyboardOpen);
-                },
+                builder: (context, state) => const AiCoachView(),
               ),
             ],
           ),

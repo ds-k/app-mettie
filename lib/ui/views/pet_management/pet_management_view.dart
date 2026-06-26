@@ -216,9 +216,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                     icon: LucideIcons.dog,
                     validator: (val) =>
                         val == null || val.isEmpty ? '이름을 입력하세요' : null,
-                    inputFormatters: [
-                      LengthLimitingTextInputFormatter(20),
-                    ],
+                    inputFormatters: [LengthLimitingTextInputFormatter(20)],
                   ),
                   const SizedBox(height: 16),
                   Row(
@@ -268,9 +266,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                     controller: _breedController,
                     label: '품종 (선택)',
                     icon: LucideIcons.bookOpen,
-                    inputFormatters: [
-                      LengthLimitingTextInputFormatter(30),
-                    ],
+                    inputFormatters: [LengthLimitingTextInputFormatter(30)],
                   ),
                   const SizedBox(height: 16),
                   Material(
@@ -298,7 +294,9 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                       decimal: true,
                     ),
                     inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^\d+\.?\d{0,2}'),
+                      ),
                       LengthLimitingTextInputFormatter(5), // 예: 99.99
                     ],
                     validator: (val) {
@@ -330,7 +328,9 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                             decimal: true,
                           ),
                           inputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}')),
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d+\.?\d{0,1}'),
+                            ),
                             LengthLimitingTextInputFormatter(4), // 예: 99.9
                           ],
                           validator: (val) {
@@ -350,7 +350,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                   const SizedBox(height: 32),
 
                   // 3. 목표 혈당 (자동 설정됨)
-                  _buildSectionTitle('목표 혈당 설정 (수정 가능)'),
+                  _buildSectionTitle('목표 혈당 설정'),
                   const SizedBox(height: 8),
                   Text(
                     '${state.targetGlucoseMin} ~ ${state.targetGlucoseMax} mg/dL',
