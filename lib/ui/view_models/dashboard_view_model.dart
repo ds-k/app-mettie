@@ -85,7 +85,7 @@ class DashboardViewModel extends Notifier<DashboardState> {
 
   void _calculateSummary(List<Record> records) {
     if (records.isEmpty) {
-      state = DashboardState();
+      Future.microtask(() => state = DashboardState());
       return;
     }
 
@@ -135,14 +135,16 @@ class DashboardViewModel extends Notifier<DashboardState> {
       );
     }
 
-    state = DashboardState(
-      avgGlucose: avgGlucose,
-      nadirGlucose: nadirGlucose,
-      peakGlucose: peakGlucose,
-      lastInsulinTime: lastInsulinTime,
-      lastInsulinDose: lastInsulinDose,
-      lastInsulinType: lastInsulinType,
-      activeAlarm: alarm,
-    );
+    Future.microtask(() {
+      state = DashboardState(
+        avgGlucose: avgGlucose,
+        nadirGlucose: nadirGlucose,
+        peakGlucose: peakGlucose,
+        lastInsulinTime: lastInsulinTime,
+        lastInsulinDose: lastInsulinDose,
+        lastInsulinType: lastInsulinType,
+        activeAlarm: alarm,
+      );
+    });
   }
 }

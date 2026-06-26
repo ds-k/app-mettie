@@ -8,10 +8,7 @@
 		<false/>
 		<key>NSLocalNetworkUsageDescription</key>
 		<string>This app requires local network access for model inference services.</string>
-		<key>NSCameraUsageDescription</key>
-		<string>반려동물 프로필 사진 촬영 및 건강 기록 사진 첨부를 위해 카메라 권한이 필요합니다.</string>
-		<key>NSPhotoLibraryUsageDescription</key>
-		<string>반려동물 프로필 사진 등록 및 건강 기록 사진 첨부를 위해 사진첩 권한이 필요합니다.</string>
+
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleURLTypes</key>
@@ -22,6 +19,7 @@
 				<key>CFBundleURLSchemes</key>
 				<array>
 					<string>com.googleusercontent.apps.780582707668-on179ecdqci4r19l1ligjvbu16kp1a23</string>
+					<string>com.mettie.app</string>
 				</array>
 			</dict>
 		</array>

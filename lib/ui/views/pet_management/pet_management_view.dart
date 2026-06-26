@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:flutter/services.dart';
 import '../../view_models/pet_management_view_model.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../data/models/pet.dart';
@@ -215,6 +216,9 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                     icon: LucideIcons.dog,
                     validator: (val) =>
                         val == null || val.isEmpty ? '이름을 입력하세요' : null,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(20),
+                    ],
                   ),
                   const SizedBox(height: 16),
                   Row(
@@ -264,6 +268,9 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                     controller: _breedController,
                     label: '품종 (선택)',
                     icon: LucideIcons.bookOpen,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(30),
+                    ],
                   ),
                   const SizedBox(height: 16),
                   Material(
@@ -290,6 +297,10 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                      LengthLimitingTextInputFormatter(5), // 예: 99.99
+                    ],
                   ),
                   const SizedBox(height: 16),
                   Row(
@@ -309,6 +320,10 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                           keyboardType: const TextInputType.numberWithOptions(
                             decimal: true,
                           ),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}')),
+                            LengthLimitingTextInputFormatter(4), // 예: 99.9
+                          ],
                         ),
                       ),
                     ],
@@ -434,12 +449,14 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
     IconData? icon,
     TextInputType? keyboardType,
     String? Function(String?)? validator,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return TextFormField(
       controller: controller,
       decoration: _inputDecoration(label, icon),
       keyboardType: keyboardType,
       validator: validator,
+      inputFormatters: inputFormatters,
     );
   }
 

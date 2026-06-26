@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../data/models/record.dart';
@@ -267,6 +268,10 @@ class _RecordEntryBottomSheetState
                                     label: '혈당 수치 (mg/dL)',
                                     icon: LucideIcons.activity,
                                     keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                      LengthLimitingTextInputFormatter(3), // 최대 999
+                                    ],
                                   ),
                                 ),
                                 const SizedBox(width: 12),
@@ -317,8 +322,12 @@ class _RecordEntryBottomSheetState
                                     icon: LucideIcons.syringe,
                                     keyboardType:
                                         const TextInputType.numberWithOptions(
-                                          decimal: true,
-                                        ),
+                                      decimal: true,
+                                    ),
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}')),
+                                      LengthLimitingTextInputFormatter(4), // 예: 99.9
+                                    ],
                                   ),
                                 ),
                                 const SizedBox(width: 12),
@@ -368,6 +377,10 @@ class _RecordEntryBottomSheetState
                                         const TextInputType.numberWithOptions(
                                           decimal: true,
                                         ),
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}')),
+                                      LengthLimitingTextInputFormatter(5), // 예: 999.9
+                                    ],
                                   ),
                                 ),
                                 const SizedBox(width: 12),
@@ -380,6 +393,10 @@ class _RecordEntryBottomSheetState
                                         const TextInputType.numberWithOptions(
                                           decimal: true,
                                         ),
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                                      LengthLimitingTextInputFormatter(5), // 예: 99.99
+                                    ],
                                   ),
                                 ),
                               ],
@@ -485,12 +502,14 @@ class _RecordEntryBottomSheetState
     IconData? icon,
     TextInputType? keyboardType,
     int maxLines = 1,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return TextFormField(
       controller: controller,
       decoration: _inputDecoration(label, icon),
       keyboardType: keyboardType,
       maxLines: maxLines,
+      inputFormatters: inputFormatters,
     );
   }
 }

@@ -2,44 +2,43 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import '../dashboard/dashboard_view.dart';
-import '../ai_coach/ai_coach_view.dart';
-import '../pet_management/pet_management_view.dart';
-import '../profile/profile_view.dart';
 import 'widgets/record_entry_bottom_sheet.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../view_models/pet_management_view_model.dart';
 
 class HomeView extends ConsumerStatefulWidget {
-  const HomeView({super.key});
+  final StatefulNavigationShell navigationShell;
+
+  const HomeView({
+    super.key,
+    required this.navigationShell,
+  });
 
   @override
   ConsumerState<HomeView> createState() => _HomeViewState();
 }
 
 class _HomeViewState extends ConsumerState<HomeView> {
-  int _currentIndex = 0;
-
-  // 뷰 인덱스 매핑
-  List<Widget> get _views {
-    final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
-    return [
-      const DashboardView(),
-      AiCoachView(isKeyboardOpen: isKeyboardOpen),
-      const PetManagementView(),
-      const ProfileView(),
-    ];
-  }
-
   void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+    widget.navigationShell.goBranch(
+      index,
+      initialLocation: index == widget.navigationShell.currentIndex,
+    );
   }
 
   void _showRecordEntryBottomSheet() {
+    final petsAsync = ref.read(petsProvider);
+    if (petsAsync.value?.isEmpty ?? true) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('기록을 추가하려면 먼저 반려동물을 등록해주세요.')),
+      );
+      _onTabTapped(2);
+      return;
+    }
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -96,8 +95,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
       );
     }
 
-    // 강제 리다이렉트를 제거하고, 메인 UI를 항상 렌더링합니다. (Empty State 처리는 개별 뷰에서 담당)
-
     // 로딩 중
     if (petsAsync.isLoading || (petsAsync.isRefreshing && !petsAsync.hasValue) || petsAsync.value == null) {
       return const Scaffold(
@@ -119,63 +116,63 @@ class _HomeViewState extends ConsumerState<HomeView> {
           ),
         ),
         child: Scaffold(
-        backgroundColor: Colors.transparent,
-        extendBody: true, // 바텀 네비게이션이 콘텐츠 위에 플로팅되도록 true 설정
-        body: IndexedStack(index: _currentIndex, children: _views),
-        bottomNavigationBar: isKeyboardOpen
-            ? null
-            : SafeArea(
-                child: Container(
-                  margin: const EdgeInsets.only(left: 20, right: 20),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.08),
-                        blurRadius: 24,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(100),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 8,
+          backgroundColor: Colors.transparent,
+          extendBody: true, // 바텀 네비게이션이 콘텐츠 위에 플로팅되도록 true 설정
+          body: widget.navigationShell,
+          bottomNavigationBar: isKeyboardOpen
+              ? null
+              : SafeArea(
+                  child: Container(
+                    margin: const EdgeInsets.only(left: 20, right: 20),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.08),
+                          blurRadius: 24,
+                          offset: const Offset(0, 8),
                         ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.65),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.4),
-                            width: 1,
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(100),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 8,
                           ),
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _buildNavItem(0, LucideIcons.layoutDashboard), // 대시보드
-                            _buildNavItem(1, LucideIcons.sparkle), // AI 코칭
-                            _buildAddButton(),
-                            _buildNavItem(2, LucideIcons.pawPrint), // 반려동물
-                            _buildNavItem(3, LucideIcons.userCircle), // 프로필
-                          ],
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.65),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.4),
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              _buildNavItem(0, LucideIcons.layoutDashboard), // 대시보드
+                              _buildNavItem(1, LucideIcons.sparkle), // AI 코칭
+                              _buildAddButton(),
+                              _buildNavItem(2, LucideIcons.pawPrint), // 반려동물
+                              _buildNavItem(3, LucideIcons.userCircle), // 프로필
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ),
+        ),
       ),
     );
   }
 
   Widget _buildNavItem(int index, IconData icon) {
-    final isSelected = _currentIndex == index;
+    final isSelected = widget.navigationShell.currentIndex == index;
     return GestureDetector(
       onTap: () => _onTabTapped(index),
       behavior: HitTestBehavior.opaque,
