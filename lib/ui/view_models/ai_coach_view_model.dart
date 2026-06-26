@@ -70,13 +70,28 @@ class AiCoachViewModel extends Notifier<AiCoachState> {
     try {
       await llmRepo.downloadModel(
         onProgress: (progress) {
+          // 사용자가 취소하여 상태가 변경되었다면 진행 상황 업데이트 무시
+          if (state.status != AiCoachStatus.downloading) return;
           state = state.copyWith(downloadProgress: progress);
         },
       );
-      state = state.copyWith(status: AiCoachStatus.ready);
+      // 다운로드가 성공적으로 끝났고 취소되지 않았을 때만 ready 상태로 변경
+      if (state.status == AiCoachStatus.downloading) {
+        state = state.copyWith(status: AiCoachStatus.ready);
+      }
     } catch (e) {
-      // 실패 시 다시 다운로드 유도 상태로 변경
-      state = state.copyWith(status: AiCoachStatus.needsDownload);
+      // 실패 시 원래 상태로 복귀
+      if (state.status == AiCoachStatus.downloading) {
+        state = state.copyWith(status: AiCoachStatus.needsDownload);
+      }
+    }
+  }
+
+  void cancelDownload() {
+    // 다운로드 중단 시 상태를 needsDownload로 되돌림 (초기화)
+    if (state.status == AiCoachStatus.downloading) {
+      ref.read(llmRepositoryProvider).cancelDownload();
+      state = state.copyWith(status: AiCoachStatus.needsDownload, downloadProgress: 0);
     }
   }
 

@@ -385,7 +385,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                             ),
                     ),
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 120),
                 ],
               ),
             ),

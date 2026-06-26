@@ -171,273 +171,275 @@ class _RecordEntryBottomSheetState
         return GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: Container(
-          decoration: const BoxDecoration(
-            color: kSurface,
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(kRadiusXl),
+            decoration: const BoxDecoration(
+              color: kSurface,
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(kRadiusXl),
+              ),
             ),
-          ),
-          child: Column(
-            children: [
-              // Header
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
-                ),
-                decoration: const BoxDecoration(
-                  border: Border(bottom: BorderSide(color: kHairline)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      '기록 추가',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: kInk,
+            child: Column(
+              children: [
+                // Header
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 8,
+                  ),
+                  decoration: const BoxDecoration(
+                    border: Border(bottom: BorderSide(color: kHairline)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        '기록 추가',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: kInk,
+                        ),
                       ),
-                    ),
-                    IconButton(
-                      icon: const Icon(LucideIcons.x, color: kSlate),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ],
+                      IconButton(
+                        icon: const Icon(LucideIcons.x, color: kSlate),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
 
-              // Body
-              Expanded(
-                child: ListView(
-                  controller: scrollController,
-                  padding: const EdgeInsets.all(24),
-                  children: [
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // 1. 날짜/시간
-                          _buildSectionTitle('날짜 및 시간'),
-                          const SizedBox(height: 8),
-                          InkWell(
-                            onTap: _selectDateTime,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 14,
-                              ),
-                              decoration: BoxDecoration(
-                                color: kCanvas,
-                                border: Border.all(color: kHairline),
-                                borderRadius: BorderRadius.circular(kRadiusMd),
-                              ),
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    LucideIcons.calendar,
-                                    size: 20,
-                                    color: kBrandBlue,
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    DateFormat(
-                                      'yyyy년 MM월 dd일 HH:mm',
-                                    ).format(_recordedAt),
-                                    style: const TextStyle(fontSize: 16),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-
-                          // 2. 혈당
-                          _buildSectionTitle('혈당 측정 (선택)'),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Expanded(
-                                flex: 2,
-                                child: _buildTextField(
-                                  controller: _glucoseController,
-                                  label: '혈당 수치 (mg/dL)',
-                                  icon: LucideIcons.activity,
-                                  keyboardType: TextInputType.number,
+                // Body
+                Expanded(
+                  child: ListView(
+                    controller: scrollController,
+                    padding: const EdgeInsets.all(24),
+                    children: [
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // 1. 날짜/시간
+                            _buildSectionTitle('날짜 및 시간'),
+                            const SizedBox(height: 8),
+                            InkWell(
+                              onTap: _selectDateTime,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 14,
                                 ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                flex: 1,
-                                child: DropdownButtonFormField<String>(
-                                  initialValue: _glucoseType,
-                                  decoration: _inputDecoration('상태', null),
-                                  items: const [
-                                    DropdownMenuItem(
-                                      value: 'fasting',
-                                      child: Text('공복'),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: 'pre_meal',
-                                      child: Text('식전'),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: 'post_meal',
-                                      child: Text('식후'),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: 'nadir',
-                                      child: Text('최저점'),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: 'spot',
-                                      child: Text('임의'),
-                                    ),
-                                  ],
-                                  onChanged: (v) =>
-                                      setState(() => _glucoseType = v),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 24),
-
-                          // 3. 인슐린
-                          _buildSectionTitle('인슐린 투여 (선택)'),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildTextField(
-                                  controller: _insulinDoseController,
-                                  label: '투여량 (IU)',
-                                  icon: LucideIcons.syringe,
-                                  keyboardType:
-                                      const TextInputType.numberWithOptions(
-                                        decimal: true,
-                                      ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: DropdownButtonFormField<String>(
-                                  initialValue: _injectionStatus,
-                                  decoration: _inputDecoration('투여 상태', null),
-                                  items: const [
-                                    DropdownMenuItem(
-                                      value: 'given',
-                                      child: Text('투여 완료'),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: 'skipped',
-                                      child: Text('생략함'),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: 'partial',
-                                      child: Text('일부 투여'),
-                                    ),
-                                  ],
-                                  onChanged: (v) =>
-                                      setState(() => _injectionStatus = v),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          _buildTextField(
-                            controller: _insulinTypeController,
-                            label: '인슐린 종류 (변경시에만 입력)',
-                            icon: LucideIcons.pill,
-                          ),
-                          const SizedBox(height: 24),
-
-                          // 4. 사료 및 체중
-                          _buildSectionTitle('식이 및 체중 (선택)'),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildTextField(
-                                  controller: _foodAmountController,
-                                  label: '급여량 (g)',
-                                  icon: LucideIcons.bone,
-                                  keyboardType:
-                                      const TextInputType.numberWithOptions(
-                                        decimal: true,
-                                      ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: _buildTextField(
-                                  controller: _weightController,
-                                  label: '체중 (kg)',
-                                  icon: LucideIcons.scale,
-                                  keyboardType:
-                                      const TextInputType.numberWithOptions(
-                                        decimal: true,
-                                      ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 24),
-
-                          // 5. 메모 UI
-                          _buildSectionTitle('메모 (선택)'),
-                          const SizedBox(height: 8),
-                          _buildTextField(
-                            controller: _notesController,
-                            label: '자유롭게 기록을 남겨주세요',
-                            icon: LucideIcons.fileText,
-                            maxLines: 3,
-                          ),
-
-                          const SizedBox(height: 40),
-
-                          // 저장 버튼
-                          SizedBox(
-                            width: double.infinity,
-                            height: 48,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: kBrandBlue,
-                                foregroundColor: kOnDark,
-                                shape: RoundedRectangleBorder(
+                                decoration: BoxDecoration(
+                                  color: kCanvas,
+                                  border: Border.all(color: kHairline),
                                   borderRadius: BorderRadius.circular(
-                                    kRadiusFull,
-                                  ), // Pill 형태
+                                    kRadiusMd,
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      LucideIcons.calendar,
+                                      size: 20,
+                                      color: kBrandBlue,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      DateFormat(
+                                        'yyyy년 MM월 dd일 HH:mm',
+                                      ).format(_recordedAt),
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              onPressed: _isLoading ? null : _saveRecord,
-                              child: _isLoading
-                                  ? const SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        color: kOnDark,
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : const Text(
-                                      '기록 저장하기',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
                             ),
-                          ),
-                          const SizedBox(height: 20),
-                        ],
+                            const SizedBox(height: 24),
+
+                            // 2. 혈당
+                            _buildSectionTitle('혈당 측정 (선택)'),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Expanded(
+                                  flex: 2,
+                                  child: _buildTextField(
+                                    controller: _glucoseController,
+                                    label: '혈당 수치 (mg/dL)',
+                                    icon: LucideIcons.activity,
+                                    keyboardType: TextInputType.number,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  flex: 1,
+                                  child: DropdownButtonFormField<String>(
+                                    initialValue: _glucoseType,
+                                    decoration: _inputDecoration('상태', null),
+                                    items: const [
+                                      DropdownMenuItem(
+                                        value: 'fasting',
+                                        child: Text('공복'),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'pre_meal',
+                                        child: Text('식전'),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'post_meal',
+                                        child: Text('식후'),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'nadir',
+                                        child: Text('최저점'),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'spot',
+                                        child: Text('임의'),
+                                      ),
+                                    ],
+                                    onChanged: (v) =>
+                                        setState(() => _glucoseType = v),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 24),
+
+                            // 3. 인슐린
+                            _buildSectionTitle('인슐린 투여 (선택)'),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildTextField(
+                                    controller: _insulinDoseController,
+                                    label: '투여량 (IU)',
+                                    icon: LucideIcons.syringe,
+                                    keyboardType:
+                                        const TextInputType.numberWithOptions(
+                                          decimal: true,
+                                        ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: DropdownButtonFormField<String>(
+                                    initialValue: _injectionStatus,
+                                    decoration: _inputDecoration('투여 상태', null),
+                                    items: const [
+                                      DropdownMenuItem(
+                                        value: 'given',
+                                        child: Text('투여 완료'),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'skipped',
+                                        child: Text('생략함'),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'partial',
+                                        child: Text('일부 투여'),
+                                      ),
+                                    ],
+                                    onChanged: (v) =>
+                                        setState(() => _injectionStatus = v),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            _buildTextField(
+                              controller: _insulinTypeController,
+                              label: '인슐린 종류 (변경시에만 입력)',
+                              icon: LucideIcons.pill,
+                            ),
+                            const SizedBox(height: 24),
+
+                            // 4. 사료 및 체중
+                            _buildSectionTitle('식이 및 체중 (선택)'),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildTextField(
+                                    controller: _foodAmountController,
+                                    label: '급여량 (g)',
+                                    icon: LucideIcons.bone,
+                                    keyboardType:
+                                        const TextInputType.numberWithOptions(
+                                          decimal: true,
+                                        ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: _buildTextField(
+                                    controller: _weightController,
+                                    label: '체중 (kg)',
+                                    icon: LucideIcons.scale,
+                                    keyboardType:
+                                        const TextInputType.numberWithOptions(
+                                          decimal: true,
+                                        ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 24),
+
+                            // 5. 메모 UI
+                            _buildSectionTitle('메모 (선택)'),
+                            const SizedBox(height: 8),
+                            _buildTextField(
+                              controller: _notesController,
+                              label: '자유롭게 기록을 남겨주세요',
+                              icon: LucideIcons.fileText,
+                              maxLines: 3,
+                            ),
+
+                            const SizedBox(height: 40),
+
+                            // 저장 버튼
+                            SizedBox(
+                              width: double.infinity,
+                              height: 48,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: kBrandBlue,
+                                  foregroundColor: kOnDark,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                      kRadiusFull,
+                                    ), // Pill 형태
+                                  ),
+                                ),
+                                onPressed: _isLoading ? null : _saveRecord,
+                                child: _isLoading
+                                    ? const SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                          color: kOnDark,
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : const Text(
+                                        '기록 저장하기',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
           ),
         );
       },

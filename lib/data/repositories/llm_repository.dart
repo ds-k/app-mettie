@@ -12,6 +12,7 @@ class LlmRepository {
 
   bool _isModelReady = false;
   InferenceChat? _activeChat;
+  CancelToken? _cancelToken;
 
   bool get isInitialized => _isInitialized;
   bool get useFallback => _useFallback;
@@ -62,11 +63,15 @@ class LlmRepository {
   Future<void> downloadModel({Function(int progress)? onProgress}) async {
     if (!_isInitialized) return;
 
+    _cancelToken = CancelToken();
+
     try {
       await FlutterGemma.installModel(
         modelType: ModelType.gemma4,
         fileType: ModelFileType.litertlm,
-      ).fromNetwork(_modelUrl).withProgress((progress) {
+      ).fromNetwork(_modelUrl)
+       .withCancelToken(_cancelToken!)
+       .withProgress((progress) {
         if (onProgress != null) {
           onProgress(progress);
         }
@@ -75,11 +80,21 @@ class LlmRepository {
       _isModelReady = true;
       _useFallback = false;
     } catch (e) {
-      debugPrint('LLM Download Failed: $e');
-      _useFallback = true;
-      _isModelReady = false;
-      throw Exception('모델 다운로드에 실패했습니다: $e');
+      if (CancelToken.isCancel(e) || e.toString().contains('cancelled')) {
+        debugPrint('LLM Download Cancelled');
+      } else {
+        debugPrint('LLM Download Failed: $e');
+        _useFallback = true;
+        _isModelReady = false;
+        throw Exception('모델 다운로드에 실패했습니다: $e');
+      }
+    } finally {
+      _cancelToken = null;
     }
+  }
+
+  void cancelDownload() {
+    _cancelToken?.cancel('User cancelled download');
   }
 
   /// 시스템 인스트럭션과 사용자 입력을 받아 채팅 세션을 유지하며 스트리밍 응답 반환

@@ -23,12 +23,15 @@ class _HomeViewState extends ConsumerState<HomeView> {
   int _currentIndex = 0;
 
   // 뷰 인덱스 매핑
-  final List<Widget> _views = const [
-    DashboardView(),
-    AiCoachView(),
-    PetManagementView(),
-    ProfileView(),
-  ];
+  List<Widget> get _views {
+    final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
+    return [
+      const DashboardView(),
+      AiCoachView(isKeyboardOpen: isKeyboardOpen),
+      const PetManagementView(),
+      const ProfileView(),
+    ];
+  }
 
   void _onTabTapped(int index) {
     setState(() {

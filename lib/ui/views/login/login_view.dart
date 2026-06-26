@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
@@ -37,7 +38,10 @@ class LoginView extends ConsumerWidget {
                       minHeight: constraints.maxHeight,
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0,
+                        vertical: 24.0,
+                      ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -92,7 +96,10 @@ class LoginView extends ConsumerWidget {
                                 onPressed: () {
                                   context.push('/login/email');
                                 },
-                                icon: const Icon(LucideIcons.mail, color: kOnDark),
+                                icon: const Icon(
+                                  LucideIcons.mail,
+                                  color: kOnDark,
+                                ),
                                 label: const Text('이메일로 계속하기'),
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: const Size.fromHeight(52),
@@ -107,15 +114,21 @@ class LoginView extends ConsumerWidget {
                               // 디바이더 ("또는 소셜 계정으로 로그인")
                               Row(
                                 children: [
-                                  const Expanded(child: Divider(color: kHairline)),
+                                  const Expanded(
+                                    child: Divider(color: kHairline),
+                                  ),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0,
+                                    ),
                                     child: Text(
                                       '또는',
                                       style: kCaption.copyWith(color: kSlate),
                                     ),
                                   ),
-                                  const Expanded(child: Divider(color: kHairline)),
+                                  const Expanded(
+                                    child: Divider(color: kHairline),
+                                  ),
                                 ],
                               ),
                               const SizedBox(height: 16),
@@ -123,9 +136,19 @@ class LoginView extends ConsumerWidget {
                               // 2. Apple로 계속하기 버튼
                               ElevatedButton.icon(
                                 onPressed: () async {
-                                  await ref.read(authRepositoryProvider).signInWithApple();
+                                  await ref
+                                      .read(authRepositoryProvider)
+                                      .signInWithApple();
                                 },
-                                icon: const Icon(LucideIcons.apple, color: kOnDark),
+                                icon: SvgPicture.asset(
+                                  'assets/icons/apple_logo.svg',
+                                  width: 22,
+                                  height: 22,
+                                  colorFilter: const ColorFilter.mode(
+                                    kOnDark,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
                                 label: const Text('Apple로 계속하기'),
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: const Size.fromHeight(52),
@@ -140,9 +163,15 @@ class LoginView extends ConsumerWidget {
                               // 3. Google로 계속하기 버튼
                               ElevatedButton.icon(
                                 onPressed: () async {
-                                  await ref.read(authRepositoryProvider).signInWithGoogle();
+                                  await ref
+                                      .read(authRepositoryProvider)
+                                      .signInWithGoogle();
                                 },
-                                icon: const Icon(LucideIcons.mail, color: kCharcoal),
+                                icon: SvgPicture.asset(
+                                  'assets/icons/google_logo.svg',
+                                  width: 20,
+                                  height: 20,
+                                ),
                                 label: const Text('Google로 계속하기'),
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: const Size.fromHeight(52),
@@ -161,7 +190,7 @@ class LoginView extends ConsumerWidget {
                     ),
                   ),
                 );
-              }
+              },
             ),
           ),
         ],

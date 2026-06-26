@@ -160,13 +160,40 @@ class AuthRepository {
 
   Future<void> deleteAccount() async {
     try {
-      // Supabase RPC를 통한 회원 탈퇴 시도
-      await _client.rpc('delete_user');
-      // 백엔드 탈퇴 성공 시에만 기기에서 로그아웃 처리
+      final user = _client.auth.currentUser;
+      if (user == null) throw '로그인된 유저가 없습니다.';
+
+      // 유저가 Apple로 로그인했는지 확인
+      // user.appMetadata['providers'] 안에 'apple'이 포함되어 있는지 체크
+      final List<dynamic>? providers = user.appMetadata['providers'];
+      final bool isAppleUser = providers != null && providers.contains('apple');
+
+      if (isAppleUser) {
+        // Apple 로그인 유저라면, 탈퇴(Revoke)를 위해 Authorization Code를 한 번 더 발급받습니다.
+        final credential = await SignInWithApple.getAppleIDCredential(
+          scopes: [
+            AppleIDAuthorizationScopes.email,
+            AppleIDAuthorizationScopes.fullName,
+          ],
+        );
+
+        final authCode = credential.authorizationCode;
+
+        // 발급받은 Authorization Code를 Edge Function으로 보내서 Revoke 및 계정 삭제 처리를 위임
+        await _client.functions.invoke(
+          'revoke-apple-token',
+          body: {'authorization_code': authCode},
+        );
+      } else {
+        // Apple 로그인이 아닌 경우 (구글, 이메일 등) 기존 RPC로 계정 삭제
+        await _client.rpc('delete_user');
+      }
+
+      // 백엔드 탈퇴(또는 Edge Function 처리) 완료 시 기기에서 로그아웃 처리
       await _client.auth.signOut();
     } catch (e) {
-      // 에러 발생 시(RPC 없음, 네트워크 오류 등) 강제 로그아웃하지 않고 에러를 던짐
-      throw '회원탈퇴에 실패했습니다. 데이터베이스 설정을 확인하거나 네트워크 연결을 확인해주세요.';
+      // 에러 발생 시 강제 로그아웃하지 않고 에러를 던짐
+      throw '회원탈퇴에 실패했습니다. 데이터를 다시 확인해주세요.';
     }
   }
 }

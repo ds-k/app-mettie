@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../view_models/pet_management_view_model.dart';
@@ -23,13 +23,15 @@ class PetSelectorBottomSheet extends ConsumerWidget {
         return Container(
           decoration: const BoxDecoration(
             color: kSurface,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(kRadiusLg)),
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(kRadiusLg),
+            ),
           ),
           child: Column(
             children: [
               // 1. 헤더 (손잡이)
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Center(
                   child: Container(
                     width: 40,
@@ -42,7 +44,12 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                 ),
               ),
               const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                padding: EdgeInsets.only(
+                  left: 24,
+                  right: 24,
+                  top: 8,
+                  bottom: 20,
+                ),
                 child: Row(
                   children: [
                     Text(
@@ -65,7 +72,7 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                     if (pets.isEmpty) {
                       return const Center(child: Text('등록된 반려동물이 없습니다.'));
                     }
-                    
+
                     // selectedPetId가 null일 땐 첫번째 아이템이 선택된 것으로 간주
                     final activeId = selectedPetId ?? pets.first.id;
 
@@ -80,13 +87,22 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                         return Material(
                           color: Colors.transparent,
                           child: ListTile(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 8,
+                            ),
                             leading: CircleAvatar(
-                              backgroundColor: isSelected ? kBrandBlue.withValues(alpha: 0.1) : kCanvas,
-                              backgroundImage: pet.avatarUrl != null ? NetworkImage(pet.avatarUrl!) : null,
+                              backgroundColor: isSelected
+                                  ? kBrandBlue.withValues(alpha: 0.1)
+                                  : kCanvas,
+                              backgroundImage: pet.avatarUrl != null
+                                  ? NetworkImage(pet.avatarUrl!)
+                                  : null,
                               child: pet.avatarUrl == null
                                   ? Icon(
-                                      pet.species == 'cat' ? LucideIcons.cat : LucideIcons.dog,
+                                      pet.species == 'cat'
+                                          ? LucideIcons.cat
+                                          : LucideIcons.dog,
                                       color: isSelected ? kBrandBlue : kStone,
                                     )
                                   : null,
@@ -94,30 +110,45 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                             title: Text(
                               pet.name,
                               style: TextStyle(
-                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
                                 color: isSelected ? kBrandBlue : kInk,
                               ),
                             ),
                             subtitle: Text(
                               '${pet.species == 'cat' ? '고양이' : '강아지'} / ${pet.breed ?? '품종 모름'}',
-                              style: const TextStyle(color: kSlate, fontSize: 13),
+                              style: const TextStyle(
+                                color: kSlate,
+                                fontSize: 13,
+                              ),
                             ),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 if (isSelected)
-                                  const Icon(LucideIcons.check, color: kBrandBlue),
+                                  const Icon(
+                                    LucideIcons.check,
+                                    color: kBrandBlue,
+                                  ),
                                 PopupMenuButton<String>(
-                                  icon: const Icon(LucideIcons.moreVertical, color: kStone),
+                                  icon: const Icon(
+                                    LucideIcons.moreVertical,
+                                    color: kStone,
+                                  ),
                                   onSelected: (value) async {
                                     if (value == 'delete') {
-                                      final title = isOwner ? '반려동물 삭제' : '가족 나가기';
-                                      final content = isOwner 
+                                      final title = isOwner
+                                          ? '반려동물 삭제'
+                                          : '가족 나가기';
+                                      final content = isOwner
                                           ? '${pet.name}의 모든 데이터를 정말 삭제하시겠습니까?'
                                           : '${pet.name}의 가족 공간에서 나가시겠습니까?';
-                                      
-                                      final notifier = ref.read(petManagementViewModelProvider.notifier);
-                                      
+
+                                      final notifier = ref.read(
+                                        petManagementViewModelProvider.notifier,
+                                      );
+
                                       final confirm = await showDialog<bool>(
                                         context: context,
                                         builder: (ctx) => AlertDialog(
@@ -125,12 +156,23 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                                           content: Text(content),
                                           actions: [
                                             TextButton(
-                                              onPressed: () => Navigator.pop(ctx, false),
-                                              child: const Text('취소', style: TextStyle(color: kSlate)),
+                                              onPressed: () =>
+                                                  Navigator.pop(ctx, false),
+                                              child: const Text(
+                                                '취소',
+                                                style: TextStyle(color: kSlate),
+                                              ),
                                             ),
                                             TextButton(
-                                              onPressed: () => Navigator.pop(ctx, true),
-                                              child: Text(isOwner ? '삭제' : '나가기', style: const TextStyle(color: kBrandError, fontWeight: FontWeight.bold)),
+                                              onPressed: () =>
+                                                  Navigator.pop(ctx, true),
+                                              child: Text(
+                                                isOwner ? '삭제' : '나가기',
+                                                style: const TextStyle(
+                                                  color: kBrandError,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -149,7 +191,9 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                                       value: 'delete',
                                       child: Text(
                                         isOwner ? '삭제하기' : '나가기',
-                                        style: const TextStyle(color: kBrandError),
+                                        style: const TextStyle(
+                                          color: kBrandError,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -157,7 +201,9 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                               ],
                             ),
                             onTap: () {
-                              ref.read(selectedPetIdProvider.notifier).selectPet(pet.id);
+                              ref
+                                  .read(selectedPetIdProvider.notifier)
+                                  .selectPet(pet.id);
                               Navigator.pop(context);
                             },
                           ),
@@ -165,43 +211,10 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                       },
                     );
                   },
-                  loading: () => const Center(child: CircularProgressIndicator(color: kBrandBlue)),
-                  error: (error, stack) => Center(child: Text('오류 발생: $error')),
-                ),
-              ),
-
-              // 3. 새 반려동물 추가 버튼
-              const Divider(color: kHairline, height: 1),
-              InkWell(
-                onTap: () {
-                  Navigator.pop(context);
-                  // /pet-management 로 이동하여 신규 등록 유도
-                  // BottomNavigationBar index를 3(반려동물)으로 변경할 수도 있음 (보통 go_router 활용)
-                  // 그러나 여기서는 앱 전체 라우터 구조가 go_router의 StatefulShellRoute인지 아닌지에 따라 다름
-                  // UI Builder 스펙상 Home 내 IndexedStack을 쓴다면 Provider로 Index를 바꿔야 하지만,
-                  // 우선 간단히 context.go() 사용하거나 별도의 Create 뷰로 라우팅
-                  // 이 프로젝트는 HomeView가 State를 가지므로 일단 push로 처리하거나 뷰 이동 고려
-                  // 사용자가 HomeView _onTabTapped 를 호출할 수는 없으므로 context.push() 사용
-                  // 여기서는 명시적인 push 권장
-                  // 구현 편의상 아무 동작이나 넣고 추후 조정.
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(LucideIcons.plusCircle, color: kBrandBlue),
-                      const SizedBox(width: 8),
-                      const Text(
-                        '새 반려동물 추가',
-                        style: TextStyle(
-                          color: kBrandBlue,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
+                  loading: () => const Center(
+                    child: CircularProgressIndicator(color: kBrandBlue),
                   ),
+                  error: (error, stack) => Center(child: Text('오류 발생: $error')),
                 ),
               ),
             ],
