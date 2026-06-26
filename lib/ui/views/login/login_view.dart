@@ -13,22 +13,21 @@ class LoginView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          // 배경 그라데이션
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [kHeroSkyFrom, kCanvas],
-                stops: [0.0, 0.4],
-              ),
-            ),
-          ),
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [kHeroSkyFrom, kCanvas],
+          stops: [0.0, 0.4],
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Stack(
+          children: [
           SafeArea(
             child: LayoutBuilder(
               builder: (context, constraints) {
@@ -194,6 +193,7 @@ class LoginView extends ConsumerWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

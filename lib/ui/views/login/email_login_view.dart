@@ -158,36 +158,35 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(LucideIcons.arrowLeft, color: kInk),
-          onPressed: () => context.pop(),
-        ),
-        title: Text(
-          _isSignUpMode ? '이메일 회원가입' : '이메일 로그인',
-          style: kHeading3.copyWith(color: kInk, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-      ),
-      extendBodyBehindAppBar: true,
-      body: Stack(
-        children: [
-          // 배경 그라데이션
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [kHeroSkyFrom, kCanvas],
-                stops: [0.0, 0.4],
-              ),
-            ),
+      child: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [kHeroSkyFrom, kCanvas],
+            stops: [0.0, 0.4],
           ),
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(LucideIcons.arrowLeft, color: kInk),
+              onPressed: () => context.pop(),
+            ),
+            title: Text(
+              _isSignUpMode ? '이메일 회원가입' : '이메일 로그인',
+              style: kHeading3.copyWith(color: kInk, fontWeight: FontWeight.bold),
+            ),
+            centerTitle: true,
+          ),
+          extendBodyBehindAppBar: true,
+          body: Stack(
+            children: [
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
@@ -401,6 +400,7 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
               ),
             ),
         ],
+      ),
       ),
       ),
     );

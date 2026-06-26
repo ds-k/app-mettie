@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../data/repositories/auth_repository.dart';
@@ -146,6 +147,9 @@ class ProfileAppSettings extends ConsumerWidget {
                               await ref
                                   .read(authRepositoryProvider)
                                   .deleteAccount();
+                              if (context.mounted) {
+                                context.go('/login');
+                              }
                             } catch (e) {
                               if (!context.mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_typography.dart';
 
@@ -25,6 +26,7 @@ class AppTheme {
           elevation: 0,
           scrolledUnderElevation: 0,
           titleTextStyle: kHeading2,
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
         ),
         // 카드 — Elevation 0, hairline 테두리
         cardTheme: CardThemeData(
