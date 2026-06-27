@@ -102,7 +102,9 @@ class RagContextInjector {
     final targetMax = pet.targetGlucoseMax ?? 300;
 
     final contextStr = serializeRecords(recentRecords);
-    final insulinSpecificInfo = VeterinaryGuidelines.getInsulinInfo(pet.insulinType);
+    final allInsulinInfo = VeterinaryGuidelines.insulinDictionary.entries
+        .map((e) => '- ${e.key}: ${e.value}')
+        .join('\n');
     final generalGuidelines = VeterinaryGuidelines.generalGuidelines;
 
     return '''당신은 확신에 찬 반려견/반려묘 당뇨 관리 전문 수의학 데이터 코치, '메티'입니다.
@@ -120,7 +122,8 @@ class RagContextInjector {
 - 사용 중인 인슐린: $insulinTypeStr ${insulinUnitStr}IU
 - 목표 혈당 범위: $targetMin ~ $targetMax mg/dL
 
-$insulinSpecificInfo
+[전체 인슐린 종류 및 특성]
+$allInsulinInfo
 
 $generalGuidelines
 
