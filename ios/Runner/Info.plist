@@ -10,7 +10,6 @@
 		<string>This app requires local network access for model inference services.</string>
 		<key>FlutterDeepLinkingEnabled</key>
 		<true/>
-
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleURLTypes</key>
