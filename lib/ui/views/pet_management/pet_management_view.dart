@@ -229,10 +229,15 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                       Expanded(
                         child: DropdownButtonFormField<String>(
                           initialValue: _species,
-                          decoration: _inputDecoration(
+                          decoration: _dropdownDecoration(
                             '종류',
                             LucideIcons.pawPrint,
                           ),
+                          borderRadius: BorderRadius.circular(kRadiusLg),
+                          elevation: 2,
+                          menuMaxHeight: 250,
+                          style: const TextStyle(fontSize: 13, color: kInk),
+                          iconSize: 18,
                           items: const [
                             DropdownMenuItem(value: 'dog', child: Text('강아지')),
                             DropdownMenuItem(value: 'cat', child: Text('고양이')),
@@ -251,7 +256,12 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                       Expanded(
                         child: DropdownButtonFormField<String>(
                           initialValue: _sex,
-                          decoration: _inputDecoration('성별', LucideIcons.user),
+                          decoration: _dropdownDecoration('성별', LucideIcons.user),
+                          borderRadius: BorderRadius.circular(kRadiusLg),
+                          elevation: 2,
+                          menuMaxHeight: 250,
+                          style: const TextStyle(fontSize: 13, color: kInk),
+                          iconSize: 18,
                           items: const [
                             DropdownMenuItem(value: 'male', child: Text('수컷')),
                             DropdownMenuItem(
@@ -323,10 +333,15 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                           children: [
                             DropdownButtonFormField<String>(
                               value: _selectedInsulinType,
-                              decoration: _inputDecoration(
+                              decoration: _dropdownDecoration(
                                 '인슐린 종류 (선택)',
                                 LucideIcons.syringe,
                               ),
+                              borderRadius: BorderRadius.circular(kRadiusLg),
+                              elevation: 2,
+                              menuMaxHeight: 250,
+                              style: const TextStyle(fontSize: 13, color: kInk),
+                              iconSize: 18,
                               items: VeterinaryGuidelines.insulinTypes
                                   .map((type) => DropdownMenuItem(
                                         value: type,
@@ -493,6 +508,29 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
         borderSide: const BorderSide(color: kBrandBlue, width: 2),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    );
+  }
+
+  InputDecoration _dropdownDecoration(String label, IconData? icon) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(fontSize: 13),
+      prefixIcon: icon != null ? Icon(icon, color: kSlate, size: 16) : null,
+      filled: true,
+      fillColor: kCanvas,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(kRadiusFull),
+        borderSide: const BorderSide(color: kHairline),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(kRadiusFull),
+        borderSide: const BorderSide(color: kHairline),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(kRadiusFull),
+        borderSide: const BorderSide(color: kBrandBlue, width: 1.5),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
     );
   }
 

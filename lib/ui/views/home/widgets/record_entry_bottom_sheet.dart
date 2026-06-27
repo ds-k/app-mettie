@@ -281,7 +281,12 @@ class _RecordEntryBottomSheetState
                                   flex: 1,
                                   child: DropdownButtonFormField<String>(
                                     initialValue: _glucoseType,
-                                    decoration: _inputDecoration('상태', null),
+                                    decoration: _dropdownDecoration('상태', null),
+                                    borderRadius: BorderRadius.circular(kRadiusLg),
+                                    elevation: 2,
+                                    menuMaxHeight: 200,
+                                    style: const TextStyle(fontSize: 13, color: kInk),
+                                    iconSize: 18,
                                     items: const [
                                       DropdownMenuItem(
                                         value: 'fasting',
@@ -336,7 +341,12 @@ class _RecordEntryBottomSheetState
                                 Expanded(
                                   child: DropdownButtonFormField<String>(
                                     initialValue: _injectionStatus,
-                                    decoration: _inputDecoration('투여 상태', null),
+                                    decoration: _dropdownDecoration('투여 상태', null),
+                                    borderRadius: BorderRadius.circular(kRadiusLg),
+                                    elevation: 2,
+                                    menuMaxHeight: 200,
+                                    style: const TextStyle(fontSize: 13, color: kInk),
+                                    iconSize: 18,
                                     items: const [
                                       DropdownMenuItem(
                                         value: 'given',
@@ -360,10 +370,15 @@ class _RecordEntryBottomSheetState
                             const SizedBox(height: 12),
                             DropdownButtonFormField<String>(
                               value: _selectedInsulinType,
-                              decoration: _inputDecoration(
+                              decoration: _dropdownDecoration(
                                 '인슐린 종류 (변경시에만 선택)',
                                 LucideIcons.pill,
                               ),
+                              borderRadius: BorderRadius.circular(kRadiusLg),
+                              elevation: 2,
+                              menuMaxHeight: 200,
+                              style: const TextStyle(fontSize: 13, color: kInk),
+                              iconSize: 18,
                               items: VeterinaryGuidelines.insulinTypes
                                   .map((type) => DropdownMenuItem(
                                         value: type,
@@ -520,6 +535,29 @@ class _RecordEntryBottomSheetState
         borderSide: const BorderSide(color: kBrandBlue, width: 2),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    );
+  }
+
+  InputDecoration _dropdownDecoration(String label, IconData? icon) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: const TextStyle(fontSize: 13),
+      prefixIcon: icon != null ? Icon(icon, color: kSlate, size: 16) : null,
+      filled: true,
+      fillColor: kCanvas,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(kRadiusFull),
+        borderSide: const BorderSide(color: kHairline),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(kRadiusFull),
+        borderSide: const BorderSide(color: kHairline),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(kRadiusFull),
+        borderSide: const BorderSide(color: kBrandBlue, width: 1.5),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
     );
   }
 
