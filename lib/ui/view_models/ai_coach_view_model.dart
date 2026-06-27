@@ -129,13 +129,15 @@ class AiCoachViewModel extends Notifier<AiCoachState> {
         pet: currentPet,
         recentRecords: recentRecords,
       );
-      final userText = RagContextInjector.buildUserPrompt(text);
 
       // 4. 빈 AI 메시지 홀더 추가
       final aiMsgIndex = state.messages.length;
       state = state.copyWith(
         messages: [...state.messages, ChatMessage(role: 'ai', content: '')],
       );
+
+      // 모델에 전달할 유효한 기록 필터링 (최신 상태의 messages 이용, 비어있는 AI 메시지 홀더는 제외)
+      final validHistory = state.messages.where((m) => m.content.trim().isNotEmpty).toList();
 
       // 5. 스트리밍 응답 렌더링 최적화 (UI 버벅임 방지)
       final llmRepo = ref.read(llmRepositoryProvider);
@@ -144,7 +146,7 @@ class AiCoachViewModel extends Notifier<AiCoachState> {
       int lastUpdate = DateTime.now().millisecondsSinceEpoch;
 
       await for (final token in llmRepo.generateCoreResponse(
-        userText: userText,
+        history: validHistory,
         systemInstruction: systemInstruction,
       )) {
         if (_cancelRequested) break;

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_gemma/flutter_gemma.dart';
+import 'package:mettie/ui/view_models/ai_coach_view_model.dart';
 
 final llmRepositoryProvider = Provider<LlmRepository>((ref) {
   return LlmRepository();
@@ -69,9 +70,9 @@ class LlmRepository {
       await FlutterGemma.installModel(
         modelType: ModelType.gemma4,
         fileType: ModelFileType.litertlm,
-      ).fromNetwork(_modelUrl)
-       .withCancelToken(_cancelToken!)
-       .withProgress((progress) {
+      ).fromNetwork(_modelUrl).withCancelToken(_cancelToken!).withProgress((
+        progress,
+      ) {
         if (onProgress != null) {
           onProgress(progress);
         }
@@ -99,28 +100,50 @@ class LlmRepository {
 
   /// 시스템 인스트럭션과 사용자 입력을 받아 채팅 세션을 유지하며 스트리밍 응답 반환
   Stream<String> generateCoreResponse({
-    required String userText,
+    required List<ChatMessage> history,
     String? systemInstruction,
   }) async* {
     if (_useFallback || !_isModelReady) {
-      // Fallback 로직 (현재는 더미 또는 향후 Cloud API 연동)
+      // Fallback 로직
       yield "⚠️ 온디바이스 AI가 준비되지 않아 응답할 수 없습니다. 모델을 먼저 다운로드 해주세요.";
       return;
     }
 
     try {
-      if (_activeChat == null) {
-        final model = await FlutterGemma.getActiveModel(
-          maxTokens: 2048,
-        );
-        _activeChat = await model.createChat(
-          modelType: ModelType.gemma4,
-          temperature: 0.1,
-          systemInstruction: systemInstruction,
-        );
+      // 매 턴마다 세션을 재생성하고 최근 N개의 메시지만 주입하여 메모리 초과 방지
+      if (_activeChat != null) {
+        await _activeChat!.close();
       }
 
-      await _activeChat!.addQueryChunk(Message(text: userText, isUser: true));
+      final model = await FlutterGemma.getActiveModel(maxTokens: 2048);
+      _activeChat = await model.createChat(
+        modelType: ModelType.gemma4,
+        temperature: 0.1,
+        systemInstruction: systemInstruction,
+      );
+
+      // 최적화를 위해 최근 최대 4개의 대화(질문 2개, 답변 2개 분량)만 컨텍스트로 유지
+      const int maxHistoryCount = 4;
+      final recentHistory = history.length > maxHistoryCount
+          ? history.sublist(history.length - maxHistoryCount)
+          : history;
+
+      // 이전 대화 내역 주입 (마지막 사용자의 질문 제외)
+      for (int i = 0; i < recentHistory.length - 1; i++) {
+        final msg = recentHistory[i];
+        if (msg.content.isNotEmpty) {
+          await _activeChat!.addQueryChunk(
+            Message(text: msg.content, isUser: msg.role == 'user'),
+          );
+        }
+      }
+
+      // 마지막 사용자의 질문 주입 및 응답 생성 시작
+      final lastMsg = recentHistory.last;
+      await _activeChat!.addQueryChunk(
+        Message(text: lastMsg.content, isUser: true),
+      );
+
       await for (final response in _activeChat!.generateChatResponseAsync()) {
         if (response is TextResponse) {
           yield response.token;
