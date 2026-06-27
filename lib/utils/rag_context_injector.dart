@@ -3,7 +3,6 @@ import '../data/models/pet.dart';
 import '../data/models/record.dart';
 
 class RagContextInjector {
-  /// 최근 기록(Record) 리스트를 자연어 타임라인 문자열로 직렬화합니다.
   static String serializeRecords(List<Record> records) {
     if (records.isEmpty) {
       return "최근 기록 없음";
@@ -39,8 +38,19 @@ class RagContextInjector {
         parts.add('혈당 ${record.glucoseValue} mg/dL$typeStr');
       }
 
-      if (record.insulinDose != null) {
-        parts.add('인슐린 ${record.insulinDose} IU 투여');
+      if (record.insulinDose != null || record.injectionStatus != null) {
+        String statusStr = '';
+        if (record.injectionStatus == 'skipped') {
+          statusStr = ' (생략)';
+        } else if (record.injectionStatus == 'partial') {
+          statusStr = ' (일부 투여)';
+        }
+
+        if (record.insulinDose != null) {
+          parts.add('인슐린 ${record.insulinDose} IU 투여$statusStr');
+        } else if (statusStr.isNotEmpty) {
+          parts.add('인슐린$statusStr');
+        }
       }
 
       if (record.foodAmountG != null || (record.foodBrand != null && record.foodBrand!.isNotEmpty)) {
@@ -54,12 +64,41 @@ class RagContextInjector {
         parts.add('사료: ${foodParts.join(' ')}');
       }
 
+      if (record.weightKg != null) {
+        parts.add('체중 ${record.weightKg}kg');
+      }
+
       if (record.activityLevel != null) {
         parts.add('활동성 ${record.activityLevel}/5');
       }
 
-      if (record.waterIntake == 'increased') {
-        parts.add('음수량 증가 관찰');
+      if (record.waterIntake != null) {
+        if (record.waterIntake == 'increased') parts.add('음수량 증가');
+        if (record.waterIntake == 'decreased') parts.add('음수량 감소');
+      }
+
+      if (record.urination != null) {
+        if (record.urination == 'polyuria') parts.add('다뇨');
+        if (record.urination == 'decreased') parts.add('배뇨 감소');
+      }
+
+      if (record.appetite != null) {
+        if (record.appetite == 'good') parts.add('식욕 좋음');
+        if (record.appetite == 'partial') parts.add('식욕 부진');
+        if (record.appetite == 'anorexic') parts.add('식욕 절폐');
+      }
+
+      if (record.vomitCount > 0) {
+        parts.add('구토 ${record.vomitCount}회');
+      }
+
+      if (record.stoolStatus != null) {
+        if (record.stoolStatus == 'diarrhea') parts.add('설사');
+        if (record.stoolStatus == 'constipation') parts.add('변비');
+      }
+
+      if (record.notes != null && record.notes!.isNotEmpty) {
+        parts.add('메모: ${record.notes!}');
       }
 
       if (parts.isNotEmpty) {

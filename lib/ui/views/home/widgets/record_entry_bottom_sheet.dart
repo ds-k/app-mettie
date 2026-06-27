@@ -41,7 +41,7 @@ class _RecordEntryBottomSheetState
   String? _waterIntake;
   String? _urination;
   String? _appetite;
-  final int _activityLevel = 3;
+  final int? _activityLevel = null;
 
   final _vomitCountController = TextEditingController(text: '0');
   String? _stoolStatus;
@@ -111,7 +111,7 @@ class _RecordEntryBottomSheetState
         waterIntake: _waterIntake,
         urination: _urination,
         appetite: _appetite,
-        activityLevel: _activityLevel.round(),
+        activityLevel: _activityLevel,
         vomitCount: int.tryParse(_vomitCountController.text) ?? 0,
         stoolStatus: _stoolStatus,
         notes: _notesController.text,

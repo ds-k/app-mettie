@@ -78,13 +78,43 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> with WidgetsBindingOb
                 color: kBrandBlue,
               ),
               tooltip: '새 채팅 시작',
-              onPressed: () {
-                ref.read(aiCoachViewModelProvider.notifier).clearChat();
+              onPressed: () async {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text('새 채팅 시작'),
+                      content: const Text(
+                        '이전 채팅 기록이 초기화되며 다시 볼 수 없습니다.\n최근 추가된 기록을 바탕으로 새로운 세션을 시작하시겠습니까?',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: const Text('취소', style: TextStyle(color: kStone)),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(true),
+                          child: const Text(
+                            '새로 시작',
+                            style: TextStyle(
+                              color: kBrandBlue,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+
+                if (confirm == true) {
+                  ref.read(aiCoachViewModelProvider.notifier).clearChat();
+                }
               },
             ),
           ],
           bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(40),
+            preferredSize: const Size.fromHeight(60),
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -95,9 +125,9 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> with WidgetsBindingOb
                   SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      '본 가이드는 참고용이며, 의료진의 전문적 상담을 대체할 수 없습니다. 최종 투약 결정 책임은 보호자에게 있습니다.',
+                      '의료진의 전문적 상담을 대체할 수 없습니다. 최종 투약 결정 책임은 보호자에게 있습니다.\n💡 새로운 기록을 입력하셨다면 [새 채팅 시작]을 눌러 세션을 갱신해주세요.',
                       style: TextStyle(fontSize: 12, color: kBrandWarn),
-                      maxLines: 2,
+                      maxLines: 3,
                     ),
                   ),
                 ],
