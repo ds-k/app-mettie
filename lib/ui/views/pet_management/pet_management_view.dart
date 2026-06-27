@@ -379,9 +379,9 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                           ),
                           inputFormatters: [
                             FilteringTextInputFormatter.allow(
-                              RegExp(r'^\d+\.?\d{0,1}'),
+                              RegExp(r'^\d+\.?\d{0,2}'),
                             ),
-                            LengthLimitingTextInputFormatter(4), // 예: 99.9
+                            LengthLimitingTextInputFormatter(5), // 예: 99.99
                           ],
                           validator: (val) {
                             if (val != null && val.isNotEmpty) {

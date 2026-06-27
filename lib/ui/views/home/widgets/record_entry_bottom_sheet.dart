@@ -332,8 +332,8 @@ class _RecordEntryBottomSheetState
                                       decimal: true,
                                     ),
                                     inputFormatters: [
-                                      FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}')),
-                                      LengthLimitingTextInputFormatter(4), // 예: 99.9
+                                      FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                                      LengthLimitingTextInputFormatter(5), // 예: 99.99
                                     ],
                                   ),
                                 ),
