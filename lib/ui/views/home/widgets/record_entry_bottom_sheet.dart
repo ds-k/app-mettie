@@ -8,6 +8,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../data/models/record.dart';
 import '../../../../data/repositories/record_repository.dart';
 import '../../../../data/repositories/auth_repository.dart';
+import '../../../../data/constants/veterinary_guidelines.dart';
 import '../../../view_models/dashboard_view_model.dart';
 
 class RecordEntryBottomSheet extends ConsumerStatefulWidget {
@@ -30,6 +31,7 @@ class _RecordEntryBottomSheetState
 
   final _insulinDoseController = TextEditingController();
   final _insulinTypeController = TextEditingController();
+  String? _selectedInsulinType;
   String? _injectionStatus = 'given';
 
   final _foodBrandController = TextEditingController();
@@ -100,9 +102,9 @@ class _RecordEntryBottomSheetState
         glucoseValue: int.tryParse(_glucoseController.text),
         glucoseType: _glucoseType,
         insulinDose: double.tryParse(_insulinDoseController.text),
-        insulinType: _insulinTypeController.text.isEmpty
-            ? pet.insulinType
-            : _insulinTypeController.text,
+        insulinType: _selectedInsulinType == '기타'
+            ? _insulinTypeController.text.trim()
+            : (_selectedInsulinType ?? pet.insulinType),
         injectionStatus: _injectionStatus,
         foodBrand: _foodBrandController.text,
         foodAmountG: double.tryParse(_foodAmountController.text),
@@ -356,11 +358,36 @@ class _RecordEntryBottomSheetState
                               ],
                             ),
                             const SizedBox(height: 12),
-                            _buildTextField(
-                              controller: _insulinTypeController,
-                              label: '인슐린 종류 (변경시에만 입력)',
-                              icon: LucideIcons.pill,
+                            DropdownButtonFormField<String>(
+                              value: _selectedInsulinType,
+                              decoration: _inputDecoration(
+                                '인슐린 종류 (변경시에만 선택)',
+                                LucideIcons.pill,
+                              ),
+                              items: VeterinaryGuidelines.insulinTypes
+                                  .map((type) => DropdownMenuItem(
+                                        value: type,
+                                        child: Text(type, overflow: TextOverflow.ellipsis),
+                                      ))
+                                  .toList(),
+                              onChanged: (val) {
+                                setState(() {
+                                  _selectedInsulinType = val;
+                                  if (val != '기타') {
+                                    _insulinTypeController.clear();
+                                  }
+                                });
+                              },
+                              isExpanded: true,
                             ),
+                            if (_selectedInsulinType == '기타') ...[
+                              const SizedBox(height: 8),
+                              _buildTextField(
+                                controller: _insulinTypeController,
+                                label: '기타 인슐린 직접 입력',
+                                icon: LucideIcons.penLine,
+                              ),
+                            ],
                             const SizedBox(height: 24),
 
                             // 4. 사료 및 체중

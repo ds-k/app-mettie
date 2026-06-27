@@ -9,10 +9,7 @@ import '../../../../data/repositories/record_repository.dart';
 class DashboardRecordRow extends ConsumerWidget {
   final Record record;
 
-  const DashboardRecordRow({
-    super.key,
-    required this.record,
-  });
+  const DashboardRecordRow({super.key, required this.record});
 
   String _getRecordTitle(Record record) {
     final hour = record.recordedAt.hour;
@@ -109,19 +106,39 @@ class DashboardRecordRow extends ConsumerWidget {
         child: const Icon(LucideIcons.trash2, color: kOnDark),
       ),
       confirmDismiss: (direction) async {
+        final bool? confirm = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('기록 삭제'),
+            content: const Text('이 기록을 정말 삭제하시겠습니까?\n삭제된 기록은 다시 복구할 수 없습니다.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('취소', style: TextStyle(color: kSlate)),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('삭제', style: TextStyle(color: kBrandError)),
+              ),
+            ],
+          ),
+        );
+
+        if (confirm != true) return false;
+
         try {
           await ref.read(recordRepositoryProvider).deleteRecord(record.id);
           if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('기록이 삭제되었습니다.')),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(const SnackBar(content: Text('기록이 삭제되었습니다.')));
           }
           return true;
         } catch (e) {
           if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('삭제 중 오류가 발생했습니다: $e')),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('삭제 중 오류가 발생했습니다: $e')));
           }
           return false;
         }
@@ -217,10 +234,7 @@ class DashboardRecordRow extends ConsumerWidget {
                       padding: const EdgeInsets.only(top: 12),
                       child: Text(
                         record.notes!,
-                        style: const TextStyle(
-                          color: kSlate,
-                          fontSize: 14,
-                        ),
+                        style: const TextStyle(color: kSlate, fontSize: 14),
                       ),
                     ),
                 ],

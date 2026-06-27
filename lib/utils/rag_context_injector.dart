@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 import '../data/models/pet.dart';
 import '../data/models/record.dart';
+import '../data/constants/veterinary_guidelines.dart';
 
 class RagContextInjector {
   static String serializeRecords(List<Record> records) {
@@ -46,10 +47,15 @@ class RagContextInjector {
           statusStr = ' (일부 투여)';
         }
 
+        String typeStr = '';
+        if (record.insulinType != null && record.insulinType!.isNotEmpty) {
+          typeStr = ' [${record.insulinType}]';
+        }
+
         if (record.insulinDose != null) {
-          parts.add('인슐린 ${record.insulinDose} IU 투여$statusStr');
+          parts.add('인슐린$typeStr ${record.insulinDose} IU 투여$statusStr');
         } else if (statusStr.isNotEmpty) {
-          parts.add('인슐린$statusStr');
+          parts.add('인슐린$typeStr$statusStr');
         }
       }
 
@@ -66,35 +72,6 @@ class RagContextInjector {
 
       if (record.weightKg != null) {
         parts.add('체중 ${record.weightKg}kg');
-      }
-
-      if (record.activityLevel != null) {
-        parts.add('활동성 ${record.activityLevel}/5');
-      }
-
-      if (record.waterIntake != null) {
-        if (record.waterIntake == 'increased') parts.add('음수량 증가');
-        if (record.waterIntake == 'decreased') parts.add('음수량 감소');
-      }
-
-      if (record.urination != null) {
-        if (record.urination == 'polyuria') parts.add('다뇨');
-        if (record.urination == 'decreased') parts.add('배뇨 감소');
-      }
-
-      if (record.appetite != null) {
-        if (record.appetite == 'good') parts.add('식욕 좋음');
-        if (record.appetite == 'partial') parts.add('식욕 부진');
-        if (record.appetite == 'anorexic') parts.add('식욕 절폐');
-      }
-
-      if (record.vomitCount > 0) {
-        parts.add('구토 ${record.vomitCount}회');
-      }
-
-      if (record.stoolStatus != null) {
-        if (record.stoolStatus == 'diarrhea') parts.add('설사');
-        if (record.stoolStatus == 'constipation') parts.add('변비');
       }
 
       if (record.notes != null && record.notes!.isNotEmpty) {
@@ -125,21 +102,27 @@ class RagContextInjector {
     final targetMax = pet.targetGlucoseMax ?? 300;
 
     final contextStr = serializeRecords(recentRecords);
+    final insulinSpecificInfo = VeterinaryGuidelines.getInsulinInfo(pet.insulinType);
+    final generalGuidelines = VeterinaryGuidelines.generalGuidelines;
 
-    return '''당신은 반려견/반려묘 당뇨 관리를 돕는 전문 '데이터 분석가 AI 코치, 메티'입니다.
-단순히 "수의사에게 가세요"라는 원론적 답변을 지양하고, 보호자가 입력한 '최근 생체 기록'의 추세와 혈당 변화를 깊이 있게 분석하여 실질적인 인사이트를 제공하세요.
+    return '''당신은 확신에 찬 반려견/반려묘 당뇨 관리 전문 수의학 데이터 코치, '메티'입니다.
+무조건 "수의사와 상담하라"며 답변을 회피하거나 원론적인 면책 조항을 반복하지 마십시오.
 
 다음 가이드라인을 엄격히 준수하세요:
-1. 언어: 반드시 **한국어**로만 답변하세요. (영어 등 외국어 사용 금지)
-2. 분량 제한: 모바일 화면에 맞게 **최대 200~300자 내외**로 아주 짧고 명확하게 작성하세요.
-3. 형태: 장황한 서술을 피하고, 2~3개의 핵심 총알기호(Bullet points)로 요약하여 가독성을 극대화하세요.
-4. 분석 및 권고: 현재 데이터가 목표 범위인지 짧게 짚고, 필요한 조치(예: "인슐린 소폭 상향 고려 및 수의사 상담 권장")를 명확히 제시하세요.
+1. 언어: 반드시 **한국어**로만 답변하세요.
+2. 분량 및 형태: 모바일 화면에 맞게 **최대 200~300자 내외**로 작성하되, 2~3개의 핵심 총알기호(Bullet points)를 사용하여 가독성을 극대화하세요.
+3. 자신감 있는 코칭: 제공된 [수의학 가이드라인]과 [인슐린 특성]을 바탕으로 현재 기록이 정상 범주인지 분석하고, 수치가 높거나 낮을 때 보호자가 당장 취해야 할 행동(예: '다음 식사량 유지', '저혈당 징후 모니터링', '추세가 3일째 상승 중이므로 수의사와 0.5U 증량 논의')을 구체적이고 실질적으로 가이드하세요.
+4. 유연한 지식 활용: [최근 생체 기록]에 기반하여 상태를 분석하되, 보호자가 인슐린 특성이나 당뇨 관리에 대한 '일반적인 의학 지식'을 묻는다면 수의학적 기본 지식을 바탕으로 명쾌하게 설명해 주세요.
 
 [현재 반려동물 정보]
 - 종/품종: $speciesStr / $breedStr
 - 질환 상태: $diagnosisStr
 - 사용 중인 인슐린: $insulinTypeStr ${insulinUnitStr}IU
 - 목표 혈당 범위: $targetMin ~ $targetMax mg/dL
+
+$insulinSpecificInfo
+
+$generalGuidelines
 
 [최근 생체 기록]
 $contextStr

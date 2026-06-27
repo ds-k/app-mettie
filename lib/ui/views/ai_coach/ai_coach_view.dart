@@ -15,7 +15,8 @@ class AiCoachView extends ConsumerStatefulWidget {
   ConsumerState<AiCoachView> createState() => _AiCoachViewState();
 }
 
-class _AiCoachViewState extends ConsumerState<AiCoachView> with WidgetsBindingObserver {
+class _AiCoachViewState extends ConsumerState<AiCoachView>
+    with WidgetsBindingObserver {
   final TextEditingController _textController = TextEditingController();
   bool _isKeyboardOpen = false;
 
@@ -90,7 +91,10 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> with WidgetsBindingOb
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(false),
-                          child: const Text('취소', style: TextStyle(color: kStone)),
+                          child: const Text(
+                            '취소',
+                            style: TextStyle(color: kStone),
+                          ),
                         ),
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(true),
@@ -125,9 +129,9 @@ class _AiCoachViewState extends ConsumerState<AiCoachView> with WidgetsBindingOb
                   SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      '의료진의 전문적 상담을 대체할 수 없습니다. 최종 투약 결정 책임은 보호자에게 있습니다.\n💡 새로운 기록을 입력하셨다면 [새 채팅 시작]을 눌러 세션을 갱신해주세요.',
+                      '메티는 의료 상담을 대체할 수 없으며 최종 책임은 보호자에게 있습니다.\n새 기록 입력 시 [새 채팅 시작]을 눌러 세션을 갱신해주세요.',
                       style: TextStyle(fontSize: 12, color: kBrandWarn),
-                      maxLines: 3,
+                      maxLines: 2,
                     ),
                   ),
                 ],

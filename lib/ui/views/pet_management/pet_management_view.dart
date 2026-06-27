@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import '../../view_models/pet_management_view_model.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../data/models/pet.dart';
+import '../../../data/constants/veterinary_guidelines.dart';
 import 'widgets/pet_list_item.dart';
 
 class PetManagementView extends ConsumerStatefulWidget {
@@ -29,6 +30,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
   String _sex = 'male';
   bool _isNeutered = false;
   bool _isCreatingNew = false;
+  String? _selectedInsulinType;
 
   @override
   void dispose() {
@@ -53,7 +55,9 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
           sex: _sex,
           isNeutered: _isNeutered,
           weightKg: double.tryParse(_weightController.text),
-          insulinType: _insulinTypeController.text.trim(),
+          insulinType: _selectedInsulinType == '기타' 
+              ? _insulinTypeController.text.trim() 
+              : (_selectedInsulinType ?? ''),
           insulinUnitIu: double.tryParse(_insulinDoseController.text),
           vetClinic: _vetClinicController.text.trim(),
         );
@@ -71,6 +75,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
       _insulinTypeController.clear();
       _insulinDoseController.clear();
       _vetClinicController.clear();
+      _selectedInsulinType = null;
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -313,10 +318,40 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                   Row(
                     children: [
                       Expanded(
-                        child: _buildTextField(
-                          controller: _insulinTypeController,
-                          label: '인슐린 종류 (선택)',
-                          icon: LucideIcons.syringe,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            DropdownButtonFormField<String>(
+                              value: _selectedInsulinType,
+                              decoration: _inputDecoration(
+                                '인슐린 종류 (선택)',
+                                LucideIcons.syringe,
+                              ),
+                              items: VeterinaryGuidelines.insulinTypes
+                                  .map((type) => DropdownMenuItem(
+                                        value: type,
+                                        child: Text(type, overflow: TextOverflow.ellipsis),
+                                      ))
+                                  .toList(),
+                              onChanged: (val) {
+                                setState(() {
+                                  _selectedInsulinType = val;
+                                  if (val != '기타') {
+                                    _insulinTypeController.clear();
+                                  }
+                                });
+                              },
+                              isExpanded: true,
+                            ),
+                            if (_selectedInsulinType == '기타') ...[
+                              const SizedBox(height: 8),
+                              _buildTextField(
+                                controller: _insulinTypeController,
+                                label: '기타 인슐린 직접 입력',
+                                icon: LucideIcons.penLine,
+                              ),
+                            ],
+                          ],
                         ),
                       ),
                       const SizedBox(width: 16),
