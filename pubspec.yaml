@@ -2,7 +2,7 @@ name: mettie
 description: "Mettie — 반려동물 혈당 및 일상 기록 AI 어시스턴트"
 publish_to: "none"
 
-version: 1.0.0+9
+version: 1.0.0+10
 
 environment:
   sdk: ^3.12.0
