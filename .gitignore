@@ -5,6 +5,16 @@
 *.swp
 .DS_Store
 .atom/
+.buildlog/
+.history
+.svn/
+.env
+.env*
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
 .build/
 .buildlog/
 .history
@@ -43,3 +53,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# gemini
+.gemini/
