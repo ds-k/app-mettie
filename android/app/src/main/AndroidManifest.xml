@@ -46,6 +46,7 @@
             android:name="flutterEmbedding"
             android:value="2" />
         <!-- Required for MediaPipe GPU inference on some devices -->
+        <uses-native-library android:name="libvndksupport.so" android:required="false"/>
         <uses-native-library android:name="libOpenCL.so" android:required="false"/>
         <uses-native-library android:name="libOpenCL-car.so" android:required="false"/>
         <uses-native-library android:name="libOpenCL-pixel.so" android:required="false"/>
