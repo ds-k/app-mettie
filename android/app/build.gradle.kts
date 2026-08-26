@@ -52,6 +52,22 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
+
+    packaging {
+        jniLibs {
+            // Qualcomm이 배포하는 QNN Hexagon DSP skeleton 바이너리로, flutter_gemma_litertlm이
+            // NPU 백엔드용으로 무조건 번들링하지만 4KB 페이지 정렬로만 배포되어 Play의 16KB
+            // 페이지 크기 요구사항(2025-11-01 시행)을 위반한다. Qualcomm 쪽 SDK 문제라 플러그인
+            // 업그레이드로는 해결 불가. 앱이 NPU 백엔드를 지정하지 않으므로 제외해도 기능에
+            // 영향 없음(엔진이 자동으로 GPU/CPU로 폴백).
+            excludes += setOf(
+                "**/libQnnHtpV73Skel.so",
+                "**/libQnnHtpV75Skel.so",
+                "**/libQnnHtpV79Skel.so",
+                "**/libQnnHtpV81Skel.so",
+            )
+        }
+    }
 }
 
 kotlin {
