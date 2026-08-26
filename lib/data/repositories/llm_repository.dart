@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_gemma/flutter_gemma.dart';
+import 'package:flutter_gemma_litertlm/flutter_gemma_litertlm.dart';
 import 'package:mettie/ui/view_models/ai_coach_view_model.dart';
 
 final llmRepositoryProvider = Provider<LlmRepository>((ref) {
@@ -26,7 +27,9 @@ class LlmRepository {
   /// 앱 기동 시 FlutterGemma 초기화만 수행합니다. (가볍게 동작)
   Future<void> initialize() async {
     try {
-      await FlutterGemma.initialize();
+      await FlutterGemma.initialize(
+        inferenceEngines: const [LiteRtLmEngine()],
+      );
       _isInitialized = true;
     } catch (e) {
       debugPrint('LLM Initialization Failed: $e');

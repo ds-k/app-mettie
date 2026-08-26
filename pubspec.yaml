@@ -2,7 +2,7 @@ name: mettie
 description: "Mettie — 반려동물 혈당 및 일상 기록 AI 어시스턴트"
 publish_to: "none"
 
-version: 1.0.0+10
+version: 1.0.0+12
 
 environment:
   sdk: ^3.12.0
@@ -32,7 +32,8 @@ dependencies:
   sign_in_with_apple: ^8.0.0
   crypto: ^3.0.7
   intl: ^0.20.2
-  flutter_gemma: ^0.16.4
+  flutter_gemma: ^1.6.5
+  flutter_gemma_litertlm: ^1.5.2
   dio: ^5.9.2
   flutter_markdown: ^0.7.7+1
   url_launcher: ^6.3.2
