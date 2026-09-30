@@ -332,7 +332,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             DropdownButtonFormField<String>(
-                              value: _selectedInsulinType,
+                              initialValue: _selectedInsulinType,
                               decoration: _dropdownDecoration(
                                 '인슐린 종류 (선택)',
                                 LucideIcons.syringe,

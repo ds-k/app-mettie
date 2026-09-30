@@ -369,7 +369,7 @@ class _RecordEntryBottomSheetState
                             ),
                             const SizedBox(height: 12),
                             DropdownButtonFormField<String>(
-                              value: _selectedInsulinType,
+                              initialValue: _selectedInsulinType,
                               decoration: _dropdownDecoration(
                                 '인슐린 종류 (변경시에만 선택)',
                                 LucideIcons.pill,
