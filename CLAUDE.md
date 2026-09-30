@@ -18,7 +18,12 @@ dart run flutter_launcher_icons        # 앱 아이콘 재생성 (pubspec 설정
 dart run flutter_native_splash:create  # 스플래시 재생성
 ```
 
-`test/` 디렉터리는 아직 없다. 테스트를 추가하면 `flutter test test/<file>_test.dart`로 단일 파일을 실행한다.
+```bash
+flutter test                                   # 전체 테스트
+flutter test test/reload_regression_test.dart  # 단일 파일
+```
+
+provider 테스트는 `ProviderContainer`에 `authStateProvider`와 저장소 provider를 fake로 override해서 Supabase 없이 돌린다 (`test/reload_regression_test.dart` 참고).
 
 ## git에 없는 로컬 파일 (새 워크트리 세팅 시 복사 필요)
 
@@ -32,6 +37,7 @@ MVVM + Riverpod 3. 레이어 방향은 `ui/views → ui/view_models → data/rep
 - **상태 관리 규칙**: Riverpod 코드 생성(`@riverpod` annotation, build_runner)을 쓰지 않는다. `Provider` / `StreamProvider` / `NotifierProvider` + `Notifier`를 직접 선언한다. provider는 해당 클래스와 같은 파일 상단에 정의한다.
 - **Repository**: `Supabase.instance.client`를 주입받는 얇은 래퍼. 에러는 한국어 사용자 메시지 문자열을 그대로 `throw`하는 패턴이다 (뷰에서 그대로 표시).
 - **인증·라우팅**: `authStateProvider`(Supabase `onAuthStateChange` 스트림)를 `routerProvider`가 watch하고, go_router `redirect`에서 로그인 여부로 `/login` ↔ `/home/dashboard`를 분기한다. 홈은 `StatefulShellRoute.indexedStack` 4탭(dashboard / ai-coach / pet-management / profile). 소셜 로그인 딥링크는 `com.mettie.app://login-callback`.
+- **리빌드 범위 주의**: `routerProvider`는 인증 상태를 `watch`하지 않고 `refreshListenable`로 redirect만 다시 평가한다. 인증·펫처럼 객체가 자주 새로 만들어지는 provider는 `.select((x) => x?.id)`로 ID만 구독하고, 화면의 로딩 분기는 `isLoading`이 아니라 `!hasValue`로 판단한다. 어기면 대시보드가 반복해서 리로드된다.
 - **데이터 흐름**: `petsProvider`(pet_management_view_model) → `selectedPetIdProvider` → `currentPetProvider` → `recordsStreamProvider`(Supabase realtime `.stream()`) → `DashboardViewModel`이 `ref.listen`으로 요약 통계 계산. 여러 뷰모델이 `currentPetProvider`를 공유한다.
 
 ### 멀티 테넌트 데이터 모델

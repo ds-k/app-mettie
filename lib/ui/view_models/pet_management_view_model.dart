@@ -7,8 +7,9 @@ import 'dashboard_view_model.dart';
 
 final petsProvider = FutureProvider<List<Pet>>((ref) async {
   // 인증 상태가 변경(로그인/로그아웃)되면 반려동물 목록도 다시 가져옵니다.
-  final user = ref.watch(currentUserProvider);
-  if (user == null) {
+  // User 객체는 토큰 갱신마다 새로 만들어지므로, 사용자 ID가 바뀔 때만 다시 불러온다.
+  final userId = ref.watch(currentUserProvider.select((u) => u?.id));
+  if (userId == null) {
     return [];
   }
   final repo = ref.watch(petRepositoryProvider);

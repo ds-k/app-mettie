@@ -53,8 +53,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
   Widget build(BuildContext context) {
     final petsAsync = ref.watch(petsProvider);
 
-    // 에러 발생 시
-    if (petsAsync.hasError) {
+    // 에러 발생 시 (기존 데이터가 있으면 그대로 보여준다)
+    if (petsAsync.hasError && !petsAsync.hasValue) {
       return Scaffold(
         backgroundColor: kSurface,
         body: Center(
@@ -95,8 +95,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
       );
     }
 
-    // 로딩 중
-    if (petsAsync.isLoading || (petsAsync.isRefreshing && !petsAsync.hasValue) || petsAsync.value == null) {
+    // 최초 로딩 중 — 다시 불러오는 중에 스피너로 바꾸면 탭 셸 전체가 다시 만들어진다
+    if (!petsAsync.hasValue) {
       return const Scaffold(
         backgroundColor: kSurface,
         body: Center(child: CircularProgressIndicator(color: kBrandBlue)),

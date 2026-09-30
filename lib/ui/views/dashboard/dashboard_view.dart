@@ -24,10 +24,8 @@ class DashboardView extends ConsumerWidget {
 
     final petsAsync = ref.watch(petsProvider);
 
-    // 로딩 상태 처리
-    if (petsAsync.isLoading ||
-        (petsAsync.isRefreshing && !petsAsync.hasValue) ||
-        petsAsync.value == null) {
+    // 로딩 상태 처리 — 이미 데이터가 있으면 다시 불러오는 중에도 기존 화면을 유지한다
+    if (!petsAsync.hasValue) {
       return const Scaffold(
         backgroundColor: Colors.transparent,
         body: Center(child: CircularProgressIndicator(color: kBrandBlue)),

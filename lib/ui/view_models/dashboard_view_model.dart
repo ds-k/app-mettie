@@ -39,11 +39,12 @@ final currentPetProvider = Provider<Pet?>((ref) {
 
 // Records 실시간 스트림
 final recordsStreamProvider = StreamProvider<List<Record>>((ref) {
-  final pet = ref.watch(currentPetProvider);
-  if (pet == null) return const Stream.empty();
-  
+  // 펫 목록을 다시 불러오면 Pet 인스턴스가 바뀌므로, ID가 바뀔 때만 실시간 구독을 다시 연결한다.
+  final petId = ref.watch(currentPetProvider.select((p) => p?.id));
+  if (petId == null) return const Stream.empty();
+
   final repo = ref.watch(recordRepositoryProvider);
-  return repo.watchRecords(pet.id);
+  return repo.watchRecords(petId);
 });
 
 class DashboardState {

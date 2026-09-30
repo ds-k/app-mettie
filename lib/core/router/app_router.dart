@@ -19,13 +19,21 @@ final _shellNavigatorPetManagementKey = GlobalKey<NavigatorState>(debugLabel: 'p
 final _shellNavigatorProfileKey = GlobalKey<NavigatorState>(debugLabel: 'profileShell');
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authStateProvider);
+  // 인증 상태를 watch하면 토큰 갱신 같은 이벤트마다 GoRouter가 새로 만들어져 화면 전체가 다시 그려진다.
+  // 라우터는 한 번만 만들고, 로그인 여부가 바뀔 때만 redirect를 다시 평가한다.
+  final authRefresh = ValueNotifier<bool>(false);
+  ref.listen<bool>(
+    authStateProvider.select((s) => s.value?.session != null),
+    (_, isAuth) => authRefresh.value = isAuth,
+  );
 
-  return GoRouter(
+  final router = GoRouter(
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/splash',
+    refreshListenable: authRefresh,
     redirect: (context, state) {
-      if (authState.isLoading || !authState.hasValue) return null;
+      final authState = ref.read(authStateProvider);
+      if (!authState.hasValue) return null;
 
       final isAuth = authState.value?.session != null;
       final location = state.matchedLocation;
@@ -114,4 +122,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
     ],
   );
+
+  ref.onDispose(() {
+    router.dispose();
+    authRefresh.dispose();
+  });
+
+  return router;
 });
