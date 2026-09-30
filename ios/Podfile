@@ -38,5 +38,9 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
+    # 일부 pod(예: Flutter)의 podspec 기본값 13.0은 Xcode 27 지원 범위(15.0+) 밖이라 빌드 실패
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
+    end
   end
 end
