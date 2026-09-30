@@ -1,33 +1,15 @@
 PODS:
   - Flutter (1.0.0)
-  - flutter_gemma (0.16.5):
-    - Flutter
-    - MediaPipeTasksGenAI (= 0.10.33)
-    - MediaPipeTasksGenAIC (= 0.10.33)
-  - MediaPipeTasksGenAI (0.10.33):
-    - MediaPipeTasksGenAIC (= 0.10.33)
-  - MediaPipeTasksGenAIC (0.10.33)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
-  - flutter_gemma (from `.symlinks/plugins/flutter_gemma/ios`)
-
-SPEC REPOS:
-  trunk:
-    - MediaPipeTasksGenAI
-    - MediaPipeTasksGenAIC
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
-  flutter_gemma:
-    :path: ".symlinks/plugins/flutter_gemma/ios"
 
 SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  flutter_gemma: 6bf34a12b45df17e3db9b33db7fea51506c8628f
-  MediaPipeTasksGenAI: 8eed8e6d03fe26d30c4205cb5295ec7b394432ad
-  MediaPipeTasksGenAIC: cb098ecea44e248efe8fe7e2f62b4cb0df781802
 
 PODFILE CHECKSUM: 401c052836b5d8360e70cf5b247078e81c156e8a
 
