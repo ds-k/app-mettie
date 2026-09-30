@@ -10,7 +10,6 @@ Mettie(메티) — 당뇨 반려동물(개/고양이)의 혈당·인슐린·사�
 
 ```bash
 flutter pub get                        # 의존성 설치 (새 워크트리에서도 먼저 실행)
-cd ios && pod install && cd ..         # iOS 네이티브 의존성
 flutter analyze                        # 린트 (flutter_lints)
 flutter run -d <device-id>             # 실행 (flutter devices로 ID 확인)
 flutter build appbundle --release      # Play 스토어 배포용
@@ -56,4 +55,5 @@ MVVM + Riverpod 3. 레이어 방향은 `ui/views → ui/view_models → data/rep
 
 - **Android 16KB 페이지 크기**: Play는 모든 `.so`가 16KB 정렬이어야 받아준다. `android/app/build.gradle.kts`의 `packaging.jniLibs.excludes`에서 Qualcomm QNN `libQnnHtpV*Skel.so`를 제외하고 있으니 지우지 않는다. 네이티브 의존성을 추가하거나 올릴 때는 README의 `llvm-readelf` 검증 스크립트로 AAB를 확인한다.
 - **release 빌드는 ProGuard 규칙**(`android/app/proguard-rules.pro`)이 적용된다. 네이티브·리플렉션 기반 플러그인을 추가하면 keep 규칙이 필요한지 확인한다.
-- **iOS는 Swift Package Manager가 켜져 있다.** SPM을 지원하는 플러그인(예: `flutter_gemma`)은 CocoaPods가 아니라 SPM으로 들어오므로 `Podfile.lock`에 없는 게 정상이다.
+- **iOS는 CocoaPods 없이 Swift Package Manager만 쓴다.** `Podfile`이 없는 게 정상이다. SPM을 지원하지 않는 플러그인을 추가하면 Flutter가 기본 `Podfile`을 다시 만드는데, 그때는 `post_install`에서 모든 pod의 `IPHONEOS_DEPLOYMENT_TARGET`을 16.0으로 맞춰야 한다 (Xcode 27은 15.0 미만 타깃을 빌드하지 못함).
+- **Xcode 27 + Flutter 3.47.5 이상이 필요하다.** 3.44 이하는 Xcode 27의 `lipo -verify_arch` 변경 때문에 시뮬레이터 유니버설 빌드가 실패한다.
