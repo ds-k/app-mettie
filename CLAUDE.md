@@ -30,6 +30,20 @@ provider 테스트는 `ProviderContainer`에 `authStateProvider`와 저장소 pr
 - `.env` — `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `GOOGLE_WEB_CLIENT_ID`, `GOOGLE_IOS_CLIENT_ID`, `WEB_BASE_URL`. `pubspec.yaml`에 에셋으로 번들되며 `main.dart`에서 `flutter_dotenv`로 로드한다.
 - `android/key.properties`, `android/app/upload-keystore.jks` — 릴리스 서명용. 없으면 release 빌드 서명 실패 (debug는 무관).
 
+## Supabase (`supabase/`)
+
+마이그레이션, RLS 테스트, Edge Function을 레포에서 관리한다. 운영 프로젝트 ref는 `mqbppfnbzkvkzjbdzhow`.
+
+```bash
+supabase start -x studio,imgproxy,vector,logflare,supavisor,mailpit,postgres-meta,storage-api,edge-runtime  # 로컬 dev DB (Docker)
+supabase db reset          # 로컬에 마이그레이션 전부 재적용
+supabase test db           # supabase/tests/*.sql (pgTAP) 실행
+```
+
+- 스키마 변경은 `supabase/migrations/`에 파일로 추가하고 **로컬에서 `supabase test db` 통과 후** 운영에 반영한다.
+- 이 개발 환경에서는 원격 DB 직접 연결(`db push`, `migration list --linked`, 링크된 상태의 `supabase start`)이 멈춘다. 운영 반영은 Management API를 쓰는 `supabase db query --linked -f <file>`로 하고, `supabase_migrations.schema_migrations`에 버전을 같이 기록한다. 로컬 기동이 멈추면 `supabase/.temp`(링크 정보)를 잠시 치우고 띄운다.
+- 가족 참여는 `join_family_with_code` RPC로만 한다. `user_families` 직접 INSERT는 자기가 만든 가족에 owner로 연결할 때만 허용된다 (`supabase/tests/family_rls.test.sql`).
+
 ## 아키텍처
 
 MVVM + Riverpod 3. 레이어 방향은 `ui/views → ui/view_models → data/repositories → Supabase / flutter_gemma`.
@@ -42,7 +56,7 @@ MVVM + Riverpod 3. 레이어 방향은 `ui/views → ui/view_models → data/rep
 
 ### 멀티 테넌트 데이터 모델
 
-펫은 사용자가 아니라 **family**에 속한다. `users ↔ user_families(role: owner/member) ↔ families → pets → records`. 사용자가 볼 수 있는 펫은 `pets`를 `families!inner(user_families!inner(...))`로 조인해 `user_id`로 필터링한다 (`PetRepository.getPets`). 가족 공유는 `invitations` 테이블의 6자리 코드(24시간 만료)로 한다. DB 스키마 SQL은 레포에 없다. README의 ER 다이어그램을 참고한다.
+펫은 사용자가 아니라 **family**에 속한다. `users ↔ user_families(role: owner/member) ↔ families → pets → records`. 사용자가 볼 수 있는 펫은 `pets`를 `families!inner(user_families!inner(...))`로 조인해 `user_id`로 필터링한다 (`PetRepository.getPets`). 가족 공유는 `invitations` 테이블의 6자리 코드(24시간 만료)로 한다. 스키마는 `supabase/migrations/`가 기준이다.
 
 ### 온디바이스 AI 코치
 
