@@ -7,16 +7,18 @@ import '../../ui/views/splash/splash_view.dart';
 import '../../ui/views/login/login_view.dart';
 import '../../ui/views/login/email_login_view.dart';
 import '../../ui/views/home/home_view.dart';
-import '../../ui/views/dashboard/dashboard_view.dart';
+import '../../ui/views/today/today_view.dart';
+import '../../ui/views/trends/trends_view.dart';
 import '../../ui/views/ai_coach/ai_coach_view.dart';
+import '../../ui/views/book/book_view.dart';
 import '../../ui/views/pet_management/pet_management_view.dart';
 import '../../ui/views/profile/profile_view.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
-final _shellNavigatorDashboardKey = GlobalKey<NavigatorState>(debugLabel: 'dashboardShell');
+final _shellNavigatorTodayKey = GlobalKey<NavigatorState>(debugLabel: 'todayShell');
+final _shellNavigatorTrendsKey = GlobalKey<NavigatorState>(debugLabel: 'trendsShell');
 final _shellNavigatorAiCoachKey = GlobalKey<NavigatorState>(debugLabel: 'aiCoachShell');
-final _shellNavigatorPetManagementKey = GlobalKey<NavigatorState>(debugLabel: 'petManagementShell');
-final _shellNavigatorProfileKey = GlobalKey<NavigatorState>(debugLabel: 'profileShell');
+final _shellNavigatorBookKey = GlobalKey<NavigatorState>(debugLabel: 'bookShell');
 
 final routerProvider = Provider<GoRouter>((ref) {
   // 인증 상태를 watch하면 토큰 갱신 같은 이벤트마다 GoRouter가 새로 만들어져 화면 전체가 다시 그려진다.
@@ -47,11 +49,11 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // 인증 완료 상태에서 로그인 관련 화면에 있으면 홈으로 이동
       if (isAuth && (location == '/login' || location == '/login/email' || location == '/splash')) {
-        return '/home/dashboard';
+        return '/home/today';
       }
       
       if (isAuth && location == '/home') {
-        return '/home/dashboard';
+        return '/home/today';
       }
 
       return null;
@@ -77,44 +79,44 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
         ],
       ),
+      // 계정·알림 설정은 건강수첩 등 각 탭 상단의 톱니에서 연다
+      GoRoute(
+        path: '/settings',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const ProfileView(),
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return HomeView(navigationShell: navigationShell);
         },
         branches: [
           StatefulShellBranch(
-            navigatorKey: _shellNavigatorDashboardKey,
+            navigatorKey: _shellNavigatorTodayKey,
             routes: [
-              GoRoute(
-                path: '/home/dashboard',
-                builder: (context, state) => const DashboardView(),
-              ),
+              GoRoute(path: '/home/today', builder: (context, state) => const TodayView()),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _shellNavigatorTrendsKey,
+            routes: [
+              GoRoute(path: '/home/trends', builder: (context, state) => const TrendsView()),
             ],
           ),
           StatefulShellBranch(
             navigatorKey: _shellNavigatorAiCoachKey,
             routes: [
-              GoRoute(
-                path: '/home/ai-coach',
-                builder: (context, state) => const AiCoachView(),
-              ),
+              GoRoute(path: '/home/ai-coach', builder: (context, state) => const AiCoachView()),
             ],
           ),
           StatefulShellBranch(
-            navigatorKey: _shellNavigatorPetManagementKey,
+            navigatorKey: _shellNavigatorBookKey,
             routes: [
               GoRoute(
-                path: '/home/pet-management',
-                builder: (context, state) => const PetManagementView(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            navigatorKey: _shellNavigatorProfileKey,
-            routes: [
-              GoRoute(
-                path: '/home/profile',
-                builder: (context, state) => const ProfileView(),
+                path: '/home/book',
+                builder: (context, state) => const BookView(),
+                routes: [
+                  GoRoute(path: 'pets', builder: (context, state) => const PetManagementView()),
+                ],
               ),
             ],
           ),

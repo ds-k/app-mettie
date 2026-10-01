@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../data/constants/veterinary_guidelines.dart';
 import '../../data/models/pet.dart';
 import '../../data/repositories/pet_repository.dart';
 import '../../data/repositories/auth_repository.dart';
@@ -139,6 +140,12 @@ class PetManagementViewModel extends Notifier<PetManagementState> {
         bodyConditionScore: bodyConditionScore,
         vetClinic: vetClinic,
         vetMemo: vetMemo,
+        // 인슐린 정보나 당뇨 진단이 있으면 당뇨 모듈을 켠다
+        conditions: [
+          if ((insulinType?.isNotEmpty ?? false) || insulinUnitIu != null || (diagnosis?.contains('당뇨') ?? false))
+            'diabetes',
+        ],
+        insulinConcentration: VeterinaryGuidelines.concentrationOf(insulinType),
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );

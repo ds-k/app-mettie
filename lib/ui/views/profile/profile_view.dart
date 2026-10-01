@@ -5,7 +5,6 @@ import '../../../core/constants/app_colors.dart';
 import '../../view_models/profile_view_model.dart';
 import 'widgets/profile_app_settings.dart';
 import 'widgets/profile_account_info.dart';
-import 'widgets/profile_family_management.dart';
 
 class ProfileView extends ConsumerStatefulWidget {
   const ProfileView({super.key});
@@ -27,10 +26,11 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
     });
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: kSurface,
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: kInk),
         title: const Text(
-          '프로필',
+          '설정',
           style: TextStyle(color: kInk, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
@@ -45,13 +45,8 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
             const ProfileAccountInfo(),
             const SizedBox(height: 32),
 
-            // 가족 관리 섹션
-            const ProfileFamilyManagement(),
-
-            const SizedBox(height: 32),
-
+            // 가족 관리는 건강수첩으로 옮겼다
             // 앱 정보 및 설정 섹션
-            const SizedBox(height: 32),
             const ProfileAppSettings(),
             const SizedBox(height: 100),
           ],

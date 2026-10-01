@@ -3,6 +3,8 @@ import 'package:mettie/data/models/pet.dart';
 import 'package:mettie/data/models/record.dart';
 import 'package:mettie/domain/dosing.dart';
 import 'package:mettie/domain/glucose.dart';
+import 'package:mettie/domain/timeline.dart';
+import 'package:mettie/utils/korean.dart';
 
 Pet _pet({String species = 'cat', int? min, int? max, int hypo = 80}) => Pet(
       id: 'p',
@@ -116,5 +118,69 @@ void main() {
       expect(next.scheduledAt, DateTime(2026, 10, 2, 7));
       expect(nextDose(const [], const [], now), isNull);
     });
+  });
+
+  group('타임라인', () {
+    Record food(DateTime at, String type, double g, {String writer = 'u'}) => Record(
+          id: '$type$at',
+          petId: 'p',
+          writerId: writer,
+          recordedAt: at,
+          foodType: type,
+          foodAmountG: g,
+          createdAt: at,
+        );
+
+    test('같은 작성자의 습식·건식 기록은 한 끼로 묶는다', () {
+      final t = DateTime(2026, 10, 1, 18, 55);
+      final entries = buildTimeline([
+        food(t, 'wet', 45),
+        food(t.add(const Duration(minutes: 1)), 'dry', 30),
+        _rec(DateTime(2026, 10, 1, 19), dose: 2, status: 'given'),
+      ]);
+      expect(entries.map((e) => e.kind), [EntryKind.insulin, EntryKind.meal]);
+      expect(entries.last.records.length, 2);
+    });
+
+    test('다른 사람이 기록했거나 시간이 떨어진 사료는 묶지 않는다', () {
+      final t = DateTime(2026, 10, 1, 7);
+      expect(buildTimeline([food(t, 'wet', 45), food(t, 'dry', 30, writer: 'mom')]).length, 2);
+      expect(buildTimeline([food(t, 'wet', 45), food(t.add(const Duration(minutes: 40)), 'dry', 30)]).length, 2);
+    });
+
+    test('v1.0의 복합 기록은 인슐린 줄로 보이고 사료 필터에도 걸린다', () {
+      final legacy = Record(
+        id: 'l',
+        petId: 'p',
+        writerId: 'u',
+        recordedAt: DateTime(2026, 9, 1, 7),
+        insulinDose: 2,
+        injectionStatus: 'given',
+        foodAmountG: 50,
+        createdAt: DateTime(2026, 9, 1),
+      );
+      final entry = buildTimeline([legacy]).single;
+      expect(entry.kind, EntryKind.insulin);
+      expect(entry.contains(EntryKind.meal), isTrue);
+    });
+
+    test('하루 요약은 투여 완료·생략과 혈당 평균을 센다', () {
+      final day = DateTime(2026, 9, 22);
+      final s = DaySummary.of([
+        _rec(day.add(const Duration(hours: 7)), dose: 2.5, status: 'given'),
+        _rec(day.add(const Duration(hours: 19)), dose: 0, status: 'skipped'),
+        _rec(day.add(const Duration(hours: 6)), glucose: 310),
+        _rec(day.add(const Duration(hours: 18)), glucose: 290),
+      ], dosesPlanned: 2);
+      expect([s.dosesGiven, s.dosesSkipped, s.dosesPlanned], [1, 1, 2]);
+      expect(s.glucoseAverage, 300);
+    });
+  });
+
+  test('주격 조사', () {
+    expect(subjectOf('나'), '내가');
+    expect(subjectOf('엄마'), '엄마가');
+    expect(subjectOf('지민'), '지민이가');
+    expect(subjectOf('Mom'), 'Mom가');
   });
 }

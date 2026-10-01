@@ -31,6 +31,17 @@ class VeterinaryGuidelines {
 - 임의 용량 변경 경고: 인슐린 용량은 최소 3~7일간의 추세(곡선)를 보고 변경해야 하며, 단일 측정값에 기반한 보호자의 임의 증량은 저혈당(소모기 효과 포함) 위험이 있습니다.
 ''';
 
+  /// 인슐린 종류별 농도. 반려동물 전용 인슐린(캐닌슐린, 프로징크)은 U-40이고 사람용은 대부분 U-100이다.
+  /// 주사기 눈금이 농도와 다르면 실제 투여량이 2.5배까지 달라진다.
+  static String? concentrationOf(String? insulinType) {
+    if (insulinType == null || insulinType.isEmpty || insulinType == '기타') return null;
+    if (insulinType.contains('캐닌슐린') || insulinType.contains('Vetsulin') || insulinType.contains('프로징크')) {
+      return 'U-40';
+    }
+    if (insulinType.contains('투제오')) return 'U-300';
+    return 'U-100';
+  }
+
   /// 특정 인슐린에 대한 특성 텍스트 반환
   static String getInsulinInfo(String? type) {
     if (type == null || type.isEmpty) return '';

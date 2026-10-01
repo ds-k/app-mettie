@@ -35,18 +35,11 @@ class _HomeViewState extends ConsumerState<HomeView> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('기록을 추가하려면 먼저 반려동물을 등록해주세요.')),
       );
-      _onTabTapped(2);
+      _onTabTapped(3);
       return;
     }
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return const RecordEntryBottomSheet();
-      },
-    );
+    showRecordEntrySheet(context);
   }
 
   @override
@@ -154,11 +147,11 @@ class _HomeViewState extends ConsumerState<HomeView> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              _buildNavItem(0, LucideIcons.layoutDashboard), // 대시보드
-                              _buildNavItem(1, LucideIcons.sparkle), // AI 코칭
+                              _buildNavItem(0, LucideIcons.house, '홈'),
+                              _buildNavItem(1, LucideIcons.chartLine, '추이'),
                               _buildAddButton(),
-                              _buildNavItem(2, LucideIcons.pawPrint), // 반려동물
-                              _buildNavItem(3, LucideIcons.userCircle), // 프로필
+                              _buildNavItem(2, LucideIcons.sparkle, 'AI 코치'),
+                              _buildNavItem(3, LucideIcons.bookHeart, '건강수첩'),
                             ],
                           ),
                         ),
@@ -171,9 +164,13 @@ class _HomeViewState extends ConsumerState<HomeView> {
     );
   }
 
-  Widget _buildNavItem(int index, IconData icon) {
+  Widget _buildNavItem(int index, IconData icon, String label) {
     final isSelected = widget.navigationShell.currentIndex == index;
-    return GestureDetector(
+    return Semantics(
+      label: label,
+      button: true,
+      selected: isSelected,
+      child: GestureDetector(
       onTap: () => _onTabTapped(index),
       behavior: HitTestBehavior.opaque,
       child: Container(
@@ -186,11 +183,15 @@ class _HomeViewState extends ConsumerState<HomeView> {
         ),
         child: Icon(icon, color: isSelected ? kInk : kSlate, size: 26),
       ),
+      ),
     );
   }
 
   Widget _buildAddButton() {
-    return GestureDetector(
+    return Semantics(
+      label: '기록 추가',
+      button: true,
+      child: GestureDetector(
       onTap: _showRecordEntryBottomSheet,
       behavior: HitTestBehavior.opaque,
       child: Container(
@@ -207,6 +208,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
           ],
         ),
         child: const Icon(LucideIcons.plus, color: Colors.white, size: 26),
+      ),
       ),
     );
   }
