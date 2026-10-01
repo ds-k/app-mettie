@@ -46,13 +46,16 @@ supabase test db           # supabase/tests/*.sql (pgTAP) 실행
 
 ## 아키텍처
 
-MVVM + Riverpod 3. 레이어 방향은 `ui/views → ui/view_models → data/repositories → Supabase / flutter_gemma`.
+MVVM + Riverpod 3. 레이어 방향은 `ui/views → ui/view_models → data/repositories → Supabase / flutter_gemma`. 화면과 무관한 계산(혈당 상태 분류, 목표 범위 비율, 투여 회차·중복 판정, 타임라인 묶음)은 `lib/domain/`의 순수 함수로 두고 `test/domain_test.dart`로 고정한다.
 
 - **상태 관리 규칙**: Riverpod 코드 생성(`@riverpod` annotation, build_runner)을 쓰지 않는다. `Provider` / `StreamProvider` / `NotifierProvider` + `Notifier`를 직접 선언한다. provider는 해당 클래스와 같은 파일 상단에 정의한다.
 - **Repository**: `Supabase.instance.client`를 주입받는 얇은 래퍼. 에러는 한국어 사용자 메시지 문자열을 그대로 `throw`하는 패턴이다 (뷰에서 그대로 표시).
-- **인증·라우팅**: `authStateProvider`(Supabase `onAuthStateChange` 스트림)를 `routerProvider`가 watch하고, go_router `redirect`에서 로그인 여부로 `/login` ↔ `/home/dashboard`를 분기한다. 홈은 `StatefulShellRoute.indexedStack` 4탭(dashboard / ai-coach / pet-management / profile). 소셜 로그인 딥링크는 `com.mettie.app://login-callback`.
+- **인증·라우팅**: go_router `redirect`에서 로그인 여부로 `/login` ↔ `/home/today`를 분기한다. 홈은 `StatefulShellRoute.indexedStack` 4탭(`/home/today` 홈 · `/home/trends` 추이 · `/home/ai-coach` · `/home/book` 건강수첩)과 가운데 기록 추가 버튼. 설정은 `/settings`(최상위 내비게이터). 바텀시트는 `useRootNavigator: true`로 열어야 하단 탭에 가리지 않는다. 소셜 로그인 딥링크는 `com.mettie.app://login-callback`.
 - **리빌드 범위 주의**: `routerProvider`는 인증 상태를 `watch`하지 않고 `refreshListenable`로 redirect만 다시 평가한다. 인증·펫처럼 객체가 자주 새로 만들어지는 provider는 `.select((x) => x?.id)`로 ID만 구독하고, 화면의 로딩 분기는 `isLoading`이 아니라 `!hasValue`로 판단한다. 어기면 대시보드가 반복해서 리로드된다.
-- **데이터 흐름**: `petsProvider`(pet_management_view_model) → `selectedPetIdProvider` → `currentPetProvider` → `recordsStreamProvider`(Supabase realtime `.stream()`) → `DashboardViewModel`이 `ref.listen`으로 요약 통계 계산. 여러 뷰모델이 `currentPetProvider`를 공유한다.
+- **데이터 흐름**: `petsProvider` → `selectedPetIdProvider` → `currentPetProvider` → `recordsStreamProvider`(펫별 최근 500건 realtime `.stream()`, 최신순). 다른 펫 기록은 `petRecordsProvider(petId)`, 작성자 이름은 `writerNameProvider`(RPC `family_members`), 남은 시간 표시는 `clockProvider`. 공용 provider는 `ui/view_models/dashboard_view_model.dart`에 있다.
+- **질환 모듈**: `pets.conditions`(현재 `diabetes`)에 따라 홈·건강수첩 카드가 달라진다. 당뇨가 아닌 펫도 공통 카드(오늘 기록, 체중)로 쓸 수 있어야 한다. 강아지·고양이 공용이므로 종별 기본값(목표 범위 강아지 100–250, 고양이 100–300)과 종별 관찰 항목을 유지한다.
+- **중복 투여**: 같은 펫 3시간 안의 두 번째 투여 완료 기록은 서버 트리거 `guard_duplicate_dose`가 `DUPLICATE_DOSE`로 거부한다. 앱은 저장 전 `findConflictingDose`로 먼저 경고하고, 보호자가 확인하면 `dose_override = true`로 저장한다. 창(3시간)은 `lib/domain/dosing.dart`와 트리거에서 같아야 한다.
+- **혼합 급여**: 사료는 종류별로 한 건씩 저장하고 타임라인(`buildTimeline`)에서 15분 안의 같은 작성자 사료를 한 끼로 묶는다.
 
 ### 멀티 테넌트 데이터 모델
 
