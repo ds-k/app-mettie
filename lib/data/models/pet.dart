@@ -19,6 +19,17 @@ class Pet {
   final String? vetMemo;
   final String? avatarUrl;
   final String? role; // e.g. 'owner', 'partner'
+
+  // ─── 관리 계획 (질환 모듈) ───────────────────────────────────────────────
+  final List<String> conditions; // 켜진 질환 모듈. 현재는 'diabetes'
+  final List<String> dosingTimes; // 'HH:mm' 투여 시각
+  final String? insulinConcentration; // 'U-40', 'U-100', 'U-300'
+  final String? syringeType; // 'U-40', 'U-100', 'pen'
+  final int hypoThreshold; // 저혈당 기준 (기본 80)
+  final String? glucoseMeter;
+  final String? defaultFoodWet;
+  final String? defaultFoodDry;
+
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -43,9 +54,20 @@ class Pet {
     this.vetMemo,
     this.avatarUrl,
     this.role,
+    this.conditions = const [],
+    this.dosingTimes = const [],
+    this.insulinConcentration,
+    this.syringeType,
+    this.hypoThreshold = 80,
+    this.glucoseMeter,
+    this.defaultFoodWet,
+    this.defaultFoodDry,
     required this.createdAt,
     required this.updatedAt,
   });
+
+  bool get hasDiabetes => conditions.contains('diabetes');
+  bool get isCat => species == 'cat';
 
   Pet copyWith({
     String? id,
@@ -68,6 +90,14 @@ class Pet {
     String? vetMemo,
     String? avatarUrl,
     String? role,
+    List<String>? conditions,
+    List<String>? dosingTimes,
+    String? insulinConcentration,
+    String? syringeType,
+    int? hypoThreshold,
+    String? glucoseMeter,
+    String? defaultFoodWet,
+    String? defaultFoodDry,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -92,6 +122,14 @@ class Pet {
       vetMemo: vetMemo ?? this.vetMemo,
       avatarUrl: avatarUrl ?? this.avatarUrl,
       role: role ?? this.role,
+      conditions: conditions ?? this.conditions,
+      dosingTimes: dosingTimes ?? this.dosingTimes,
+      insulinConcentration: insulinConcentration ?? this.insulinConcentration,
+      syringeType: syringeType ?? this.syringeType,
+      hypoThreshold: hypoThreshold ?? this.hypoThreshold,
+      glucoseMeter: glucoseMeter ?? this.glucoseMeter,
+      defaultFoodWet: defaultFoodWet ?? this.defaultFoodWet,
+      defaultFoodDry: defaultFoodDry ?? this.defaultFoodDry,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -127,6 +165,18 @@ class Pet {
       vetMemo: json['vet_memo'] as String?,
       avatarUrl: json['avatar_url'] as String?,
       role: json['role'] as String? ?? parsedRole,
+      conditions: (json['conditions'] as List?)?.cast<String>() ?? const [],
+      // Postgres time[]은 'HH:mm:ss'로 오므로 'HH:mm'으로 자른다
+      dosingTimes: (json['dosing_times'] as List?)
+              ?.map((t) => (t as String).substring(0, 5))
+              .toList() ??
+          const [],
+      insulinConcentration: json['insulin_concentration'] as String?,
+      syringeType: json['syringe_type'] as String?,
+      hypoThreshold: json['hypo_threshold'] as int? ?? 80,
+      glucoseMeter: json['glucose_meter'] as String?,
+      defaultFoodWet: json['default_food_wet'] as String?,
+      defaultFoodDry: json['default_food_dry'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
@@ -153,6 +203,14 @@ class Pet {
       'vet_clinic': vetClinic,
       'vet_memo': vetMemo,
       'avatar_url': avatarUrl,
+      'conditions': conditions,
+      'dosing_times': dosingTimes,
+      'insulin_concentration': insulinConcentration,
+      'syringe_type': syringeType,
+      'hypo_threshold': hypoThreshold,
+      'glucose_meter': glucoseMeter,
+      'default_food_wet': defaultFoodWet,
+      'default_food_dry': defaultFoodDry,
       // role is purely client-side/joined, do not send back to pets table on insert/update
     };
   }

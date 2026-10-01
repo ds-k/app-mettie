@@ -14,6 +14,8 @@ class Record {
   final double? insulinDose;
   final String? insulinType;
   final String? injectionStatus; // 'given', 'skipped', 'partial'
+  // 같은 회차 중복 투여 경고를 보호자가 확인하고 저장했는지 (서버 트리거 guard_duplicate_dose)
+  final bool doseOverride;
 
   // Food / Nutrition
   final String? foodBrand;
@@ -52,6 +54,7 @@ class Record {
     this.insulinDose,
     this.insulinType,
     this.injectionStatus,
+    this.doseOverride = false,
     this.foodBrand,
     this.foodType,
     this.foodAmountG,
@@ -82,6 +85,7 @@ class Record {
     double? insulinDose,
     String? insulinType,
     String? injectionStatus,
+    bool? doseOverride,
     String? foodBrand,
     String? foodType,
     double? foodAmountG,
@@ -111,6 +115,7 @@ class Record {
       insulinDose: insulinDose ?? this.insulinDose,
       insulinType: insulinType ?? this.insulinType,
       injectionStatus: injectionStatus ?? this.injectionStatus,
+      doseOverride: doseOverride ?? this.doseOverride,
       foodBrand: foodBrand ?? this.foodBrand,
       foodType: foodType ?? this.foodType,
       foodAmountG: foodAmountG ?? this.foodAmountG,
@@ -143,6 +148,7 @@ class Record {
       insulinDose: (json['insulin_dose'] as num?)?.toDouble(),
       insulinType: json['insulin_type'] as String?,
       injectionStatus: json['injection_status'] as String?,
+      doseOverride: json['dose_override'] as bool? ?? false,
       foodBrand: json['food_brand'] as String?,
       foodType: json['food_type'] as String?,
       foodAmountG: (json['food_amount_g'] as num?)?.toDouble(),
@@ -175,6 +181,7 @@ class Record {
       if (insulinDose != null) 'insulin_dose': insulinDose,
       if (insulinType != null) 'insulin_type': insulinType,
       if (injectionStatus != null) 'injection_status': injectionStatus,
+      if (doseOverride) 'dose_override': true,
       if (foodBrand != null) 'food_brand': foodBrand,
       if (foodType != null) 'food_type': foodType,
       if (foodAmountG != null) 'food_amount_g': foodAmountG,
