@@ -21,12 +21,13 @@ class TimelineEntry {
 }
 
 Set<EntryKind> kindsOf(Record r) => {
-      if (r.injectionStatus != null || r.insulinDose != null) EntryKind.insulin,
-      if (r.glucoseValue != null) EntryKind.glucose,
-      if (r.foodAmountG != null || (r.foodBrand?.isNotEmpty ?? false)) EntryKind.meal,
-      if (r.weightKg != null) EntryKind.weight,
-      if (_hasObservation(r)) EntryKind.observation,
-    };
+  if (r.injectionStatus != null || r.insulinDose != null) EntryKind.insulin,
+  if (r.glucoseValue != null) EntryKind.glucose,
+  if (r.foodAmountG != null || (r.foodBrand?.isNotEmpty ?? false))
+    EntryKind.meal,
+  if (r.weightKg != null) EntryKind.weight,
+  if (_hasObservation(r)) EntryKind.observation,
+};
 
 bool _hasObservation(Record r) =>
     r.waterIntake != null ||
@@ -38,18 +39,25 @@ bool _hasObservation(Record r) =>
 
 EntryKind _primaryKind(Record r) {
   final kinds = kindsOf(r);
-  for (final k in [EntryKind.insulin, EntryKind.glucose, EntryKind.meal, EntryKind.weight]) {
+  for (final k in [
+    EntryKind.insulin,
+    EntryKind.glucose,
+    EntryKind.meal,
+    EntryKind.weight,
+  ]) {
     if (kinds.contains(k)) return k;
   }
   return EntryKind.observation;
 }
 
-bool _isFoodOnly(Record r) => kindsOf(r).difference({EntryKind.meal, EntryKind.observation}).isEmpty &&
+bool _isFoodOnly(Record r) =>
+    kindsOf(r).difference({EntryKind.meal, EntryKind.observation}).isEmpty &&
     kindsOf(r).contains(EntryKind.meal);
 
 /// 기록을 최신순 타임라인으로 만든다. 같은 작성자의 사료 기록은 15분 안이면 한 끼로 묶는다.
 List<TimelineEntry> buildTimeline(Iterable<Record> records) {
-  final sorted = [...records]..sort((a, b) => b.recordedAt.compareTo(a.recordedAt));
+  final sorted = [...records]
+    ..sort((a, b) => b.recordedAt.compareTo(a.recordedAt));
   final entries = <TimelineEntry>[];
   for (final r in sorted) {
     if (_isFoodOnly(r) && entries.isNotEmpty) {
@@ -81,8 +89,9 @@ class DaySummary {
     required this.glucoseValues,
   });
 
-  double? get glucoseAverage =>
-      glucoseValues.isEmpty ? null : glucoseValues.reduce((a, b) => a + b) / glucoseValues.length;
+  double? get glucoseAverage => glucoseValues.isEmpty
+      ? null
+      : glucoseValues.reduce((a, b) => a + b) / glucoseValues.length;
 
   factory DaySummary.of(Iterable<Record> dayRecords, {int dosesPlanned = 0}) {
     var given = 0, skipped = 0;

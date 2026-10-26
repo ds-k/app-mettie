@@ -3,10 +3,11 @@ class Record {
   final String petId;
   final String writerId;
   final DateTime recordedAt;
-  
+
   // Blood Glucose
   final int? glucoseValue;
-  final String? glucoseType; // 'pre_meal', 'post_meal', 'fasting', 'nadir', 'spot'
+  final String?
+  glucoseType; // 'pre_meal', 'post_meal', 'fasting', 'nadir', 'spot'
   final String? measurementDevice;
   final bool isStressFlag;
 
@@ -161,9 +162,13 @@ class Record {
       activityLevel: json['activity_level'] as int?,
       vomitCount: json['vomit_count'] as int? ?? 0,
       stoolStatus: json['stool_status'] as String?,
-      symptomTags: (json['symptom_tags'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      symptomTags: (json['symptom_tags'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       notes: json['notes'] as String?,
-      attachments: (json['attachments'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      attachments: (json['attachments'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       createdAt: DateTime.parse(json['created_at'] as String).toLocal(),
     );
   }
@@ -187,7 +192,8 @@ class Record {
       if (foodAmountG != null) 'food_amount_g': foodAmountG,
       if (treatMemo != null) 'treat_memo': treatMemo,
       if (weightKg != null) 'weight_kg': weightKg,
-      if (bodyConditionScore != null) 'body_condition_score': bodyConditionScore,
+      if (bodyConditionScore != null)
+        'body_condition_score': bodyConditionScore,
       if (waterIntake != null) 'water_intake': waterIntake,
       if (urination != null) 'urination': urination,
       if (appetite != null) 'appetite': appetite,

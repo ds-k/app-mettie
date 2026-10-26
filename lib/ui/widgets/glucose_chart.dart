@@ -31,22 +31,39 @@ class GlucoseChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final glucose = records
-        .where((r) => r.glucoseValue != null && !r.recordedAt.isBefore(from) && !r.recordedAt.isAfter(to))
-        .toList()
-      ..sort((a, b) => a.recordedAt.compareTo(b.recordedAt));
+    final glucose =
+        records
+            .where(
+              (r) =>
+                  r.glucoseValue != null &&
+                  !r.recordedAt.isBefore(from) &&
+                  !r.recordedAt.isAfter(to),
+            )
+            .toList()
+          ..sort((a, b) => a.recordedAt.compareTo(b.recordedAt));
     final doses = records
-        .where((r) => r.injectionStatus != null && !r.recordedAt.isBefore(from) && !r.recordedAt.isAfter(to))
+        .where(
+          (r) =>
+              r.injectionStatus != null &&
+              !r.recordedAt.isBefore(from) &&
+              !r.recordedAt.isAfter(to),
+        )
         .toList();
 
-    final maxValue = glucose.fold<int>(range.max, (m, r) => r.glucoseValue! > m ? r.glucoseValue! : m);
+    final maxValue = glucose.fold<int>(
+      range.max,
+      (m, r) => r.glucoseValue! > m ? r.glucoseValue! : m,
+    );
     final minY = compact ? 40.0 : 0.0;
     final maxY = ((maxValue + 20) / 100).ceil() * 100.0;
     // 투여 눈금은 그래프 아래 띠에 놓는다
     final doseY = compact ? minY : 20.0;
     final spanMinutes = to.difference(from).inMinutes.toDouble();
 
-    final glucoseSpots = [for (final r in glucose) FlSpot(_x(r.recordedAt), r.glucoseValue!.toDouble())];
+    final glucoseSpots = [
+      for (final r in glucose)
+        FlSpot(_x(r.recordedAt), r.glucoseValue!.toDouble()),
+    ];
 
     return SizedBox(
       height: height,
@@ -57,33 +74,42 @@ class GlucoseChart extends StatelessWidget {
           minY: minY,
           maxY: maxY,
           clipData: const FlClipData.all(),
-          rangeAnnotations: RangeAnnotations(horizontalRangeAnnotations: [
-            HorizontalRangeAnnotation(
-              y1: range.min.toDouble(),
-              y2: range.max.toDouble(),
-              color: kStatusOkSoft.withValues(alpha: 0.7),
-            ),
-          ]),
-          extraLinesData: ExtraLinesData(horizontalLines: [
-            HorizontalLine(
-              y: range.hypo.toDouble(),
-              color: kStatusError.withValues(alpha: 0.8),
-              strokeWidth: 1,
-              dashArray: [4, 3],
-            ),
-          ]),
+          rangeAnnotations: RangeAnnotations(
+            horizontalRangeAnnotations: [
+              HorizontalRangeAnnotation(
+                y1: range.min.toDouble(),
+                y2: range.max.toDouble(),
+                color: kStatusOkSoft.withValues(alpha: 0.7),
+              ),
+            ],
+          ),
+          extraLinesData: ExtraLinesData(
+            horizontalLines: [
+              HorizontalLine(
+                y: range.hypo.toDouble(),
+                color: kStatusError.withValues(alpha: 0.8),
+                strokeWidth: 1,
+                dashArray: [4, 3],
+              ),
+            ],
+          ),
           gridData: FlGridData(
             show: !compact,
             drawVerticalLine: false,
             horizontalInterval: 100,
-            getDrawingHorizontalLine: (_) => const FlLine(color: kHairline, strokeWidth: 0.8),
+            getDrawingHorizontalLine: (_) =>
+                const FlLine(color: kHairline, strokeWidth: 0.8),
           ),
           borderData: FlBorderData(show: false),
           titlesData: compact
               ? const FlTitlesData(show: false)
               : FlTitlesData(
-                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  rightTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
@@ -93,7 +119,11 @@ class GlucoseChart extends StatelessWidget {
                         meta: meta,
                         child: Text(
                           value.toInt().toString(),
-                          style: const TextStyle(color: kSlate, fontSize: 10, fontFeatures: kTabularFigures),
+                          style: const TextStyle(
+                            color: kSlate,
+                            fontSize: 10,
+                            fontFeatures: kTabularFigures,
+                          ),
                         ),
                       ),
                     ),
@@ -108,10 +138,15 @@ class GlucoseChart extends StatelessWidget {
                         final t = from.add(Duration(minutes: value.toInt()));
                         final label = spanMinutes <= 60 * 24 * 1.5
                             ? DateFormat('HH:mm').format(t)
-                            : DateFormat('M/d').format(t);
+                            : DateFormat.Md(
+                                Localizations.localeOf(context).languageCode,
+                              ).format(t);
                         return SideTitleWidget(
                           meta: meta,
-                          child: Text(label, style: const TextStyle(color: kSlate, fontSize: 10)),
+                          child: Text(
+                            label,
+                            style: const TextStyle(color: kSlate, fontSize: 10),
+                          ),
                         );
                       },
                     ),
@@ -125,8 +160,12 @@ class GlucoseChart extends StatelessWidget {
                 for (final s in spots)
                   if (s.barIndex == 0)
                     LineTooltipItem(
-                      '${s.y.toInt()} mg/dL\n${DateFormat('M/d HH:mm').format(from.add(Duration(minutes: s.x.toInt())))}',
-                      const TextStyle(color: kOnDark, fontSize: 11, fontWeight: FontWeight.w600),
+                      '${s.y.toInt()} mg/dL\n${DateFormat.Md(Localizations.localeOf(context).languageCode).add_Hm().format(from.add(Duration(minutes: s.x.toInt())))}',
+                      const TextStyle(
+                        color: kOnDark,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
                     )
                   else
                     null,
@@ -143,8 +182,11 @@ class GlucoseChart extends StatelessWidget {
                   final status = range.classify(spot.y.toInt());
                   final isLast = index == glucoseSpots.length - 1;
                   return FlDotCirclePainter(
-                    radius: status == GlucoseStatus.hypo || (compact && isLast) ? 4 : 2.6,
-                    color: status == GlucoseStatus.inRange && !(compact && isLast)
+                    radius: status == GlucoseStatus.hypo || (compact && isLast)
+                        ? 4
+                        : 2.6,
+                    color:
+                        status == GlucoseStatus.inRange && !(compact && isLast)
                         ? kBrandBlue
                         : glucoseStatusColor(status),
                     strokeWidth: 1,

@@ -4,7 +4,7 @@ CREATE OR REPLACE FUNCTION "public"."family_members"("p_family_id" uuid)
 RETURNS TABLE ("user_id" uuid, "display_name" text, "role" text)
     LANGUAGE sql STABLE SECURITY DEFINER SET search_path = ''
     AS $$
-  SELECT uf.user_id, coalesce(nullif(u.full_name, ''), '가족'), uf.role
+  SELECT uf.user_id, nullif(u.full_name, ''), uf.role
   FROM public.user_families uf
   JOIN public.users u ON u.id = uf.user_id
   WHERE uf.family_id = p_family_id

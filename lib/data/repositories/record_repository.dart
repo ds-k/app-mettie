@@ -13,7 +13,8 @@ const int kRecentRecordLimit = 500;
 
 /// 서버 트리거 guard_duplicate_dose가 같은 회차의 두 번째 투여를 거부했을 때.
 class DuplicateDoseException implements Exception {
-  final String writerName;
+  /// 투여한 가족의 표시 이름. 이름이 없으면 null (화면에서 '가족'으로 보여 준다)
+  final String? writerName;
   final DateTime recordedAt;
   final double? insulinDose;
 
@@ -28,12 +29,15 @@ class DuplicateDoseException implements Exception {
     try {
       final detail = jsonDecode(e.details as String) as Map<String, dynamic>;
       return DuplicateDoseException(
-        writerName: detail['writer'] as String? ?? '가족',
+        writerName: detail['writer'] as String?,
         recordedAt: DateTime.parse(detail['recorded_at'] as String).toLocal(),
         insulinDose: (detail['insulin_dose'] as num?)?.toDouble(),
       );
     } catch (_) {
-      return DuplicateDoseException(writerName: '가족', recordedAt: DateTime.now());
+      return DuplicateDoseException(
+        writerName: null,
+        recordedAt: DateTime.now(),
+      );
     }
   }
 }
@@ -73,7 +77,12 @@ class RecordRepository {
   Future<Record> updateRecord(Record record) async {
     final data = record.toJson();
     try {
-      final response = await _client.from('records').update(data).eq('id', record.id).select().single();
+      final response = await _client
+          .from('records')
+          .update(data)
+          .eq('id', record.id)
+          .select()
+          .single();
       return Record.fromJson(response);
     } on PostgrestException catch (e) {
       throw DuplicateDoseException.tryParse(e) ?? e;
@@ -81,7 +90,11 @@ class RecordRepository {
   }
 
   Future<void> deleteRecord(String id) async {
-    final response = await _client.from('records').delete().eq('id', id).select();
+    final response = await _client
+        .from('records')
+        .delete()
+        .eq('id', id)
+        .select();
     if (response.isEmpty) {
       throw Exception('기록을 찾을 수 없거나 삭제할 권한이 없습니다.');
     }
@@ -89,9 +102,13 @@ class RecordRepository {
 
   /// 같은 가족 구성원의 표시 이름 (user_id → 이름).
   Future<Map<String, String>> fetchFamilyMembers(String familyId) async {
-    final rows = await _client.rpc('family_members', params: {'p_family_id': familyId}) as List;
+    final rows =
+        await _client.rpc('family_members', params: {'p_family_id': familyId})
+            as List;
     return {
-      for (final r in rows) r['user_id'] as String: r['display_name'] as String,
+      for (final r in rows)
+        if (r['display_name'] != null)
+          r['user_id'] as String: r['display_name'] as String,
     };
   }
 }

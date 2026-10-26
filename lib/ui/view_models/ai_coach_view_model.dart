@@ -40,9 +40,10 @@ class AiCoachState {
   }
 }
 
-final aiCoachViewModelProvider = NotifierProvider<AiCoachViewModel, AiCoachState>(() {
-  return AiCoachViewModel();
-});
+final aiCoachViewModelProvider =
+    NotifierProvider<AiCoachViewModel, AiCoachState>(() {
+      return AiCoachViewModel();
+    });
 
 class AiCoachViewModel extends Notifier<AiCoachState> {
   bool _cancelRequested = false;
@@ -66,7 +67,10 @@ class AiCoachViewModel extends Notifier<AiCoachState> {
 
   Future<void> startDownload() async {
     final llmRepo = ref.read(llmRepositoryProvider);
-    state = state.copyWith(status: AiCoachStatus.downloading, downloadProgress: 0);
+    state = state.copyWith(
+      status: AiCoachStatus.downloading,
+      downloadProgress: 0,
+    );
     try {
       await llmRepo.downloadModel(
         onProgress: (progress) {
@@ -91,7 +95,10 @@ class AiCoachViewModel extends Notifier<AiCoachState> {
     // 다운로드 중단 시 상태를 needsDownload로 되돌림 (초기화)
     if (state.status == AiCoachStatus.downloading) {
       ref.read(llmRepositoryProvider).cancelDownload();
-      state = state.copyWith(status: AiCoachStatus.needsDownload, downloadProgress: 0);
+      state = state.copyWith(
+        status: AiCoachStatus.needsDownload,
+        downloadProgress: 0,
+      );
     }
   }
 
@@ -114,7 +121,10 @@ class AiCoachViewModel extends Notifier<AiCoachState> {
         state = state.copyWith(
           messages: [
             ...state.messages,
-            ChatMessage(role: 'ai', content: '현재 등록된 반려동물이 없습니다. 먼저 펫을 등록해주세요.')
+            ChatMessage(
+              role: 'ai',
+              content: '현재 등록된 반려동물이 없습니다. 먼저 펫을 등록해주세요.',
+            ),
           ],
           isGenerating: false,
         );
@@ -133,16 +143,21 @@ class AiCoachViewModel extends Notifier<AiCoachState> {
       // 4. 빈 AI 메시지 홀더 추가
       final aiMsgIndex = state.messages.length;
       state = state.copyWith(
-        messages: [...state.messages, ChatMessage(role: 'ai', content: '')],
+        messages: [
+          ...state.messages,
+          ChatMessage(role: 'ai', content: ''),
+        ],
       );
 
       // 모델에 전달할 유효한 기록 필터링 (최신 상태의 messages 이용, 비어있는 AI 메시지 홀더는 제외)
-      final validHistory = state.messages.where((m) => m.content.trim().isNotEmpty).toList();
+      final validHistory = state.messages
+          .where((m) => m.content.trim().isNotEmpty)
+          .toList();
 
       // 5. 스트리밍 응답 렌더링 최적화 (UI 버벅임 방지)
       final llmRepo = ref.read(llmRepositoryProvider);
       final buffer = StringBuffer();
-      
+
       int lastUpdate = DateTime.now().millisecondsSinceEpoch;
 
       await for (final token in llmRepo.generateCoreResponse(
@@ -157,20 +172,29 @@ class AiCoachViewModel extends Notifier<AiCoachState> {
         // 50ms 마다 한 번씩만 UI 갱신 (너무 잦은 렌더링으로 인한 속도 저하 방지)
         if (now - lastUpdate > 50) {
           final updatedMessages = List<ChatMessage>.from(state.messages);
-          updatedMessages[aiMsgIndex] = ChatMessage(role: 'ai', content: buffer.toString());
+          updatedMessages[aiMsgIndex] = ChatMessage(
+            role: 'ai',
+            content: buffer.toString(),
+          );
           state = state.copyWith(messages: updatedMessages);
           lastUpdate = now;
         }
       }
-      
+
       // 스트림 종료 후 마지막으로 최종 내용 확실히 갱신
       final finalMessages = List<ChatMessage>.from(state.messages);
-      finalMessages[aiMsgIndex] = ChatMessage(role: 'ai', content: buffer.toString());
+      finalMessages[aiMsgIndex] = ChatMessage(
+        role: 'ai',
+        content: buffer.toString(),
+      );
       state = state.copyWith(messages: finalMessages);
     } catch (e) {
       final aiMsgIndex = state.messages.length - 1;
       final updatedMessages = List<ChatMessage>.from(state.messages);
-      updatedMessages[aiMsgIndex] = ChatMessage(role: 'ai', content: '응답 생성 중 오류가 발생했습니다.\n$e');
+      updatedMessages[aiMsgIndex] = ChatMessage(
+        role: 'ai',
+        content: '응답 생성 중 오류가 발생했습니다.\n$e',
+      );
       state = state.copyWith(messages: updatedMessages);
     } finally {
       state = state.copyWith(isGenerating: false);

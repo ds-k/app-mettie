@@ -3,6 +3,7 @@ String subjectOf(String name) {
   if (name == '나') return '내가';
   if (name.isEmpty) return name;
   final last = name.runes.last;
-  final hasFinalConsonant = last >= 0xAC00 && last <= 0xD7A3 && (last - 0xAC00) % 28 != 0;
+  final hasFinalConsonant =
+      last >= 0xAC00 && last <= 0xD7A3 && (last - 0xAC00) % 28 != 0;
   return hasFinalConsonant ? '$name이가' : '$name가';
 }

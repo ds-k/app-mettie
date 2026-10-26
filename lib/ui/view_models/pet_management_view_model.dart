@@ -142,7 +142,9 @@ class PetManagementViewModel extends Notifier<PetManagementState> {
         vetMemo: vetMemo,
         // 인슐린 정보나 당뇨 진단이 있으면 당뇨 모듈을 켠다
         conditions: [
-          if ((insulinType?.isNotEmpty ?? false) || insulinUnitIu != null || (diagnosis?.contains('당뇨') ?? false))
+          if ((insulinType?.isNotEmpty ?? false) ||
+              insulinUnitIu != null ||
+              (diagnosis?.contains('당뇨') ?? false))
             'diabetes',
         ],
         insulinConcentration: VeterinaryGuidelines.concentrationOf(insulinType),

@@ -18,13 +18,19 @@ bool _isGivenDose(Record r) =>
     r.injectionStatus == 'given' && (r.insulinDose ?? 0) > 0;
 
 /// [at] 기준 같은 회차(±3시간)에 이미 투여 완료 기록이 있으면 그 기록을 돌려준다.
-Record? findConflictingDose(Iterable<Record> records, DateTime at, {String? excludeId}) {
+Record? findConflictingDose(
+  Iterable<Record> records,
+  DateTime at, {
+  String? excludeId,
+}) {
   Record? closest;
   for (final r in records) {
     if (!_isGivenDose(r) || r.id == excludeId) continue;
     final gap = r.recordedAt.difference(at).abs();
     if (gap > kDoseWindow) continue;
-    if (closest == null || gap < closest.recordedAt.difference(at).abs()) closest = r;
+    if (closest == null || gap < closest.recordedAt.difference(at).abs()) {
+      closest = r;
+    }
   }
   return closest;
 }
@@ -40,7 +46,13 @@ List<DoseSlot> doseSlotsFor(
   final times = [...dosingTimes]..sort();
   for (final t in times) {
     final parts = t.split(':');
-    final scheduled = DateTime(day.year, day.month, day.day, int.parse(parts[0]), int.parse(parts[1]));
+    final scheduled = DateTime(
+      day.year,
+      day.month,
+      day.day,
+      int.parse(parts[0]),
+      int.parse(parts[1]),
+    );
 
     Record? match;
     for (final r in records) {
@@ -66,11 +78,17 @@ List<DoseSlot> doseSlotsFor(
 }
 
 /// 아직 처리되지 않은 가장 가까운 회차. 오늘 남은 회차가 없으면 내일 첫 회차.
-DoseSlot? nextDose(List<String> dosingTimes, Iterable<Record> records, DateTime now) {
+DoseSlot? nextDose(
+  List<String> dosingTimes,
+  Iterable<Record> records,
+  DateTime now,
+) {
   if (dosingTimes.isEmpty) return null;
   final today = doseSlotsFor(now, dosingTimes, records, now);
   for (final s in today) {
-    if (s.state == DoseSlotState.due || s.state == DoseSlotState.upcoming) return s;
+    if (s.state == DoseSlotState.due || s.state == DoseSlotState.upcoming) {
+      return s;
+    }
   }
   final tomorrow = now.add(const Duration(days: 1));
   return doseSlotsFor(tomorrow, dosingTimes, records, now).first;

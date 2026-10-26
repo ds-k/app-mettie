@@ -65,7 +65,8 @@ class AuthRepository {
       );
     } catch (e) {
       // 사용자가 직접 취소한 경우는 예외를 던지지 않고 조용히 종료합니다.
-      if (e.toString().contains('Canceled') || e.toString().contains('canceled')) {
+      if (e.toString().contains('Canceled') ||
+          e.toString().contains('canceled')) {
         return;
       }
       throw '구글 로그인에 실패했습니다. 다시 시도해주세요.';
@@ -135,10 +136,7 @@ class AuthRepository {
   }
 
   Future<void> signInWithEmailPassword(String email, String password) async {
-    await _client.auth.signInWithPassword(
-      email: email,
-      password: password,
-    );
+    await _client.auth.signInWithPassword(email: email, password: password);
   }
 
   Future<void> signUpWithEmailPassword(

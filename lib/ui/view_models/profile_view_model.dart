@@ -7,11 +7,7 @@ class ProfileState {
   final String? error;
   final String? generatedCode;
 
-  ProfileState({
-    this.isLoading = false,
-    this.error,
-    this.generatedCode,
-  });
+  ProfileState({this.isLoading = false, this.error, this.generatedCode});
 
   ProfileState copyWith({
     bool? isLoading,
@@ -26,9 +22,10 @@ class ProfileState {
   }
 }
 
-final profileViewModelProvider = NotifierProvider<ProfileViewModel, ProfileState>(() {
-  return ProfileViewModel();
-});
+final profileViewModelProvider =
+    NotifierProvider<ProfileViewModel, ProfileState>(() {
+      return ProfileViewModel();
+    });
 
 class ProfileViewModel extends Notifier<ProfileState> {
   @override
@@ -52,10 +49,10 @@ class ProfileViewModel extends Notifier<ProfileState> {
     try {
       final repo = ref.read(petRepositoryProvider);
       await repo.joinFamilyWithCode(code);
-      
+
       // 조인 성공 후 펫 리스트 새로고침
       ref.invalidate(petsProvider);
-      
+
       state = state.copyWith(isLoading: false);
       return true;
     } catch (e) {
@@ -63,7 +60,7 @@ class ProfileViewModel extends Notifier<ProfileState> {
       return false;
     }
   }
-  
+
   void clearError() {
     state = state.copyWith(error: null);
   }

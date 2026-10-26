@@ -15,10 +15,18 @@ import '../../ui/views/pet_management/pet_management_view.dart';
 import '../../ui/views/profile/profile_view.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
-final _shellNavigatorTodayKey = GlobalKey<NavigatorState>(debugLabel: 'todayShell');
-final _shellNavigatorTrendsKey = GlobalKey<NavigatorState>(debugLabel: 'trendsShell');
-final _shellNavigatorAiCoachKey = GlobalKey<NavigatorState>(debugLabel: 'aiCoachShell');
-final _shellNavigatorBookKey = GlobalKey<NavigatorState>(debugLabel: 'bookShell');
+final _shellNavigatorTodayKey = GlobalKey<NavigatorState>(
+  debugLabel: 'todayShell',
+);
+final _shellNavigatorTrendsKey = GlobalKey<NavigatorState>(
+  debugLabel: 'trendsShell',
+);
+final _shellNavigatorAiCoachKey = GlobalKey<NavigatorState>(
+  debugLabel: 'aiCoachShell',
+);
+final _shellNavigatorBookKey = GlobalKey<NavigatorState>(
+  debugLabel: 'bookShell',
+);
 
 final routerProvider = Provider<GoRouter>((ref) {
   // 인증 상태를 watch하면 토큰 갱신 같은 이벤트마다 GoRouter가 새로 만들어져 화면 전체가 다시 그려진다.
@@ -43,15 +51,21 @@ final routerProvider = Provider<GoRouter>((ref) {
       if (location == '/splash') return null;
 
       // 미인증 상태에서 /login 또는 /login/email이 아닌 다른 경로에 접속할 때만 /login으로 리다이렉트
-      if (!isAuth && location != '/login' && location != '/login/email' && location != '/login-callback') {
+      if (!isAuth &&
+          location != '/login' &&
+          location != '/login/email' &&
+          location != '/login-callback') {
         return '/login';
       }
 
       // 인증 완료 상태에서 로그인 관련 화면에 있으면 홈으로 이동
-      if (isAuth && (location == '/login' || location == '/login/email' || location == '/splash')) {
+      if (isAuth &&
+          (location == '/login' ||
+              location == '/login/email' ||
+              location == '/splash')) {
         return '/home/today';
       }
-      
+
       if (isAuth && location == '/home') {
         return '/home/today';
       }
@@ -59,15 +73,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
-      GoRoute(
-        path: '/splash', 
-        builder: (context, state) => const SplashView()
-      ),
+      GoRoute(path: '/splash', builder: (context, state) => const SplashView()),
       GoRoute(
         path: '/login-callback',
-        builder: (context, state) => const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        ),
+        builder: (context, state) =>
+            const Scaffold(body: Center(child: CircularProgressIndicator())),
       ),
       GoRoute(
         path: '/login',
@@ -93,19 +103,28 @@ final routerProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             navigatorKey: _shellNavigatorTodayKey,
             routes: [
-              GoRoute(path: '/home/today', builder: (context, state) => const TodayView()),
+              GoRoute(
+                path: '/home/today',
+                builder: (context, state) => const TodayView(),
+              ),
             ],
           ),
           StatefulShellBranch(
             navigatorKey: _shellNavigatorTrendsKey,
             routes: [
-              GoRoute(path: '/home/trends', builder: (context, state) => const TrendsView()),
+              GoRoute(
+                path: '/home/trends',
+                builder: (context, state) => const TrendsView(),
+              ),
             ],
           ),
           StatefulShellBranch(
             navigatorKey: _shellNavigatorAiCoachKey,
             routes: [
-              GoRoute(path: '/home/ai-coach', builder: (context, state) => const AiCoachView()),
+              GoRoute(
+                path: '/home/ai-coach',
+                builder: (context, state) => const AiCoachView(),
+              ),
             ],
           ),
           StatefulShellBranch(
@@ -115,7 +134,10 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: '/home/book',
                 builder: (context, state) => const BookView(),
                 routes: [
-                  GoRoute(path: 'pets', builder: (context, state) => const PetManagementView()),
+                  GoRoute(
+                    path: 'pets',
+                    builder: (context, state) => const PetManagementView(),
+                  ),
                 ],
               ),
             ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../l10n/l10n.dart';
 import '../../view_models/profile_view_model.dart';
 import 'widgets/profile_app_settings.dart';
 import 'widgets/profile_account_info.dart';
@@ -29,9 +30,9 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
       backgroundColor: kSurface,
       appBar: AppBar(
         iconTheme: const IconThemeData(color: kInk),
-        title: const Text(
-          '설정',
-          style: TextStyle(color: kInk, fontWeight: FontWeight.bold),
+        title: Text(
+          context.l10n.commonSettings,
+          style: const TextStyle(color: kInk, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,

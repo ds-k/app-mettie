@@ -55,8 +55,8 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
           sex: _sex,
           isNeutered: _isNeutered,
           weightKg: double.tryParse(_weightController.text),
-          insulinType: _selectedInsulinType == '기타' 
-              ? _insulinTypeController.text.trim() 
+          insulinType: _selectedInsulinType == '기타'
+              ? _insulinTypeController.text.trim()
               : (_selectedInsulinType ?? ''),
           insulinUnitIu: double.tryParse(_insulinDoseController.text),
           vetClinic: _vetClinicController.text.trim(),
@@ -256,7 +256,10 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                       Expanded(
                         child: DropdownButtonFormField<String>(
                           initialValue: _sex,
-                          decoration: _dropdownDecoration('성별', LucideIcons.user),
+                          decoration: _dropdownDecoration(
+                            '성별',
+                            LucideIcons.user,
+                          ),
                           borderRadius: BorderRadius.circular(kRadiusLg),
                           elevation: 2,
                           menuMaxHeight: 250,
@@ -343,10 +346,15 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                               style: const TextStyle(fontSize: 13, color: kInk),
                               iconSize: 18,
                               items: VeterinaryGuidelines.insulinTypes
-                                  .map((type) => DropdownMenuItem(
-                                        value: type,
-                                        child: Text(type, overflow: TextOverflow.ellipsis),
-                                      ))
+                                  .map(
+                                    (type) => DropdownMenuItem(
+                                      value: type,
+                                      child: Text(
+                                        type,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  )
                                   .toList(),
                               onChanged: (val) {
                                 setState(() {

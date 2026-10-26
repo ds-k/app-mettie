@@ -13,12 +13,16 @@ import '../../../../data/repositories/record_repository.dart';
 import '../../../../domain/dosing.dart';
 import '../../../../domain/glucose.dart';
 import '../../../../domain/timeline.dart';
-import '../../../../utils/korean.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../l10n/labels.dart';
 import '../../../view_models/dashboard_view_model.dart';
 import '../../../widgets/status_pill.dart';
 
 /// 빠른 기록 시트를 연다. [initialKinds]로 처음 펼칠 종류를 정할 수 있다.
-Future<void> showRecordEntrySheet(BuildContext context, {Set<EntryKind>? initialKinds}) {
+Future<void> showRecordEntrySheet(
+  BuildContext context, {
+  Set<EntryKind>? initialKinds,
+}) {
   return showModalBottomSheet(
     context: context,
     useRootNavigator: true,
@@ -28,21 +32,18 @@ Future<void> showRecordEntrySheet(BuildContext context, {Set<EntryKind>? initial
   );
 }
 
-/// 종별 관찰 항목. 공통 항목은 기존 칼럼에, 나머지는 symptom_tags에 저장한다.
-const _commonObservations = ['물 많이 마심', '소변 많음', '식욕 저하', '구토', '무기력'];
-const _dogObservations = ['산책 평소보다 많음', '산책 평소보다 적음', '눈 혼탁·시야 이상'];
-const _catObservations = ['화장실 덩어리 큼', '뒷다리 걸음 이상'];
-
 class RecordEntryBottomSheet extends ConsumerStatefulWidget {
   final Set<EntryKind>? initialKinds;
 
   const RecordEntryBottomSheet({super.key, this.initialKinds});
 
   @override
-  ConsumerState<RecordEntryBottomSheet> createState() => _RecordEntryBottomSheetState();
+  ConsumerState<RecordEntryBottomSheet> createState() =>
+      _RecordEntryBottomSheetState();
 }
 
-class _RecordEntryBottomSheetState extends ConsumerState<RecordEntryBottomSheet> {
+class _RecordEntryBottomSheetState
+    extends ConsumerState<RecordEntryBottomSheet> {
   late Set<EntryKind> _kinds;
   DateTime _recordedAt = DateTime.now();
 
@@ -65,14 +66,23 @@ class _RecordEntryBottomSheetState extends ConsumerState<RecordEntryBottomSheet>
 
   bool _saving = false;
 
-  List<TextEditingController> get _controllers => [_glucose, _dose, _wet, _dry, _weight, _notes];
+  List<TextEditingController> get _controllers => [
+    _glucose,
+    _dose,
+    _wet,
+    _dry,
+    _weight,
+    _notes,
+  ];
 
   @override
   void initState() {
     super.initState();
     final pet = ref.read(currentPetProvider);
     _kinds = {...?widget.initialKinds};
-    if (_kinds.isEmpty) _kinds = {pet?.hasDiabetes == true ? EntryKind.glucose : EntryKind.meal};
+    if (_kinds.isEmpty) {
+      _kinds = {pet?.hasDiabetes == true ? EntryKind.glucose : EntryKind.meal};
+    }
     if (pet?.insulinUnitIu != null) _dose.text = _fmt(pet!.insulinUnitIu!);
     for (final c in _controllers) {
       c.addListener(() => setState(() {}));
@@ -87,33 +97,47 @@ class _RecordEntryBottomSheetState extends ConsumerState<RecordEntryBottomSheet>
     super.dispose();
   }
 
-  String _fmt(double v) => v == v.roundToDouble() ? v.toStringAsFixed(1) : v.toString();
+  String _fmt(double v) =>
+      v == v.roundToDouble() ? v.toStringAsFixed(1) : v.toString();
 
   Record? _localConflict(List<Record> records) {
-    if (!_kinds.contains(EntryKind.insulin) || _injectionStatus != 'given') return null;
+    if (!_kinds.contains(EntryKind.insulin) || _injectionStatus != 'given') {
+      return null;
+    }
     return findConflictingDose(records, _recordedAt);
   }
 
   List<Record> _buildRecords(Pet pet, String userId) {
-    Record base() => Record(id: '', petId: pet.id, writerId: userId, recordedAt: _recordedAt, createdAt: DateTime.now());
+    Record base() => Record(
+      id: '',
+      petId: pet.id,
+      writerId: userId,
+      recordedAt: _recordedAt,
+      createdAt: DateTime.now(),
+    );
     final out = <Record>[];
 
-    if (_kinds.contains(EntryKind.glucose) && int.tryParse(_glucose.text) != null) {
-      out.add(base().copyWith(
-        glucoseValue: int.parse(_glucose.text),
-        glucoseType: _glucoseType,
-        measurementDevice: pet.glucoseMeter,
-      ));
+    if (_kinds.contains(EntryKind.glucose) &&
+        int.tryParse(_glucose.text) != null) {
+      out.add(
+        base().copyWith(
+          glucoseValue: int.parse(_glucose.text),
+          glucoseType: _glucoseType,
+          measurementDevice: pet.glucoseMeter,
+        ),
+      );
     }
     if (_kinds.contains(EntryKind.insulin)) {
       final dose = double.tryParse(_dose.text);
       if (_injectionStatus == 'skipped' || dose != null) {
-        out.add(base().copyWith(
-          insulinDose: _injectionStatus == 'skipped' ? 0 : dose,
-          insulinType: pet.insulinType,
-          injectionStatus: _injectionStatus,
-          doseOverride: _overrideAcknowledged,
-        ));
+        out.add(
+          base().copyWith(
+            insulinDose: _injectionStatus == 'skipped' ? 0 : dose,
+            insulinType: pet.insulinType,
+            injectionStatus: _injectionStatus,
+            doseOverride: _overrideAcknowledged,
+          ),
+        );
       }
     }
     if (_kinds.contains(EntryKind.meal)) {
@@ -124,22 +148,41 @@ class _RecordEntryBottomSheetState extends ConsumerState<RecordEntryBottomSheet>
       ]) {
         final g = double.tryParse(ctrl.text);
         if (g == null) continue;
-        out.add(base().copyWith(foodType: type, foodAmountG: g, foodBrand: brand, appetite: _appetite));
+        out.add(
+          base().copyWith(
+            foodType: type,
+            foodAmountG: g,
+            foodBrand: brand,
+            appetite: _appetite,
+          ),
+        );
       }
     }
-    if (_kinds.contains(EntryKind.weight) && double.tryParse(_weight.text) != null) {
+    if (_kinds.contains(EntryKind.weight) &&
+        double.tryParse(_weight.text) != null) {
       out.add(base().copyWith(weightKg: double.parse(_weight.text)));
     }
-    if (_kinds.contains(EntryKind.observation) && (_observations.isNotEmpty || _notes.text.trim().isNotEmpty)) {
-      final tags = _observations.difference(_commonObservations.toSet()).toList();
-      out.add(base().copyWith(
-        waterIntake: _observations.contains('물 많이 마심') ? 'increased' : null,
-        urination: _observations.contains('소변 많음') ? 'polyuria' : null,
-        appetite: _observations.contains('식욕 저하') ? 'partial' : null,
-        vomitCount: _observations.contains('구토') ? 1 : 0,
-        symptomTags: [...tags, if (_observations.contains('무기력')) '무기력'],
-        notes: _notes.text.trim().isEmpty ? null : _notes.text.trim(),
-      ));
+    if (_kinds.contains(EntryKind.observation) &&
+        (_observations.isNotEmpty || _notes.text.trim().isNotEmpty)) {
+      // 공통 항목은 기존 칼럼에, 나머지는 symptom_tags에 언어와 무관한 코드로 저장한다
+      final tags = _observations.difference({
+        'drink_more',
+        'urinate_more',
+        'poor_appetite',
+        'vomit',
+      }).toList();
+      out.add(
+        base().copyWith(
+          waterIntake: _observations.contains('drink_more')
+              ? 'increased'
+              : null,
+          urination: _observations.contains('urinate_more') ? 'polyuria' : null,
+          appetite: _observations.contains('poor_appetite') ? 'partial' : null,
+          vomitCount: _observations.contains('vomit') ? 1 : 0,
+          symptomTags: tags,
+          notes: _notes.text.trim().isEmpty ? null : _notes.text.trim(),
+        ),
+      );
     }
     return out;
   }
@@ -149,7 +192,7 @@ class _RecordEntryBottomSheetState extends ConsumerState<RecordEntryBottomSheet>
     if (userId == null) return;
     final records = _buildRecords(pet, userId);
     if (records.isEmpty) {
-      _snack('저장할 내용을 입력해 주세요.');
+      _snack(context.l10n.entryNothingToSave);
       return;
     }
     setState(() => _saving = true);
@@ -163,13 +206,14 @@ class _RecordEntryBottomSheetState extends ConsumerState<RecordEntryBottomSheet>
         _overrideAcknowledged = false;
       });
     } catch (e) {
-      _snack('저장하지 못했어요. 네트워크를 확인하고 다시 시도해 주세요.');
+      if (mounted) _snack(context.l10n.commonNetworkError);
     } finally {
       if (mounted) setState(() => _saving = false);
     }
   }
 
-  void _snack(String msg) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+  void _snack(String msg) =>
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
 
   Future<void> _pickTime() async {
     final date = await showDatePicker(
@@ -179,10 +223,19 @@ class _RecordEntryBottomSheetState extends ConsumerState<RecordEntryBottomSheet>
       lastDate: DateTime.now(),
     );
     if (date == null || !mounted) return;
-    final time = await showTimePicker(context: context, initialTime: TimeOfDay.fromDateTime(_recordedAt));
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(_recordedAt),
+    );
     if (time == null) return;
     setState(() {
-      _recordedAt = DateTime(date.year, date.month, date.day, time.hour, time.minute);
+      _recordedAt = DateTime(
+        date.year,
+        date.month,
+        date.day,
+        time.hour,
+        time.minute,
+      );
       _serverConflict = null;
     });
   }
@@ -194,16 +247,20 @@ class _RecordEntryBottomSheetState extends ConsumerState<RecordEntryBottomSheet>
     final records = ref.watch(recordsStreamProvider).value ?? const <Record>[];
     final userId = ref.watch(currentUserProvider)?.id ?? '';
     final localConflict = _localConflict(records);
-    final hasConflict = _injectionStatus == 'given' && (localConflict != null || _serverConflict != null);
+    final hasConflict =
+        _injectionStatus == 'given' &&
+        (localConflict != null || _serverConflict != null);
     final count = _buildRecords(pet, userId).length;
     final blocked = hasConflict && !_overrideAcknowledged;
 
+    final l = context.l10n;
     final kinds = [
-      (EntryKind.glucose, '혈당', LucideIcons.droplet),
-      if (pet.hasDiabetes) (EntryKind.insulin, '인슐린', LucideIcons.syringe),
-      (EntryKind.meal, '식사', LucideIcons.utensils),
-      (EntryKind.weight, '체중', LucideIcons.scale),
-      (EntryKind.observation, '관찰', LucideIcons.eye),
+      (EntryKind.glucose, l.kindGlucose, LucideIcons.droplet),
+      if (pet.hasDiabetes)
+        (EntryKind.insulin, l.kindInsulin, LucideIcons.syringe),
+      (EntryKind.meal, l.kindMeal, LucideIcons.utensils),
+      (EntryKind.weight, l.kindWeight, LucideIcons.scale),
+      (EntryKind.observation, l.kindObservation, LucideIcons.eye),
     ];
 
     return DraggableScrollableSheet(
@@ -222,11 +279,17 @@ class _RecordEntryBottomSheetState extends ConsumerState<RecordEntryBottomSheet>
               padding: const EdgeInsets.fromLTRB(20, 16, 8, 4),
               child: Row(
                 children: [
-                  Text('${pet.name} 기록 추가',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: kInk)),
+                  Text(
+                    l.entryTitle(pet.name),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: kInk,
+                    ),
+                  ),
                   const Spacer(),
                   IconButton(
-                    tooltip: '닫기',
+                    tooltip: l.commonClose,
                     onPressed: () => Navigator.pop(context),
                     icon: const Icon(LucideIcons.x, color: kSlate),
                   ),
@@ -236,7 +299,12 @@ class _RecordEntryBottomSheetState extends ConsumerState<RecordEntryBottomSheet>
             Expanded(
               child: ListView(
                 controller: scroll,
-                padding: EdgeInsets.fromLTRB(20, 4, 20, 24 + MediaQuery.of(context).viewInsets.bottom),
+                padding: EdgeInsets.fromLTRB(
+                  20,
+                  4,
+                  20,
+                  24 + MediaQuery.of(context).viewInsets.bottom,
+                ),
                 children: [
                   Wrap(
                     spacing: 8,
@@ -244,7 +312,11 @@ class _RecordEntryBottomSheetState extends ConsumerState<RecordEntryBottomSheet>
                     children: [
                       for (final (kind, label, icon) in kinds)
                         FilterChip(
-                          avatar: Icon(icon, size: 16, color: _kinds.contains(kind) ? kOnDark : kCharcoal),
+                          avatar: Icon(
+                            icon,
+                            size: 16,
+                            color: _kinds.contains(kind) ? kOnDark : kCharcoal,
+                          ),
                           label: Text(label),
                           selected: _kinds.contains(kind),
                           showCheckmark: false,
@@ -269,21 +341,41 @@ class _RecordEntryBottomSheetState extends ConsumerState<RecordEntryBottomSheet>
                       onTap: _pickTime,
                       child: Row(
                         children: [
-                          const Icon(LucideIcons.clock, size: 18, color: kSlate),
+                          const Icon(
+                            LucideIcons.clock,
+                            size: 18,
+                            color: kSlate,
+                          ),
                           const SizedBox(width: 10),
-                          Text(DateFormat('M월 d일 HH:mm').format(_recordedAt),
-                              style: const TextStyle(fontSize: 15, color: kInk, fontFeatures: kTabularFigures)),
+                          Text(
+                            DateFormat.MMMd(
+                              l.localeName,
+                            ).add_Hm().format(_recordedAt),
+                            style: const TextStyle(
+                              fontSize: 15,
+                              color: kInk,
+                              fontFeatures: kTabularFigures,
+                            ),
+                          ),
                           const Spacer(),
-                          const Text('시각 변경', style: TextStyle(color: kBrandBlueDeep, fontWeight: FontWeight.w600)),
+                          Text(
+                            l.entryChangeTime,
+                            style: const TextStyle(
+                              color: kBrandBlueDeep,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ),
                   if (_kinds.contains(EntryKind.glucose)) _glucoseSection(pet),
-                  if (_kinds.contains(EntryKind.insulin)) _insulinSection(pet, localConflict),
+                  if (_kinds.contains(EntryKind.insulin))
+                    _insulinSection(pet, localConflict),
                   if (_kinds.contains(EntryKind.meal)) _mealSection(pet),
                   if (_kinds.contains(EntryKind.weight)) _weightSection(),
-                  if (_kinds.contains(EntryKind.observation)) _observationSection(pet),
+                  if (_kinds.contains(EntryKind.observation))
+                    _observationSection(pet),
                 ],
               ),
             ),
@@ -295,13 +387,31 @@ class _RecordEntryBottomSheetState extends ConsumerState<RecordEntryBottomSheet>
                   width: double.infinity,
                   height: 50,
                   child: FilledButton(
-                    onPressed: _saving || count == 0 || blocked ? null : () => _save(pet),
-                    style: FilledButton.styleFrom(backgroundColor: kBrandBlue, shape: const StadiumBorder()),
+                    onPressed: _saving || count == 0 || blocked
+                        ? null
+                        : () => _save(pet),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: kBrandBlue,
+                      shape: const StadiumBorder(),
+                    ),
                     child: _saving
                         ? const SizedBox(
-                            width: 20, height: 20, child: CircularProgressIndicator(color: kOnDark, strokeWidth: 2))
-                        : Text(count <= 1 ? '저장' : '$count건 저장',
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: kOnDark,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Text(
+                            count <= 1
+                                ? l.commonSave
+                                : l.commonSaveCount(count),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                   ),
                 ),
               ),
@@ -317,14 +427,21 @@ class _RecordEntryBottomSheetState extends ConsumerState<RecordEntryBottomSheet>
   Widget _glucoseSection(Pet pet) {
     final v = int.tryParse(_glucose.text);
     final status = v == null ? null : GlucoseRange.forPet(pet).classify(v);
+    final l = context.l10n;
     return _Section(
-      title: '혈당',
-      trailing: status == null ? null : StatusPill.glucose(status),
+      title: l.kindGlucose,
+      trailing: status == null ? null : StatusPill.glucose(status, l),
       children: [
-        _NumberField(controller: _glucose, label: '혈당', unit: 'mg/dL', decimals: 0, maxLength: 3),
+        _NumberField(
+          controller: _glucose,
+          label: l.entryGlucoseField,
+          unit: 'mg/dL',
+          decimals: 0,
+          maxLength: 3,
+        ),
         const SizedBox(height: 10),
         _ChoiceRow(
-          options: const {'pre_meal': '식전', 'post_meal': '식후', 'fasting': '공복', 'nadir': 'nadir', 'spot': '임의'},
+          options: {for (final t in kGlucoseTypes) t: glucoseTypeLabel(l, t)!},
           value: _glucoseType,
           onChanged: (v) => setState(() => _glucoseType = v),
         ),
@@ -333,37 +450,54 @@ class _RecordEntryBottomSheetState extends ConsumerState<RecordEntryBottomSheet>
   }
 
   Widget _insulinSection(Pet pet, Record? localConflict) {
-    final concentration = pet.insulinConcentration ?? VeterinaryGuidelines.concentrationOf(pet.insulinType);
+    final concentration =
+        pet.insulinConcentration ??
+        VeterinaryGuidelines.concentrationOf(pet.insulinType);
     final syringe = pet.syringeType;
-    final mismatch = concentration != null && syringe != null && syringe != 'pen' && syringe != concentration;
+    final mismatch =
+        concentration != null &&
+        syringe != null &&
+        syringe != 'pen' &&
+        syringe != concentration;
+    final l = context.l10n;
 
     return _Section(
-      title: '인슐린',
+      title: l.kindInsulin,
       children: [
         Wrap(
           spacing: 6,
           runSpacing: 6,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            Text(pet.insulinType?.split('(').first ?? '인슐린 미설정',
-                style: const TextStyle(fontWeight: FontWeight.w600, color: kInk)),
-            if (concentration != null) StatusPill(label: '인슐린 $concentration'),
-            if (syringe != null) StatusPill(label: syringe == 'pen' ? '펜' : '주사기 $syringe'),
+            Text(
+              pet.insulinType == null
+                  ? l.entryInsulinUnset
+                  : insulinDisplayName(l, pet.insulinType!),
+              style: const TextStyle(fontWeight: FontWeight.w600, color: kInk),
+            ),
+            if (concentration != null)
+              StatusPill(label: l.entryInsulinConcentration(concentration)),
+            if (syringe != null)
+              StatusPill(
+                label: syringe == 'pen' ? l.entryPen : l.entrySyringe(syringe),
+              ),
           ],
         ),
         if (mismatch) ...[
           const SizedBox(height: 8),
           _WarnBox(
-            title: '인슐린과 주사기 눈금이 달라요',
-            body: '인슐린은 $concentration인데 주사기는 $syringe로 설정돼 있어요. 눈금대로 넣으면 실제 용량이 크게 달라집니다. '
-                '건강수첩의 관리 계획을 확인해 주세요.',
+            title: l.entryMismatchTitle,
+            body: l.entryMismatchBody(concentration, syringe),
             color: kStatusError,
             background: kStatusErrorSoft,
           ),
         ],
         const SizedBox(height: 10),
         _ChoiceRow(
-          options: const {'given': '투여 완료', 'partial': '일부 투여', 'skipped': '생략'},
+          options: {
+            for (final c in const ['given', 'partial', 'skipped'])
+              c: injectionStatusLabel(l, c),
+          },
           value: _injectionStatus,
           onChanged: (v) => setState(() {
             _injectionStatus = v;
@@ -372,9 +506,16 @@ class _RecordEntryBottomSheetState extends ConsumerState<RecordEntryBottomSheet>
         ),
         if (_injectionStatus != 'skipped') ...[
           const SizedBox(height: 10),
-          _NumberField(controller: _dose, label: '투여량', unit: 'IU', decimals: 2, maxLength: 5),
+          _NumberField(
+            controller: _dose,
+            label: l.entryDoseField,
+            unit: 'IU',
+            decimals: 2,
+            maxLength: 5,
+          ),
         ],
-        if (_injectionStatus == 'given' && (localConflict != null || _serverConflict != null)) ...[
+        if (_injectionStatus == 'given' &&
+            (localConflict != null || _serverConflict != null)) ...[
           const SizedBox(height: 10),
           _DuplicateWarning(
             local: localConflict,
@@ -388,26 +529,42 @@ class _RecordEntryBottomSheetState extends ConsumerState<RecordEntryBottomSheet>
   }
 
   Widget _mealSection(Pet pet) {
+    final l = context.l10n;
     return _Section(
-      title: '식사',
+      title: l.kindMeal,
       children: [
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: _NumberField(
-                  controller: _wet, label: '습식', unit: 'g', decimals: 1, maxLength: 5, hint: pet.defaultFoodWet),
+                controller: _wet,
+                label: l.foodWet,
+                unit: 'g',
+                decimals: 1,
+                maxLength: 5,
+                hint: pet.defaultFoodWet,
+              ),
             ),
             const SizedBox(width: 10),
             Expanded(
               child: _NumberField(
-                  controller: _dry, label: '건식', unit: 'g', decimals: 1, maxLength: 5, hint: pet.defaultFoodDry),
+                controller: _dry,
+                label: l.foodDry,
+                unit: 'g',
+                decimals: 1,
+                maxLength: 5,
+                hint: pet.defaultFoodDry,
+              ),
             ),
           ],
         ),
         const SizedBox(height: 10),
         _ChoiceRow(
-          options: const {'good': '잘 먹음', 'partial': '조금 남김', 'anorexic': '안 먹음'},
+          options: {
+            for (final c in const ['good', 'partial', 'anorexic'])
+              c: appetiteLabel(l, c),
+          },
           value: _appetite,
           onChanged: (v) => setState(() => _appetite = v),
         ),
@@ -416,16 +573,29 @@ class _RecordEntryBottomSheetState extends ConsumerState<RecordEntryBottomSheet>
   }
 
   Widget _weightSection() {
+    final l = context.l10n;
     return _Section(
-      title: '체중',
-      children: [_NumberField(controller: _weight, label: '체중', unit: 'kg', decimals: 2, maxLength: 5)],
+      title: l.kindWeight,
+      children: [
+        _NumberField(
+          controller: _weight,
+          label: l.kindWeight,
+          unit: 'kg',
+          decimals: 2,
+          maxLength: 5,
+        ),
+      ],
     );
   }
 
   Widget _observationSection(Pet pet) {
-    final options = [..._commonObservations, ...(pet.isCat ? _catObservations : _dogObservations)];
+    final options = [
+      ...kCommonObservations,
+      ...(pet.isCat ? kCatObservations : kDogObservations),
+    ];
+    final l = context.l10n;
     return _Section(
-      title: '관찰',
+      title: l.kindObservation,
       children: [
         Wrap(
           spacing: 6,
@@ -433,20 +603,31 @@ class _RecordEntryBottomSheetState extends ConsumerState<RecordEntryBottomSheet>
           children: [
             for (final o in options)
               FilterChip(
-                label: Text(o),
+                label: Text(observationLabel(l, o)),
                 selected: _observations.contains(o),
                 showCheckmark: false,
                 selectedColor: kBrandBlueSoft,
                 backgroundColor: kCanvas,
-                side: BorderSide(color: _observations.contains(o) ? kBrandBlue : kHairline),
-                labelStyle: TextStyle(color: _observations.contains(o) ? kBrandBlueDeep : kCharcoal, fontSize: 13),
+                side: BorderSide(
+                  color: _observations.contains(o) ? kBrandBlue : kHairline,
+                ),
+                labelStyle: TextStyle(
+                  color: _observations.contains(o) ? kBrandBlueDeep : kCharcoal,
+                  fontSize: 13,
+                ),
                 shape: const StadiumBorder(),
-                onSelected: (on) => setState(() => on ? _observations.add(o) : _observations.remove(o)),
+                onSelected: (on) => setState(
+                  () => on ? _observations.add(o) : _observations.remove(o),
+                ),
               ),
           ],
         ),
         const SizedBox(height: 10),
-        TextField(controller: _notes, maxLines: 3, decoration: _inputDecoration('메모')),
+        TextField(
+          controller: _notes,
+          maxLines: 3,
+          decoration: _inputDecoration(l.entryNotes),
+        ),
       ],
     );
   }
@@ -454,21 +635,31 @@ class _RecordEntryBottomSheetState extends ConsumerState<RecordEntryBottomSheet>
 
 // ─── 작은 위젯 ─────────────────────────────────────────────────────────────────
 
-InputDecoration _inputDecoration(String label, {String? suffix, String? hint}) => InputDecoration(
-      labelText: label,
-      suffixText: suffix,
-      helperText: hint,
-      helperMaxLines: 1,
-      filled: true,
-      fillColor: kCanvas,
-      border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(kRadiusLg), borderSide: const BorderSide(color: kHairline)),
-      enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(kRadiusLg), borderSide: const BorderSide(color: kHairline)),
-      focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(kRadiusLg), borderSide: const BorderSide(color: kBrandBlue, width: 1.5)),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-    );
+InputDecoration _inputDecoration(
+  String label, {
+  String? suffix,
+  String? hint,
+}) => InputDecoration(
+  labelText: label,
+  suffixText: suffix,
+  helperText: hint,
+  helperMaxLines: 1,
+  filled: true,
+  fillColor: kCanvas,
+  border: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(kRadiusLg),
+    borderSide: const BorderSide(color: kHairline),
+  ),
+  enabledBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(kRadiusLg),
+    borderSide: const BorderSide(color: kHairline),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(kRadiusLg),
+    borderSide: const BorderSide(color: kBrandBlue, width: 1.5),
+  ),
+  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+);
 
 class _Tile extends StatelessWidget {
   final Widget child;
@@ -476,14 +667,14 @@ class _Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(
-          color: kCanvas,
-          borderRadius: BorderRadius.circular(kRadiusLg),
-          border: Border.all(color: kHairline),
-        ),
-        child: child,
-      );
+    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+    decoration: BoxDecoration(
+      color: kCanvas,
+      borderRadius: BorderRadius.circular(kRadiusLg),
+      border: Border.all(color: kHairline),
+    ),
+    child: child,
+  );
 }
 
 class _Section extends StatelessWidget {
@@ -494,20 +685,29 @@ class _Section extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(top: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    padding: const EdgeInsets.only(top: 20),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
           children: [
-            Row(children: [
-              Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: kCharcoal)),
-              const Spacer(),
-              ?trailing,
-            ]),
-            const SizedBox(height: 8),
-            ...children,
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: kCharcoal,
+              ),
+            ),
+            const Spacer(),
+            ?trailing,
           ],
         ),
-      );
+        const SizedBox(height: 8),
+        ...children,
+      ],
+    ),
+  );
 }
 
 class _NumberField extends StatelessWidget {
@@ -529,46 +729,56 @@ class _NumberField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => TextField(
-        controller: controller,
-        keyboardType: TextInputType.numberWithOptions(decimal: decimals > 0),
-        inputFormatters: [
-          FilteringTextInputFormatter.allow(RegExp(decimals > 0 ? '^\\d+\\.?\\d{0,$decimals}' : r'^\d+')),
-          LengthLimitingTextInputFormatter(maxLength),
-        ],
-        style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600, fontFeatures: kTabularFigures),
-        decoration: _inputDecoration(label, suffix: unit, hint: hint),
-      );
+    controller: controller,
+    keyboardType: TextInputType.numberWithOptions(decimal: decimals > 0),
+    inputFormatters: [
+      FilteringTextInputFormatter.allow(
+        RegExp(decimals > 0 ? '^\\d+\\.?\\d{0,$decimals}' : r'^\d+'),
+      ),
+      LengthLimitingTextInputFormatter(maxLength),
+    ],
+    style: const TextStyle(
+      fontSize: 17,
+      fontWeight: FontWeight.w600,
+      fontFeatures: kTabularFigures,
+    ),
+    decoration: _inputDecoration(label, suffix: unit, hint: hint),
+  );
 }
 
 class _ChoiceRow extends StatelessWidget {
   final Map<String, String> options;
   final String value;
   final ValueChanged<String> onChanged;
-  const _ChoiceRow({required this.options, required this.value, required this.onChanged});
+  const _ChoiceRow({
+    required this.options,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) => Wrap(
-        spacing: 6,
-        runSpacing: 6,
-        children: [
-          for (final e in options.entries)
-            ChoiceChip(
-              label: Text(e.value),
-              selected: value == e.key,
-              showCheckmark: false,
-              selectedColor: kBrandBlueSoft,
-              backgroundColor: kCanvas,
-              side: BorderSide(color: value == e.key ? kBrandBlue : kHairline),
-              labelStyle: TextStyle(
-                color: value == e.key ? kBrandBlueDeep : kCharcoal,
-                fontWeight: value == e.key ? FontWeight.w600 : FontWeight.w400,
-                fontSize: 13,
-              ),
-              shape: const StadiumBorder(),
-              onSelected: (_) => onChanged(e.key),
-            ),
-        ],
-      );
+    spacing: 6,
+    runSpacing: 6,
+    children: [
+      for (final e in options.entries)
+        ChoiceChip(
+          label: Text(e.value),
+          selected: value == e.key,
+          showCheckmark: false,
+          selectedColor: kBrandBlueSoft,
+          backgroundColor: kCanvas,
+          side: BorderSide(color: value == e.key ? kBrandBlue : kHairline),
+          labelStyle: TextStyle(
+            color: value == e.key ? kBrandBlueDeep : kCharcoal,
+            fontWeight: value == e.key ? FontWeight.w600 : FontWeight.w400,
+            fontSize: 13,
+          ),
+          shape: const StadiumBorder(),
+          onSelected: (_) => onChanged(e.key),
+        ),
+    ],
+  );
 }
 
 class _WarnBox extends StatelessWidget {
@@ -588,26 +798,36 @@ class _WarnBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: background,
-          borderRadius: BorderRadius.circular(kRadiusLg),
-          border: Border.all(color: color.withValues(alpha: 0.35)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: background,
+      borderRadius: BorderRadius.circular(kRadiusLg),
+      border: Border.all(color: color.withValues(alpha: 0.35)),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
           children: [
-            Row(children: [
-              Icon(LucideIcons.triangleAlert, size: 16, color: color),
-              const SizedBox(width: 6),
-              Expanded(child: Text(title, style: TextStyle(color: color, fontWeight: FontWeight.w700))),
-            ]),
-            const SizedBox(height: 4),
-            Text(body, style: const TextStyle(color: kCharcoal, fontSize: 13, height: 1.5)),
-            ?footer,
+            Icon(LucideIcons.triangleAlert, size: 16, color: color),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(color: color, fontWeight: FontWeight.w700),
+              ),
+            ),
           ],
         ),
-      );
+        const SizedBox(height: 4),
+        Text(
+          body,
+          style: const TextStyle(color: kCharcoal, fontSize: 13, height: 1.5),
+        ),
+        ?footer,
+      ],
+    ),
+  );
 }
 
 class _DuplicateWarning extends ConsumerWidget {
@@ -625,14 +845,20 @@ class _DuplicateWarning extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final who = local != null ? ref.watch(writerNameProvider(local!.writerId)) : server!.writerName;
+    final l = context.l10n;
+    final writer = local != null
+        ? ref.watch(writerNameProvider(local!.writerId))
+        : WriterName(isMe: false, name: server!.writerName);
     final at = local?.recordedAt ?? server!.recordedAt;
     final dose = local?.insulinDose ?? server?.insulinDose;
 
     return _WarnBox(
-      title: '이번 회차는 이미 투여됐어요',
-      body: '${subjectOf(who)} ${DateFormat('HH:mm').format(at)}에 ${dose == null ? '' : '${dose.toStringAsFixed(1)} IU를 '}'
-          '투여했다고 기록했어요. 한 번 더 투여하면 저혈당 위험이 있어요.',
+      title: l.dupTitle,
+      body: l.dupBody(
+        writer.subject(l),
+        DateFormat('HH:mm').format(at),
+        (dose ?? 0).toStringAsFixed(1),
+      ),
       footer: Padding(
         padding: const EdgeInsets.only(top: 6),
         child: InkWell(
@@ -646,9 +872,15 @@ class _DuplicateWarning extends ConsumerWidget {
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 visualDensity: VisualDensity.compact,
               ),
-              const Expanded(
-                child: Text('확인했어요. 별도 투여가 맞아서 기록할게요.',
-                    style: TextStyle(color: kCharcoal, fontSize: 13, fontWeight: FontWeight.w600)),
+              Expanded(
+                child: Text(
+                  l.dupAcknowledge,
+                  style: TextStyle(
+                    color: kCharcoal,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ],
           ),

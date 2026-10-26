@@ -13,7 +13,11 @@ class GlucoseRange {
   final int min;
   final int max;
 
-  const GlucoseRange({required this.hypo, required this.min, required this.max});
+  const GlucoseRange({
+    required this.hypo,
+    required this.min,
+    required this.max,
+  });
 
   factory GlucoseRange.forPet(Pet pet) {
     final defaultMax = pet.isCat ? 300 : 250;
@@ -50,7 +54,8 @@ class GlucoseDistribution {
     return GlucoseDistribution(counts, total);
   }
 
-  double ratio(GlucoseStatus status) => total == 0 ? 0 : counts[status]! / total;
+  double ratio(GlucoseStatus status) =>
+      total == 0 ? 0 : counts[status]! / total;
   double get timeInRange => ratio(GlucoseStatus.inRange);
 }
 
@@ -70,11 +75,16 @@ class GlucosePeriodSummary {
     this.previousAverage,
   });
 
-  double? get averageDelta =>
-      average != null && previousAverage != null ? average! - previousAverage! : null;
+  double? get averageDelta => average != null && previousAverage != null
+      ? average! - previousAverage!
+      : null;
 
   /// [from]~[to] 구간과, 그 직전 같은 길이 구간을 비교한다.
-  factory GlucosePeriodSummary.of(Iterable<Record> records, DateTime from, DateTime to) {
+  factory GlucosePeriodSummary.of(
+    Iterable<Record> records,
+    DateTime from,
+    DateTime to,
+  ) {
     final length = to.difference(from);
     final prevFrom = from.subtract(length);
     final current = <Record>[];
@@ -84,14 +94,17 @@ class GlucosePeriodSummary {
       if (v == null) continue;
       if (!r.recordedAt.isBefore(from) && !r.recordedAt.isAfter(to)) {
         current.add(r);
-      } else if (!r.recordedAt.isBefore(prevFrom) && r.recordedAt.isBefore(from)) {
+      } else if (!r.recordedAt.isBefore(prevFrom) &&
+          r.recordedAt.isBefore(from)) {
         previous.add(v);
       }
     }
     if (current.isEmpty) {
       return GlucosePeriodSummary(
         count: 0,
-        previousAverage: previous.isEmpty ? null : previous.reduce((a, b) => a + b) / previous.length,
+        previousAverage: previous.isEmpty
+            ? null
+            : previous.reduce((a, b) => a + b) / previous.length,
       );
     }
     Record lowest = current.first, highest = current.first;
@@ -106,7 +119,9 @@ class GlucosePeriodSummary {
       average: sum / current.length,
       lowest: lowest,
       highest: highest,
-      previousAverage: previous.isEmpty ? null : previous.reduce((a, b) => a + b) / previous.length,
+      previousAverage: previous.isEmpty
+          ? null
+          : previous.reduce((a, b) => a + b) / previous.length,
     );
   }
 }

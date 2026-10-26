@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../l10n/l10n.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -12,10 +13,7 @@ import '../../view_models/pet_management_view_model.dart';
 class HomeView extends ConsumerStatefulWidget {
   final StatefulNavigationShell navigationShell;
 
-  const HomeView({
-    super.key,
-    required this.navigationShell,
-  });
+  const HomeView({super.key, required this.navigationShell});
 
   @override
   ConsumerState<HomeView> createState() => _HomeViewState();
@@ -33,7 +31,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
     final petsAsync = ref.read(petsProvider);
     if (petsAsync.value?.isEmpty ?? true) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('기록을 추가하려면 먼저 반려동물을 등록해주세요.')),
+        SnackBar(content: Text(context.l10n.needPetFirstForRecord)),
       );
       _onTabTapped(3);
       return;
@@ -62,9 +60,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   size: 48,
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  '데이터를 불러오지 못했습니다.',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                Text(
+                  context.l10n.commonLoadError,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -79,7 +77,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                     backgroundColor: kBrandBlue,
                     foregroundColor: kOnDark,
                   ),
-                  child: const Text('다시 시도'),
+                  child: Text(context.l10n.commonRetry),
                 ),
               ],
             ),
@@ -147,11 +145,27 @@ class _HomeViewState extends ConsumerState<HomeView> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              _buildNavItem(0, LucideIcons.house, '홈'),
-                              _buildNavItem(1, LucideIcons.chartLine, '추이'),
+                              _buildNavItem(
+                                0,
+                                LucideIcons.house,
+                                context.l10n.navHome,
+                              ),
+                              _buildNavItem(
+                                1,
+                                LucideIcons.chartLine,
+                                context.l10n.navTrends,
+                              ),
                               _buildAddButton(),
-                              _buildNavItem(2, LucideIcons.sparkle, 'AI 코치'),
-                              _buildNavItem(3, LucideIcons.bookHeart, '건강수첩'),
+                              _buildNavItem(
+                                2,
+                                LucideIcons.sparkle,
+                                context.l10n.navCoach,
+                              ),
+                              _buildNavItem(
+                                3,
+                                LucideIcons.bookHeart,
+                                context.l10n.navBook,
+                              ),
                             ],
                           ),
                         ),
@@ -171,44 +185,44 @@ class _HomeViewState extends ConsumerState<HomeView> {
       button: true,
       selected: isSelected,
       child: GestureDetector(
-      onTap: () => _onTabTapped(index),
-      behavior: HitTestBehavior.opaque,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? kSlate.withValues(alpha: 0.15)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(100),
+        onTap: () => _onTabTapped(index),
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? kSlate.withValues(alpha: 0.15)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(100),
+          ),
+          child: Icon(icon, color: isSelected ? kInk : kSlate, size: 26),
         ),
-        child: Icon(icon, color: isSelected ? kInk : kSlate, size: 26),
-      ),
       ),
     );
   }
 
   Widget _buildAddButton() {
     return Semantics(
-      label: '기록 추가',
+      label: context.l10n.navAddRecord,
       button: true,
       child: GestureDetector(
-      onTap: _showRecordEntryBottomSheet,
-      behavior: HitTestBehavior.opaque,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-        decoration: BoxDecoration(
-          color: kBrandBlue,
-          borderRadius: BorderRadius.circular(100),
-          boxShadow: [
-            BoxShadow(
-              color: kBrandBlue.withValues(alpha: 0.35),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
+        onTap: _showRecordEntryBottomSheet,
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+          decoration: BoxDecoration(
+            color: kBrandBlue,
+            borderRadius: BorderRadius.circular(100),
+            boxShadow: [
+              BoxShadow(
+                color: kBrandBlue.withValues(alpha: 0.35),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: const Icon(LucideIcons.plus, color: Colors.white, size: 26),
         ),
-        child: const Icon(LucideIcons.plus, color: Colors.white, size: 26),
-      ),
       ),
     );
   }

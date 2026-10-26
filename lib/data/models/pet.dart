@@ -152,9 +152,13 @@ class Pet {
       breed: json['breed'] as String?,
       sex: json['sex'] as String?,
       isNeutered: json['is_neutered'] as bool? ?? false,
-      dateOfBirth: json['date_of_birth'] != null ? DateTime.parse(json['date_of_birth'] as String) : null,
+      dateOfBirth: json['date_of_birth'] != null
+          ? DateTime.parse(json['date_of_birth'] as String)
+          : null,
       diagnosis: json['diagnosis'] as String?,
-      diagnosedAt: json['diagnosed_at'] != null ? DateTime.parse(json['diagnosed_at'] as String) : null,
+      diagnosedAt: json['diagnosed_at'] != null
+          ? DateTime.parse(json['diagnosed_at'] as String)
+          : null,
       insulinType: json['insulin_type'] as String?,
       insulinUnitIu: (json['insulin_unit_iu'] as num?)?.toDouble(),
       targetGlucoseMin: json['target_glucose_min'] as int?,
@@ -167,7 +171,8 @@ class Pet {
       role: json['role'] as String? ?? parsedRole,
       conditions: (json['conditions'] as List?)?.cast<String>() ?? const [],
       // Postgres time[]은 'HH:mm:ss'로 오므로 'HH:mm'으로 자른다
-      dosingTimes: (json['dosing_times'] as List?)
+      dosingTimes:
+          (json['dosing_times'] as List?)
               ?.map((t) => (t as String).substring(0, 5))
               .toList() ??
           const [],

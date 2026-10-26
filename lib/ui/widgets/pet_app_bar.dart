@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../l10n/l10n.dart';
 import '../view_models/dashboard_view_model.dart';
 import '../views/dashboard/widgets/pet_selector_bottom_sheet.dart';
 
@@ -31,7 +32,7 @@ class PetAppBar extends ConsumerWidget implements PreferredSizeWidget {
       titleSpacing: 20,
       title: Semantics(
         button: pet != null,
-        label: pet == null ? null : '반려동물 바꾸기',
+        label: pet == null ? null : context.l10n.switchPet,
         child: GestureDetector(
           onTap: pet == null
               ? null
@@ -50,7 +51,7 @@ class PetAppBar extends ConsumerWidget implements PreferredSizeWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    title ?? pet?.name ?? '메티',
+                    title ?? pet?.name ?? context.l10n.appTitle,
                     style: const TextStyle(
                       color: kInk,
                       fontSize: 20,
@@ -78,7 +79,7 @@ class PetAppBar extends ConsumerWidget implements PreferredSizeWidget {
       ),
       actions: [
         IconButton(
-          tooltip: '설정',
+          tooltip: context.l10n.commonSettings,
           onPressed: () => context.push('/settings'),
           icon: const Icon(LucideIcons.settings, color: kCharcoal, size: 22),
         ),

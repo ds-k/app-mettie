@@ -1,0 +1,7 @@
+# 다국어: lib/l10n/app_ko.arb가 기준(템플릿)이고 en, ja가 같은 키를 가져야 한다.
+arb-dir: lib/l10n
+template-arb-file: app_ko.arb
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+nullable-getter: false
+untranslated-messages-file: build/l10n_untranslated.json

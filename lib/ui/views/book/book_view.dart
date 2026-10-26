@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../data/constants/veterinary_guidelines.dart';
 import '../../../data/models/pet.dart';
 import '../../../data/models/record.dart';
+import '../../../l10n/l10n.dart';
+import '../../../l10n/labels.dart';
 import '../../view_models/dashboard_view_model.dart';
 import '../../widgets/pet_app_bar.dart';
 import '../profile/widgets/profile_family_management.dart';
@@ -21,23 +24,30 @@ class BookView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final pet = ref.watch(currentPetProvider);
     final records = ref.watch(recordsStreamProvider).value ?? const <Record>[];
+    final l = context.l10n;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: PetAppBar(subtitle: pet == null ? null : '건강수첩', title: pet == null ? '건강수첩' : null),
+      appBar: PetAppBar(
+        subtitle: pet == null ? null : l.navBook,
+        title: pet == null ? l.navBook : null,
+      ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 120),
         children: [
           if (pet != null) ...[
             _ProfileCard(pet: pet, records: records),
             const SizedBox(height: 12),
-            if (pet.hasDiabetes) _DiabetesPlanCard(pet: pet) else _StartConditionCard(pet: pet),
+            if (pet.hasDiabetes)
+              _DiabetesPlanCard(pet: pet)
+            else
+              _StartConditionCard(pet: pet),
             const SizedBox(height: 12),
           ],
           _LinkCard(
             icon: LucideIcons.pawPrint,
-            title: pet == null ? '반려동물 등록하기' : '반려동물 관리',
-            subtitle: pet == null ? '강아지, 고양이 모두 등록할 수 있어요' : '등록 · 정보 수정 · 삭제 · 초대 코드',
+            title: pet == null ? l.bookAddPet : l.bookManagePets,
+            subtitle: pet == null ? l.bookAddPetHint : l.bookManagePetsHint,
             onTap: () => context.push('/home/book/pets'),
           ),
           const SizedBox(height: 24),
@@ -54,14 +64,14 @@ class _Card extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: kCanvas,
-          borderRadius: BorderRadius.circular(kRadiusXl),
-          border: Border.all(color: kHairline),
-        ),
-        child: child,
-      );
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: kCanvas,
+      borderRadius: BorderRadius.circular(kRadiusXl),
+      border: Border.all(color: kHairline),
+    ),
+    child: child,
+  );
 }
 
 class _ProfileCard extends StatelessWidget {
@@ -71,17 +81,22 @@ class _ProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final latestWeight = records.where((r) => r.weightKg != null).firstOrNull?.weightKg ?? pet.weightKg;
-    final age = pet.dateOfBirth == null ? null : DateTime.now().difference(pet.dateOfBirth!).inDays ~/ 365;
+    final latestWeight =
+        records.where((r) => r.weightKg != null).firstOrNull?.weightKg ??
+        pet.weightKg;
+    final l = context.l10n;
+    final age = pet.dateOfBirth == null
+        ? null
+        : DateTime.now().difference(pet.dateOfBirth!).inDays ~/ 365;
     final sex = switch (pet.sex) {
-      'male' => pet.isNeutered ? '수컷(중성화)' : '수컷',
-      'female' => pet.isNeutered ? '암컷(중성화)' : '암컷',
+      'male' => pet.isNeutered ? l.sexMaleNeutered : l.sexMale,
+      'female' => pet.isNeutered ? l.sexFemaleSpayed : l.sexFemale,
       _ => null,
     };
     final facts = [
-      pet.breed ?? (pet.isCat ? '고양이' : '강아지'),
+      pet.breed ?? (pet.isCat ? l.speciesCat : l.speciesDog),
       ?sex,
-      if (age != null) '$age살',
+      if (age != null) l.ageYears(age),
       if (latestWeight != null) '${latestWeight.toStringAsFixed(2)} kg',
     ];
 
@@ -91,19 +106,34 @@ class _ProfileCard extends StatelessWidget {
           CircleAvatar(
             radius: 26,
             backgroundColor: kBrandBlueSoft,
-            backgroundImage: pet.avatarUrl?.isNotEmpty == true ? NetworkImage(pet.avatarUrl!) : null,
+            backgroundImage: pet.avatarUrl?.isNotEmpty == true
+                ? NetworkImage(pet.avatarUrl!)
+                : null,
             child: pet.avatarUrl?.isNotEmpty == true
                 ? null
-                : Icon(pet.isCat ? LucideIcons.cat : LucideIcons.dog, color: kBrandBlueDeep),
+                : Icon(
+                    pet.isCat ? LucideIcons.cat : LucideIcons.dog,
+                    color: kBrandBlueDeep,
+                  ),
           ),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(pet.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: kInk)),
+                Text(
+                  pet.name,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: kInk,
+                  ),
+                ),
                 const SizedBox(height: 2),
-                Text(facts.join(' · '), style: const TextStyle(color: kSlate, fontSize: 13)),
+                Text(
+                  facts.join(' · '),
+                  style: const TextStyle(color: kSlate, fontSize: 13),
+                ),
               ],
             ),
           ),
@@ -119,56 +149,101 @@ class _DiabetesPlanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final concentration = pet.insulinConcentration ?? VeterinaryGuidelines.concentrationOf(pet.insulinType);
+    final l = context.l10n;
+    final concentration =
+        pet.insulinConcentration ??
+        VeterinaryGuidelines.concentrationOf(pet.insulinType);
     final syringe = switch (pet.syringeType) {
-      'pen' => '펜',
+      'pen' => l.entryPen,
       null => null,
-      final s => '$s 주사기',
+      final s => l.entrySyringe(s),
     };
     final diagnosed = pet.diagnosedAt == null
         ? null
-        : '${pet.diagnosedAt!.year}.${pet.diagnosedAt!.month}.${pet.diagnosedAt!.day} 진단';
+        : l.diagnosedOn(DateFormat.yMd(l.localeName).format(pet.diagnosedAt!));
 
     final rows = <(String, String, bool)>[
       (
-        '인슐린',
-        [pet.insulinType?.split('(').first ?? '미설정', ?concentration].join(' · '),
+        l.planInsulin,
+        [
+          pet.insulinType == null
+              ? l.commonUnset
+              : insulinDisplayName(l, pet.insulinType!),
+          ?concentration,
+        ].join(' · '),
         pet.insulinType == null,
       ),
       (
-        '용량 · 시각',
+        l.planDoseTimes,
         [
           if (pet.insulinUnitIu != null) '${pet.insulinUnitIu} IU',
-          pet.dosingTimes.isEmpty ? '투여 시각 미설정' : pet.dosingTimes.join(' / '),
+          pet.dosingTimes.isEmpty
+              ? l.planTimesUnset
+              : pet.dosingTimes.join(' / '),
         ].join(' · '),
         pet.dosingTimes.isEmpty,
       ),
-      ('주사기', syringe ?? '미설정', syringe == null),
-      ('목표 혈당', '${pet.targetGlucoseMin ?? 100} – ${pet.targetGlucoseMax ?? (pet.isCat ? 300 : 250)} · 저혈당 ${pet.hypoThreshold} 미만', false),
-      if (pet.glucoseMeter != null) ('측정기', pet.glucoseMeter!, false),
+      (l.planSyringe, syringe ?? l.commonUnset, syringe == null),
+      (
+        l.planTarget,
+        l.planTargetValue(
+          pet.targetGlucoseMin ?? 100,
+          pet.targetGlucoseMax ?? (pet.isCat ? 300 : 250),
+          pet.hypoThreshold,
+        ),
+        false,
+      ),
+      if (pet.glucoseMeter != null) (l.planMeter, pet.glucoseMeter!, false),
       if (pet.defaultFoodWet != null || pet.defaultFoodDry != null)
-        ('사료', [?pet.defaultFoodWet, ?pet.defaultFoodDry].join(' · '), false),
-      if (pet.vetClinic?.isNotEmpty ?? false) ('병원', pet.vetClinic!, false),
+        (
+          l.planFood,
+          [?pet.defaultFoodWet, ?pet.defaultFoodDry].join(' · '),
+          false,
+        ),
+      if (pet.vetClinic?.isNotEmpty ?? false)
+        (l.planVet, pet.vetClinic!, false),
     ];
 
     return _Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(children: [
-            const Text('당뇨 관리 계획', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: kInk)),
-            const SizedBox(width: 8),
-            if (diagnosed != null) Text(diagnosed, style: const TextStyle(color: kSlate, fontSize: 12)),
-            const Spacer(),
-            TextButton(onPressed: () => showCarePlanSheet(context, pet), child: const Text('수정')),
-          ]),
+          Row(
+            children: [
+              Text(
+                l.planTitle,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: kInk,
+                ),
+              ),
+              const SizedBox(width: 8),
+              if (diagnosed != null)
+                Text(
+                  diagnosed,
+                  style: const TextStyle(color: kSlate, fontSize: 12),
+                ),
+              const Spacer(),
+              TextButton(
+                onPressed: () => showCarePlanSheet(context, pet),
+                child: Text(l.commonEdit),
+              ),
+            ],
+          ),
           for (final (label, value, missing) in rows)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 7),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(width: 84, child: Text(label, style: const TextStyle(color: kSlate, fontSize: 13))),
+                  SizedBox(
+                    width: 84,
+                    child: Text(
+                      label,
+                      style: const TextStyle(color: kSlate, fontSize: 13),
+                    ),
+                  ),
                   Expanded(
                     child: Text(
                       value,
@@ -199,18 +274,28 @@ class _StartConditionCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('질환 관리', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: kInk)),
+          Text(
+            context.l10n.conditionTitle,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: kInk,
+            ),
+          ),
           const SizedBox(height: 6),
           Text(
-            '${pet.name}이(가) 당뇨 진단을 받았다면 관리 계획을 만들어 투여 시간, 혈당 목표, 가족 간 중복 투여 방지를 시작할 수 있어요.',
+            context.l10n.conditionBody(pet.name),
             style: const TextStyle(color: kCharcoal, fontSize: 14, height: 1.5),
           ),
           const SizedBox(height: 10),
           OutlinedButton.icon(
             onPressed: () => showCarePlanSheet(context, pet),
             icon: const Icon(LucideIcons.plus, size: 16),
-            label: const Text('당뇨 관리 시작'),
-            style: OutlinedButton.styleFrom(shape: const StadiumBorder(), foregroundColor: kBrandBlueDeep),
+            label: Text(context.l10n.conditionStartDiabetes),
+            style: OutlinedButton.styleFrom(
+              shape: const StadiumBorder(),
+              foregroundColor: kBrandBlueDeep,
+            ),
           ),
         ],
       ),
@@ -223,7 +308,12 @@ class _LinkCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final VoidCallback onTap;
-  const _LinkCard({required this.icon, required this.title, required this.subtitle, required this.onTap});
+  const _LinkCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -246,8 +336,18 @@ class _LinkCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: const TextStyle(fontWeight: FontWeight.w600, color: kInk, fontSize: 15)),
-                    Text(subtitle, style: const TextStyle(color: kSlate, fontSize: 12)),
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: kInk,
+                        fontSize: 15,
+                      ),
+                    ),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(color: kSlate, fontSize: 12),
+                    ),
                   ],
                 ),
               ),

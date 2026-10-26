@@ -59,7 +59,8 @@ class RagContextInjector {
         }
       }
 
-      if (record.foodAmountG != null || (record.foodBrand != null && record.foodBrand!.isNotEmpty)) {
+      if (record.foodAmountG != null ||
+          (record.foodBrand != null && record.foodBrand!.isNotEmpty)) {
         final foodParts = <String>[];
         if (record.foodBrand != null && record.foodBrand!.isNotEmpty) {
           foodParts.add(record.foodBrand!);
@@ -130,7 +131,8 @@ $generalGuidelines
 [최근 생체 기록]
 $contextStr
 
-위 정보를 바탕으로 보호자의 질문에 친절하고 분석적으로 답변하세요. 마크다운(Markdown) 문법을 적극 활용하여 가독성을 높이세요.'''.trim();
+위 정보를 바탕으로 보호자의 질문에 친절하고 분석적으로 답변하세요. 마크다운(Markdown) 문법을 적극 활용하여 가독성을 높이세요.'''
+        .trim();
   }
 
   /// 사용자의 입력만을 전달하는 단순 래퍼 (미래 확장성 고려)

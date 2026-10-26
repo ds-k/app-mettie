@@ -12,10 +12,12 @@ class ProfileFamilyManagement extends ConsumerStatefulWidget {
   const ProfileFamilyManagement({super.key});
 
   @override
-  ConsumerState<ProfileFamilyManagement> createState() => _ProfileFamilyManagementState();
+  ConsumerState<ProfileFamilyManagement> createState() =>
+      _ProfileFamilyManagementState();
 }
 
-class _ProfileFamilyManagementState extends ConsumerState<ProfileFamilyManagement> {
+class _ProfileFamilyManagementState
+    extends ConsumerState<ProfileFamilyManagement> {
   final _joinCodeController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
@@ -175,20 +177,13 @@ class _ProfileFamilyManagementState extends ConsumerState<ProfileFamilyManagemen
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(
-                            LucideIcons.copy,
-                            color: kBrandBlue,
-                          ),
+                          icon: const Icon(LucideIcons.copy, color: kBrandBlue),
                           onPressed: () {
                             Clipboard.setData(
-                              ClipboardData(
-                                text: profileState.generatedCode!,
-                              ),
+                              ClipboardData(text: profileState.generatedCode!),
                             );
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('초대 코드가 복사되었습니다.'),
-                              ),
+                              const SnackBar(content: Text('초대 코드가 복사되었습니다.')),
                             );
                           },
                         ),
@@ -239,10 +234,7 @@ class _ProfileFamilyManagementState extends ConsumerState<ProfileFamilyManagemen
                   SizedBox(width: 8),
                   Text(
                     '가족 참여하기',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: kInk,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, color: kInk),
                   ),
                 ],
               ),

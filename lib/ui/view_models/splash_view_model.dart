@@ -8,15 +8,9 @@ class SplashState {
   final SplashStatus status;
   final bool isAuth;
 
-  SplashState({
-    this.status = SplashStatus.initializing,
-    this.isAuth = false,
-  });
+  SplashState({this.status = SplashStatus.initializing, this.isAuth = false});
 
-  SplashState copyWith({
-    SplashStatus? status,
-    bool? isAuth,
-  }) {
+  SplashState copyWith({SplashStatus? status, bool? isAuth}) {
     return SplashState(
       status: status ?? this.status,
       isAuth: isAuth ?? this.isAuth,
@@ -24,9 +18,11 @@ class SplashState {
   }
 }
 
-final splashViewModelProvider = NotifierProvider<SplashViewModel, SplashState>(() {
-  return SplashViewModel();
-});
+final splashViewModelProvider = NotifierProvider<SplashViewModel, SplashState>(
+  () {
+    return SplashViewModel();
+  },
+);
 
 class SplashViewModel extends Notifier<SplashState> {
   @override

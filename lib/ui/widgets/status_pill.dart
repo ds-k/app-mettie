@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../domain/glucose.dart';
+import '../../l10n/labels.dart';
+import '../../l10n/l10n.dart';
 
 /// 작은 상태 배지. 색은 의미가 있을 때만 쓰고, 기본은 회색.
 class StatusPill extends StatelessWidget {
@@ -16,33 +18,44 @@ class StatusPill extends StatelessWidget {
     this.background = kSurfaceSoft,
   });
 
-  factory StatusPill.glucose(GlucoseStatus status) {
-    final (label, fg, bg) = glucoseStatusStyle(status);
-    return StatusPill(label: label, foreground: fg, background: bg);
+  factory StatusPill.glucose(GlucoseStatus status, AppLocalizations l) {
+    final (fg, bg) = glucoseStatusStyle(status);
+    return StatusPill(
+      label: glucoseStatusLabel(l, status),
+      foreground: fg,
+      background: bg,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(color: background, borderRadius: BorderRadius.circular(kRadiusFull)),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(kRadiusFull),
+      ),
       child: Text(
         label,
-        style: TextStyle(color: foreground, fontSize: 11, fontWeight: FontWeight.w600),
+        style: TextStyle(
+          color: foreground,
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
 }
 
-/// 혈당 상태의 표시 이름, 글자색, 바탕색.
-(String, Color, Color) glucoseStatusStyle(GlucoseStatus status) {
+/// 혈당 상태의 글자색, 바탕색. 표시 이름은 glucoseStatusLabel.
+(Color, Color) glucoseStatusStyle(GlucoseStatus status) {
   return switch (status) {
-    GlucoseStatus.hypo => ('저혈당', kStatusError, kStatusErrorSoft),
-    GlucoseStatus.low => ('낮음', kStatusWarn, kStatusWarnSoft),
-    GlucoseStatus.inRange => ('목표 범위', kStatusOk, kStatusOkSoft),
-    GlucoseStatus.high => ('높음', kStatusWarn, kStatusWarnSoft),
-    GlucoseStatus.veryHigh => ('매우 높음', kStatusSevere, kStatusErrorSoft),
+    GlucoseStatus.hypo => (kStatusError, kStatusErrorSoft),
+    GlucoseStatus.low => (kStatusWarn, kStatusWarnSoft),
+    GlucoseStatus.inRange => (kStatusOk, kStatusOkSoft),
+    GlucoseStatus.high => (kStatusWarn, kStatusWarnSoft),
+    GlucoseStatus.veryHigh => (kStatusSevere, kStatusErrorSoft),
   };
 }
 
-Color glucoseStatusColor(GlucoseStatus status) => glucoseStatusStyle(status).$2;
+Color glucoseStatusColor(GlucoseStatus status) => glucoseStatusStyle(status).$1;

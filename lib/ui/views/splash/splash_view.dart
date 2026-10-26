@@ -24,12 +24,13 @@ class _SplashViewState extends ConsumerState<SplashView>
       vsync: this,
       duration: const Duration(seconds: 1),
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
 
     _controller.forward();
-    
+
     // 초기화 트리거
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
@@ -47,7 +48,7 @@ class _SplashViewState extends ConsumerState<SplashView>
   @override
   Widget build(BuildContext context) {
     // 상태 구독 (사용하지 않는 변수 제거)
-    
+
     // 완료 시 라우팅
     ref.listen<SplashState>(splashViewModelProvider, (previous, next) {
       if (next.status == SplashStatus.complete) {
@@ -61,27 +62,22 @@ class _SplashViewState extends ConsumerState<SplashView>
 
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          color: kHeroSkyFrom,
-        ),
+        decoration: const BoxDecoration(color: kHeroSkyFrom),
         child: Center(
           child: FadeTransition(
             opacity: _fadeAnimation,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(
-                  'assets/icons/mettie_logo.png',
-                  width: 140,
-                ),
+                Image.asset('assets/icons/mettie_logo.png', width: 140),
                 const SizedBox(height: 24),
                 Text(
                   'Mettie',
                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                        color: kBrandBlueDeep,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 48,
-                      ),
+                    color: kBrandBlueDeep,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 48,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 const CircularProgressIndicator(

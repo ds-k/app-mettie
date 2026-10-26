@@ -1,0 +1,587 @@
+{
+  "@@locale": "ko",
+  "appTitle": "메티",
+  "commonSave": "저장",
+  "commonSaveCount": "{count}건 저장",
+  "@commonSaveCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "commonCancel": "취소",
+  "commonClose": "닫기",
+  "commonEdit": "수정",
+  "commonDelete": "삭제",
+  "commonConfirm": "확인",
+  "commonRetry": "다시 시도",
+  "commonSettings": "설정",
+  "commonUnset": "미설정",
+  "commonAdd": "추가",
+  "commonMe": "나",
+  "commonFamily": "가족",
+  "commonNetworkError": "저장하지 못했어요. 네트워크를 확인하고 다시 시도해 주세요.",
+  "commonLoadError": "데이터를 불러오지 못했습니다.",
+  "navHome": "홈",
+  "navTrends": "추이",
+  "navCoach": "AI 코치",
+  "navBook": "건강수첩",
+  "navAddRecord": "기록 추가",
+  "needPetFirstForRecord": "기록을 추가하려면 먼저 반려동물을 등록해주세요.",
+  "switchPet": "반려동물 바꾸기",
+  "unitMgdl": "mg/dL",
+  "unitIu": "IU",
+  "unitG": "g",
+  "unitKg": "kg",
+  "speciesDog": "강아지",
+  "speciesCat": "고양이",
+  "glucoseHypo": "저혈당",
+  "glucoseLow": "낮음",
+  "glucoseInRange": "목표 범위",
+  "glucoseHigh": "높음",
+  "glucoseVeryHigh": "매우 높음",
+  "glucoseTypePreMeal": "식전",
+  "glucoseTypePostMeal": "식후",
+  "glucoseTypeFasting": "공복",
+  "glucoseTypeNadir": "nadir",
+  "glucoseTypeSpot": "임의",
+  "foodWet": "습식",
+  "foodDry": "건식",
+  "foodRaw": "생식",
+  "foodMixed": "혼합",
+  "foodGeneric": "사료",
+  "appetiteGood": "잘 먹음",
+  "appetitePartial": "조금 남김",
+  "appetiteNone": "안 먹음",
+  "appetitePoor": "식욕 저하",
+  "injectionGiven": "투여 완료",
+  "injectionPartial": "일부 투여",
+  "injectionSkipped": "생략",
+  "obsDrinkMore": "물 많이 마심",
+  "obsDrinkLess": "물 적게 마심",
+  "obsUrinateMore": "소변 많음",
+  "obsUrinateLess": "소변 적음",
+  "obsNoAppetite": "식욕 없음",
+  "obsVomit": "구토",
+  "obsVomitCount": "구토 {count}회",
+  "@obsVomitCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "obsDiarrhea": "설사",
+  "obsConstipation": "변비",
+  "obsLethargy": "무기력",
+  "obsWalkMore": "산책 평소보다 많음",
+  "obsWalkLess": "산책 평소보다 적음",
+  "obsEyeCloudy": "눈 혼탁·시야 이상",
+  "obsLitterLarge": "화장실 덩어리 큼",
+  "obsHindGait": "뒷다리 걸음 이상",
+  "writerSubjectMe": "내가",
+  "@writerSubjectMe": {
+    "description": "문장 주어로 쓰는 '나'"
+  },
+  "writerSubjectOther": "{name}",
+  "@writerSubjectOther": {
+    "description": "문장 주어로 쓰는 가족 이름. 한국어 조사는 코드에서 붙인다",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "tlInsulin": "인슐린 {dose} IU",
+  "@tlInsulin": {
+    "placeholders": {
+      "dose": {
+        "type": "String"
+      }
+    }
+  },
+  "tlInsulinPartial": "인슐린 일부 {dose} IU",
+  "@tlInsulinPartial": {
+    "placeholders": {
+      "dose": {
+        "type": "String"
+      }
+    }
+  },
+  "tlInsulinSkipped": "인슐린 생략",
+  "tlGlucose": "혈당 {value}",
+  "@tlGlucose": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "tlFoodAmount": "사료 {grams} g",
+  "@tlFoodAmount": {
+    "placeholders": {
+      "grams": {
+        "type": "String"
+      }
+    }
+  },
+  "tlWeight": "체중 {kg} kg",
+  "@tlWeight": {
+    "placeholders": {
+      "kg": {
+        "type": "String"
+      }
+    }
+  },
+  "tlEmptyFiltered": "이 조건의 기록이 없습니다.",
+  "tlToday": "오늘",
+  "tlHypoCount": "저혈당 {count}회",
+  "@tlHypoCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tlDoses": "투여 {given}/{planned}",
+  "@tlDoses": {
+    "placeholders": {
+      "given": {
+        "type": "int"
+      },
+      "planned": {
+        "type": "int"
+      }
+    }
+  },
+  "tlSkippedCount": "생략 {count}",
+  "@tlSkippedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tlGlucoseSingle": "혈당 {value}",
+  "@tlGlucoseSingle": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "tlGlucoseAverage": "혈당 평균 {value}",
+  "@tlGlucoseAverage": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "todayDiagnosisDay": "진단 {days}일째",
+  "@todayDiagnosisDay": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "remainingSoon": "곧",
+  "remainingMinutes": "{m}분 후",
+  "@remainingMinutes": {
+    "placeholders": {
+      "m": {
+        "type": "int"
+      }
+    }
+  },
+  "remainingHours": "{h}시간 후",
+  "@remainingHours": {
+    "placeholders": {
+      "h": {
+        "type": "int"
+      }
+    }
+  },
+  "remainingHoursMinutes": "{h}시간 {m}분 후",
+  "@remainingHoursMinutes": {
+    "placeholders": {
+      "h": {
+        "type": "int"
+      },
+      "m": {
+        "type": "int"
+      }
+    }
+  },
+  "slotMorning": "아침",
+  "slotMidday": "낮",
+  "slotEvening": "저녁",
+  "hypoCardTitle": "저혈당 {value} · {time}",
+  "@hypoCardTitle": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "hypoCardSteps": "1. 기운이 없거나 떨면 꿀·시럽을 잇몸에 바르세요.\n2. 15분 뒤 다시 재고, 경련·의식 저하가 있으면 바로 병원으로 가세요.\n3. 다음 인슐린은 수의사와 상의하기 전까지 투여하지 마세요.",
+  "hypoCardVet": "병원: {name}",
+  "@hypoCardVet": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setupPlanTitle": "투여 시간을 정해 주세요",
+  "setupPlanBody": "정해 두면 다음 투여까지 남은 시간과 가족의 투여 현황을 보여 드리고, 같은 회차에 두 번 투여하지 않도록 막아 드려요.",
+  "setupPlanButton": "관리 계획 설정",
+  "doseDueNow": "지금 투여할 시간",
+  "doseNext": "다음 투여",
+  "doseSlotLabel": "{slot} 회차",
+  "@doseSlotLabel": {
+    "placeholders": {
+      "slot": {
+        "type": "String"
+      }
+    }
+  },
+  "doseNoneToday": "오늘 아직 투여 기록이 없어요",
+  "doseMissedSlot": "{slot} {time} 회차 기록이 없어요",
+  "@doseMissedSlot": {
+    "placeholders": {
+      "slot": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "doseRecordButton": "투여 기록하기",
+  "doseGivenBy": "{slot} {who} {time}에 {dose} IU 투여 완료",
+  "@doseGivenBy": {
+    "placeholders": {
+      "slot": {
+        "type": "String"
+      },
+      "who": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      },
+      "dose": {
+        "type": "String"
+      }
+    }
+  },
+  "latestGlucoseLabel": "최신 혈당 · {time}",
+  "@latestGlucoseLabel": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "glucoseVsYesterday": "어제 이맘때보다 {delta}",
+  "@glucoseVsYesterday": {
+    "placeholders": {
+      "delta": {
+        "type": "String"
+      }
+    }
+  },
+  "last48h": "최근 48시간",
+  "otherPetNextDose": "다음 투여 {time} · {remaining}",
+  "@otherPetNextDose": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "remaining": {
+        "type": "String"
+      }
+    }
+  },
+  "todayRecords": "오늘 기록",
+  "todayGlucoseCount": "혈당 {count}회",
+  "@todayGlucoseCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "todayEmpty": "아직 오늘 기록이 없어요",
+  "viewPastRecords": "지난 기록 보기",
+  "weightLabel": "체중",
+  "weightMeasuredOn": "{date} 측정",
+  "@weightMeasuredOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "weightChangeSince": "{date} 대비 {pct}",
+  "@weightChangeSince": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "noPetTitle": "아직 등록된 반려동물이 없어요",
+  "noPetBody": "강아지, 고양이 모두 등록할 수 있어요.\n건강수첩에서 우리 아이를 등록해 주세요.",
+  "noPetButton": "반려동물 등록하기",
+  "kindAll": "전체",
+  "kindGlucose": "혈당",
+  "kindInsulin": "인슐린",
+  "kindMeal": "식사",
+  "kindWeight": "체중",
+  "kindObservation": "관찰",
+  "trendsAddPetFirst": "반려동물을 먼저 등록해 주세요.",
+  "trendsSubtitle": "추이 · {from} – {to}",
+  "@trendsSubtitle": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "trendsTarget": "목표 {min}–{max}",
+  "@trendsTarget": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "trendsNoGlucose": "이 기간에 혈당 기록이 없어요",
+  "trendsRecords": "기록",
+  "periodDays": "{days}일",
+  "@periodDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "legendTarget": "목표 범위",
+  "legendReading": "측정값",
+  "legendHypo": "저혈당",
+  "legendDose": "투여",
+  "legendSkipped": "생략",
+  "tirTitle": "목표 범위 내 비율",
+  "tirReadings": "측정 {count}회",
+  "@tirReadings": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "summaryTitle": "요약",
+  "summaryComparedTo": "직전 {days}일과 비교",
+  "@summaryComparedTo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "summaryAverage": "평균",
+  "summaryLowest": "최저",
+  "summaryHighest": "최고",
+  "weightTrendTrailing": "{kg} kg · {date} 대비 {pct}",
+  "@weightTrendTrailing": {
+    "placeholders": {
+      "kg": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      },
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "entryNothingToSave": "저장할 내용을 입력해 주세요.",
+  "entryTitle": "{name} 기록 추가",
+  "@entryTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "entryChangeTime": "시각 변경",
+  "entryGlucoseField": "혈당",
+  "entryInsulinUnset": "인슐린 미설정",
+  "entryInsulinConcentration": "인슐린 {value}",
+  "@entryInsulinConcentration": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "entrySyringe": "주사기 {value}",
+  "@entrySyringe": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "entryPen": "펜",
+  "entryMismatchTitle": "인슐린과 주사기 눈금이 달라요",
+  "entryMismatchBody": "인슐린은 {insulin}인데 주사기는 {syringe}로 설정돼 있어요. 눈금대로 넣으면 실제 용량이 크게 달라집니다. 건강수첩의 관리 계획을 확인해 주세요.",
+  "@entryMismatchBody": {
+    "placeholders": {
+      "insulin": {
+        "type": "String"
+      },
+      "syringe": {
+        "type": "String"
+      }
+    }
+  },
+  "entryDoseField": "투여량",
+  "entryNotes": "메모",
+  "dupTitle": "이번 회차는 이미 투여됐어요",
+  "dupBody": "{who} {time}에 {dose} IU를 투여했다고 기록했어요. 한 번 더 투여하면 저혈당 위험이 있어요.",
+  "@dupBody": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      },
+      "dose": {
+        "type": "String"
+      }
+    }
+  },
+  "dupAcknowledge": "확인했어요. 별도 투여가 맞아서 기록할게요.",
+  "insulinCaninsulin": "캐닌슐린",
+  "insulinLantus": "란투스",
+  "insulinLevemir": "레베미어",
+  "insulinProZinc": "프로징크",
+  "insulinNph": "휴물린N/노볼린N",
+  "insulinTresiba": "트레시바",
+  "insulinToujeo": "투제오",
+  "insulinOther": "기타",
+  "bookAddPet": "반려동물 등록하기",
+  "bookManagePets": "반려동물 관리",
+  "bookAddPetHint": "강아지, 고양이 모두 등록할 수 있어요",
+  "bookManagePetsHint": "등록 · 정보 수정 · 삭제 · 초대 코드",
+  "sexMale": "수컷",
+  "sexFemale": "암컷",
+  "sexMaleNeutered": "수컷(중성화)",
+  "sexFemaleSpayed": "암컷(중성화)",
+  "ageYears": "{years}살",
+  "@ageYears": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "diagnosedOn": "{date} 진단",
+  "@diagnosedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "planTitle": "당뇨 관리 계획",
+  "planInsulin": "인슐린",
+  "planDoseTimes": "용량 · 시각",
+  "planTimesUnset": "투여 시각 미설정",
+  "planSyringe": "주사기",
+  "planTarget": "목표 혈당",
+  "planTargetValue": "{min} – {max} · 저혈당 {hypo} 미만",
+  "@planTargetValue": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      },
+      "hypo": {
+        "type": "int"
+      }
+    }
+  },
+  "planMeter": "측정기",
+  "planFood": "사료",
+  "planVet": "병원",
+  "conditionTitle": "질환 관리",
+  "conditionBody": "{name}이(가) 당뇨 진단을 받았다면 관리 계획을 만들어 투여 시간, 혈당 목표, 가족 간 중복 투여 방지를 시작할 수 있어요.",
+  "@conditionBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "conditionStartDiabetes": "당뇨 관리 시작",
+  "planSheetTitle": "{name} 당뇨 관리 계획",
+  "@planSheetTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "planErrRange": "목표 범위를 확인해 주세요. 하한이 상한보다 작아야 해요.",
+  "planErrHypo": "저혈당 기준은 40–150 사이로 입력해 주세요.",
+  "planErrSave": "저장하지 못했어요. 다시 시도해 주세요.",
+  "planDosingTimes": "투여 시각",
+  "planAddTime": "시각 추가",
+  "planTwiceDaily": "07:00 · 19:00 (하루 2회)",
+  "planInsulinType": "종류",
+  "planInsulinName": "인슐린 이름",
+  "planDosePerShot": "1회 용량",
+  "planConcentration": "인슐린 농도",
+  "planMismatch": "인슐린({insulin})과 주사기({syringe}) 눈금이 달라요. 눈금대로 넣으면 실제 용량이 크게 달라집니다.",
+  "@planMismatch": {
+    "placeholders": {
+      "insulin": {
+        "type": "String"
+      },
+      "syringe": {
+        "type": "String"
+      }
+    }
+  },
+  "planLower": "하한",
+  "planUpper": "상한",
+  "planHypoThreshold": "저혈당 기준",
+  "planTargetHint": "수의사가 정해 준 범위를 넣어 주세요. 기본값은 강아지 100–250, 고양이 100–300입니다.",
+  "planMeterFoodVet": "측정기 · 사료 · 병원",
+  "planMeterHint": "혈당 측정기 (예: 알파트랙 3)",
+  "planDefaultWet": "기본 습식 사료",
+  "planDefaultDry": "기본 건식 사료",
+  "planVetClinic": "다니는 병원"
+}

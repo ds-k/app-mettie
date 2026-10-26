@@ -44,7 +44,7 @@ BEGIN
   -- 두 사람이 동시에 저장해도 한 건만 통과하도록 펫 단위로 직렬화
   PERFORM pg_advisory_xact_lock(hashtext('dose:' || NEW.pet_id::text));
 
-  SELECT r.recorded_at, r.insulin_dose, coalesce(nullif(u.full_name, ''), '가족') AS writer
+  SELECT r.recorded_at, r.insulin_dose, nullif(u.full_name, '') AS writer
     INTO existing
   FROM public.records r
   LEFT JOIN public.users u ON u.id = r.writer_id

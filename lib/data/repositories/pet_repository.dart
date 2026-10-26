@@ -14,7 +14,9 @@ class PetRepository {
 
   Future<List<Pet>> getPets() async {
     final userId = _client.auth.currentUser!.id;
-    final response = await _client.from('pets').select('''
+    final response = await _client
+        .from('pets')
+        .select('''
       *,
       families!inner (
         user_families!inner (
@@ -22,14 +24,18 @@ class PetRepository {
         )
       )
     ''')
-    .eq('families.user_families.user_id', userId)
-    .order('created_at');
-    
+        .eq('families.user_families.user_id', userId)
+        .order('created_at');
+
     return response.map((json) => Pet.fromJson(json)).toList();
   }
 
   Future<Pet?> getPet(String id) async {
-    final response = await _client.from('pets').select().eq('id', id).maybeSingle();
+    final response = await _client
+        .from('pets')
+        .select()
+        .eq('id', id)
+        .maybeSingle();
     if (response == null) return null;
     return Pet.fromJson(response);
   }
@@ -38,14 +44,19 @@ class PetRepository {
     final data = pet.toJson();
     // Supabase will generate ID, created_at, updated_at
     data.remove('id');
-    
+
     final response = await _client.from('pets').insert(data).select().single();
     return Pet.fromJson(response);
   }
 
   Future<Pet> updatePet(Pet pet) async {
     final data = pet.toJson();
-    final response = await _client.from('pets').update(data).eq('id', pet.id).select().single();
+    final response = await _client
+        .from('pets')
+        .update(data)
+        .eq('id', pet.id)
+        .select()
+        .single();
     return Pet.fromJson(response);
   }
 
@@ -56,28 +67,36 @@ class PetRepository {
 
   Future<void> leaveFamily(String familyId) async {
     final userId = _client.auth.currentUser!.id;
-    await _client.from('user_families')
-      .delete()
-      .eq('family_id', familyId)
-      .eq('user_id', userId);
+    await _client
+        .from('user_families')
+        .delete()
+        .eq('family_id', familyId)
+        .eq('user_id', userId);
   }
 
   Future<String> createInvitationCode(String familyId) async {
     // 1. 6자리 영문대문자/숫자 조합 코드 생성
     final random = math.Random();
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    final code = String.fromCharCodes(Iterable.generate(
-      6, (_) => chars.codeUnitAt(random.nextInt(chars.length))));
-      
+    final code = String.fromCharCodes(
+      Iterable.generate(
+        6,
+        (_) => chars.codeUnitAt(random.nextInt(chars.length)),
+      ),
+    );
+
     try {
       // 2. invitations 테이블에 저장 (24시간 만료)
       await _client.from('invitations').insert({
         'code': code,
         'family_id': familyId,
         'created_by': _client.auth.currentUser!.id,
-        'expires_at': DateTime.now().toUtc().add(const Duration(hours: 24)).toIso8601String(),
+        'expires_at': DateTime.now()
+            .toUtc()
+            .add(const Duration(hours: 24))
+            .toIso8601String(),
       });
-      
+
       return code;
     } on PostgrestException catch (e) {
       throw '초대 코드 생성 중 데이터베이스 오류가 발생했습니다: ${e.message}';
