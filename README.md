@@ -79,52 +79,127 @@
 
 ## Database Schema (Supabase)
 
-Mettie 앱의 핵심 데이터베이스 다이어그램입니다. 가족(그룹) 단위로 펫과 기록을 공유하기 위해 `user_families` 다대다(N:M) 테이블을 사용합니다.
+가족(그룹) 단위로 펫과 기록을 공유합니다. 사용자와 가족은 `user_families`로 다대다(N:M) 연결되고, 펫은 사용자가 아니라 가족에 속합니다. 기준 스키마는 `supabase/migrations/`이며, 아래 그림은 v1.1.0 마이그레이션(`20261001000000`~`000500`)까지 반영한 상태입니다. 칼럼 옆 `v1.1`은 이번 버전에서 추가된 항목입니다.
 
 ```mermaid
 erDiagram
-    USERS ||--o{ USER_FAMILIES : "has"
-    FAMILIES ||--o{ USER_FAMILIES : "contains"
-    FAMILIES ||--o{ PETS : "owns"
-    PETS ||--o{ RECORDS : "has"
-    USERS ||--o{ RECORDS : "writes"
+    USERS ||--o{ USER_FAMILIES : "속함"
+    FAMILIES ||--o{ USER_FAMILIES : "구성원"
+    FAMILIES ||--o{ INVITATIONS : "초대 코드"
+    USERS ||--o{ INVITATIONS : "만듦"
+    FAMILIES ||--o{ PETS : "소유"
+    PETS ||--o{ RECORDS : "기록"
+    USERS ||--o{ RECORDS : "작성"
+    USERS ||--o{ AI_USAGE : "하루 사용량"
+    USERS ||--o{ AI_USAGE_LOG : "호출"
+    PETS ||--o{ AI_USAGE_LOG : "대상"
 
     USERS {
-        uuid id PK
-        string full_name
-        string avatar_url
+        uuid id PK "auth.users.id"
+        text email
+        text full_name
+        text avatar_url
+        timestamptz ai_consent_at "v1.1 AI 코치 동의 시각, null이면 미동의"
     }
-    
+
     FAMILIES {
         uuid id PK
-        timestamp created_at
+        uuid created_by
+        timestamptz created_at
+        timestamptz pro_until "v1.1 Pro 만료 시각"
     }
 
     USER_FAMILIES {
-        uuid user_id FK
+        uuid user_id PK, FK
+        uuid family_id PK, FK
+        text role "owner, member"
+    }
+
+    INVITATIONS {
+        varchar code PK "6자리"
         uuid family_id FK
-        string role "owner, member"
+        uuid created_by FK
+        timestamptz expires_at "24시간"
     }
 
     PETS {
         uuid id PK
         uuid family_id FK
-        string name
-        string species
-        string sex
+        text name
+        text species "dog, cat"
+        text breed
+        text sex
         boolean is_neutered
+        date date_of_birth
+        text diagnosis
+        text insulin_type
+        numeric insulin_unit_iu
+        integer target_glucose_min
+        integer target_glucose_max
         numeric weight_kg
+        text[] conditions "v1.1 질환 모듈 (diabetes)"
+        time[] dosing_times "v1.1 투여 시각"
+        text insulin_concentration "v1.1 U-40, U-100"
+        text syringe_type "v1.1 U-40, U-100"
+        integer hypo_threshold "v1.1 저혈당 기준 (기본 80)"
+        text glucose_meter "v1.1"
+        text default_food_wet "v1.1"
+        text default_food_dry "v1.1"
     }
 
     RECORDS {
         uuid id PK
         uuid pet_id FK
         uuid writer_id FK
-        integer glucose_value
+        timestamptz recorded_at
+        integer glucose_value "mg/dL"
+        text glucose_type
         numeric insulin_dose
-        timestamp recorded_at
+        text injection_status
+        text food_type "wet, dry"
+        numeric food_amount_g
+        text appetite
+        numeric weight_kg
+        text[] symptom_tags "언어와 무관한 코드"
+        text notes
+        boolean dose_override "v1.1 중복 투여 확인 후 저장"
+    }
+
+    AI_USAGE {
+        uuid user_id PK, FK
+        date day PK "기기 시간대 기준"
+        integer count
+    }
+
+    AI_USAGE_LOG {
+        bigint id PK
+        uuid user_id FK
+        uuid pet_id FK
+        text model
+        integer input_tokens
+        integer output_tokens
+        integer cache_read_input_tokens
+        text stop_reason
+        boolean fake
+    }
+
+    APP_CONFIG {
+        text key PK
+        jsonb value
     }
 ```
+
+그림에는 주요 칼럼만 넣었습니다(`records`의 측정 기기·음수량·배변 같은 관찰 칼럼은 생략).
+
+| 구분 | 이름 | 역할 |
+|---|---|---|
+| 테이블 | `app_config` | 앱 설정(로그인 전에도 읽기 가능). `ai_daily_limit_free`(10), `ai_daily_limit_pro`(100), `min_supported_version`, `store_url_ios`, `store_url_android` |
+| 테이블 | `ai_usage` / `ai_usage_log` | 하루 요청 수(본인만 조회) / 토큰·캐시 사용량 로그(서비스 키만 접근) |
+| RPC | `join_family_with_code` | 초대 코드로 가족 참여. `user_families` 직접 INSERT는 자기가 만든 가족에 owner로 연결할 때만 허용 |
+| RPC | `family_members` | 가족 구성원 이름(기록 작성자 표시용) |
+| RPC | `set_ai_consent`, `ai_quota_status` | AI 코치 동의 저장·철회, 오늘 사용량과 한도 |
+| RPC (서비스 전용) | `consume_ai_quota`, `refund_ai_quota` | 서버 함수가 한도를 차감하고, 응답 전 실패 시 되돌림 |
+| 트리거 | `guard_duplicate_dose` | 같은 펫 3시간 안의 두 번째 투여 완료 기록을 `DUPLICATE_DOSE`로 거부(`dose_override = true`면 통과). 연결은 `000500`, v1.1 보급 후 운영 반영 |
 
 ## Troubleshooting
 
