@@ -9,7 +9,7 @@ class AppLocalizationsJa extends AppLocalizations {
   AppLocalizationsJa([String locale = 'ja']) : super(locale);
 
   @override
-  String get appTitle => 'メッティ';
+  String get appTitle => 'Mettie';
 
   @override
   String get commonSave => '保存';
@@ -723,4 +723,383 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get planVetClinic => 'かかりつけの病院';
+
+  @override
+  String get errUnknown => '問題が発生しました。しばらくしてからもう一度お試しください。';
+
+  @override
+  String get errGoogleToken => 'GoogleのIDトークンを取得できませんでした。もう一度お試しください。';
+
+  @override
+  String get errGoogleSignIn => 'Googleでのログインに失敗しました。もう一度お試しください。';
+
+  @override
+  String get errAppleToken => 'AppleのIDトークンを取得できませんでした。';
+
+  @override
+  String get errAppleSignIn => 'Appleでのログインに失敗しました。もう一度お試しください。';
+
+  @override
+  String get errNotSignedIn => 'ログインが必要です。';
+
+  @override
+  String get errDeleteAccount => '退会できませんでした。もう一度お試しください。';
+
+  @override
+  String get errInviteCreate => '招待コードを作成できませんでした。通信状況を確認してください。';
+
+  @override
+  String get errInviteInvalid => '無効な招待コードです。';
+
+  @override
+  String get errInviteExpired => '有効期限が切れた招待コードです。';
+
+  @override
+  String get errInviteAlreadyJoined => 'すでに参加している家族です。';
+
+  @override
+  String get errJoinFailed => '家族に参加できませんでした。通信状況を確認してください。';
+
+  @override
+  String get errRecordNotFound => '記録が見つからないか、削除する権限がありません。';
+
+  @override
+  String get errSaveFailed => '保存に失敗しました。';
+
+  @override
+  String get petDeleteTitle => 'ペットを削除';
+
+  @override
+  String get petLeaveTitle => '家族から抜ける';
+
+  @override
+  String petDeleteBody(String name) {
+    return '$nameのすべてのデータを削除しますか？この操作は取り消せません。';
+  }
+
+  @override
+  String petLeaveBody(String name) {
+    return '$nameの家族スペースから抜けますか？';
+  }
+
+  @override
+  String get petDeleted => '削除しました。';
+
+  @override
+  String get petLeft => '家族から抜けました。';
+
+  @override
+  String get petLeave => '抜ける';
+
+  @override
+  String get petManageTitle => 'ペットの管理';
+
+  @override
+  String get petAddTooltip => 'ペットを登録';
+
+  @override
+  String get petNewTitle => '新しいペットを登録';
+
+  @override
+  String get petBasicInfo => '基本情報';
+
+  @override
+  String get petName => '名前';
+
+  @override
+  String get petNameRequired => '名前を入力してください';
+
+  @override
+  String get petSpecies => '種類';
+
+  @override
+  String get petSex => '性別';
+
+  @override
+  String get petBreedOptional => '品種（任意）';
+
+  @override
+  String get petNeutered => '避妊・去勢済み';
+
+  @override
+  String get petHealthInfo => '健康・管理情報';
+
+  @override
+  String get petWeightKg => '体重（kg）';
+
+  @override
+  String get petWeightInvalid => '正しい体重を入力してください（0より大きく150以下）';
+
+  @override
+  String get petInsulinTypeOptional => 'インスリンの種類（任意）';
+
+  @override
+  String get petInsulinOther => 'その他のインスリンを入力';
+
+  @override
+  String get petInsulinUnits => '単位（IU）';
+
+  @override
+  String get petInsulinUnitsInvalid => '正しい単位（IU）を入力してください（0より大きく150以下）';
+
+  @override
+  String get petTargetGlucose => '目標血糖値';
+
+  @override
+  String get petSaveAndStart => '保存して始める';
+
+  @override
+  String get roleOwner => '飼い主';
+
+  @override
+  String get roleCoCaregiver => '共同飼育者';
+
+  @override
+  String get breedUnknown => '品種不明';
+
+  @override
+  String get familySharing => '家族と共有';
+
+  @override
+  String get inviteCreate => '招待コードを発行';
+
+  @override
+  String get inviteCodeTitle => '招待コード';
+
+  @override
+  String get inviteCodeBody => '下のコードをコピーして家族に送ってください。\nコードの有効期限は24時間です。';
+
+  @override
+  String get inviteCopy => 'コピー';
+
+  @override
+  String get inviteCopied => '招待コードをコピーしました。';
+
+  @override
+  String get familyJoinTitle => '家族に参加';
+
+  @override
+  String get familyJoinPrompt => '受け取った6桁の招待コードを入力してください。';
+
+  @override
+  String get familyInviteCodeLabel => '招待コード';
+
+  @override
+  String get familyCodeRequired => '6桁のコードを入力してください。';
+
+  @override
+  String get familyJoined => '家族に参加しました。';
+
+  @override
+  String get familyJoin => '参加';
+
+  @override
+  String get familyTitle => '家族（共同飼育者）';
+
+  @override
+  String get familyIntro => 'ペットの記録を家族とリアルタイムで共有・管理できます。';
+
+  @override
+  String get familyInviteTitle => '家族を招待';
+
+  @override
+  String familyInviteBody(String name) {
+    return '選択中のペット（$name）のスペースにパートナーを招待します。コードの有効期限は24時間です。';
+  }
+
+  @override
+  String get familyGetCode => '招待コードを発行';
+
+  @override
+  String get familyJoinBody => '家族から6桁の招待コードを受け取った場合は、下のボタンから入力してください。';
+
+  @override
+  String get familyEnterCode => '招待コードを入力';
+
+  @override
+  String get settingsAppInfo => 'アプリ情報と設定';
+
+  @override
+  String get settingsVersion => 'バージョン';
+
+  @override
+  String get settingsTerms => '利用規約';
+
+  @override
+  String get settingsPrivacy => 'プライバシーポリシー';
+
+  @override
+  String get settingsLicenses => 'オープンソースライセンス';
+
+  @override
+  String get settingsCannotOpenBrowser => 'ブラウザを開けませんでした。';
+
+  @override
+  String get settingsDeleteAccount => '退会';
+
+  @override
+  String get settingsDeleteAccountBody =>
+      'Mettieを退会しますか？\n記録したすべてのペットデータと個人情報はすぐに削除され、復元できません。';
+
+  @override
+  String get settingsDeleteAccountConfirm => '退会する';
+
+  @override
+  String get accountInfo => 'アカウント';
+
+  @override
+  String get accountDefaultName => 'ユーザー';
+
+  @override
+  String get accountSignOut => 'ログアウト';
+
+  @override
+  String get rowOther => 'その他';
+
+  @override
+  String get rowMorning => '朝';
+
+  @override
+  String get rowLunch => '昼';
+
+  @override
+  String get rowEvening => '夜';
+
+  @override
+  String get rowNight => '深夜';
+
+  @override
+  String rowPreMeal(String time) {
+    return '$time・食前';
+  }
+
+  @override
+  String rowPostMeal(String time) {
+    return '$time・食後';
+  }
+
+  @override
+  String get rowFasting => '空腹時';
+
+  @override
+  String get rowNadir => '最低血糖値（ナディア）';
+
+  @override
+  String rowInsulin(String time) {
+    return '$timeのインスリン';
+  }
+
+  @override
+  String rowMeal(String time) {
+    return '$timeの食事';
+  }
+
+  @override
+  String get rowDeleteTitle => '記録を削除';
+
+  @override
+  String get rowDeleteBody => 'この記録を削除しますか？\n削除した記録は復元できません。';
+
+  @override
+  String get rowDeleted => '記録を削除しました。';
+
+  @override
+  String get rowFood => 'フード';
+
+  @override
+  String get selectorTitle => 'ペットを選択';
+
+  @override
+  String get selectorEmpty => '登録されたペットはいません。';
+
+  @override
+  String get selectorDeleteAction => '削除する';
+
+  @override
+  String get loginHeadline => 'うちの子の血糖値記録\nスマートなAIガイド';
+
+  @override
+  String get loginSubtitle => '手軽な血糖値チェックから日々の記録まで\nMettie AIがお手伝いします。';
+
+  @override
+  String get loginWithEmail => 'メールで続ける';
+
+  @override
+  String get loginOr => 'または';
+
+  @override
+  String get loginWithApple => 'Appleで続ける';
+
+  @override
+  String get loginWithGoogle => 'Googleで続ける';
+
+  @override
+  String get emailAgreeRequired => '利用規約とプライバシーポリシーに同意してください。';
+
+  @override
+  String get emailVerifyTitle => 'メール認証のご案内';
+
+  @override
+  String get emailLinkSent => '登録用のリンクを送信しました。';
+
+  @override
+  String emailSentTo(String email) {
+    return '$email に登録確認用のリンクを送信しました。';
+  }
+
+  @override
+  String get emailCheckInbox => 'メール内のリンクをタップすると登録が完了します。（迷惑メールフォルダもご確認ください。）';
+
+  @override
+  String get emailSignUpTitle => 'メールで新規登録';
+
+  @override
+  String get emailSignInTitle => 'メールでログイン';
+
+  @override
+  String get emailNameHint => '名前を入力してください';
+
+  @override
+  String get emailName => '名前';
+
+  @override
+  String get emailNameRequired => '名前を入力してください。';
+
+  @override
+  String get emailEmail => 'メールアドレス';
+
+  @override
+  String get emailEmailRequired => 'メールアドレスを入力してください。';
+
+  @override
+  String get emailEmailInvalid => 'メールアドレスの形式が正しくありません。';
+
+  @override
+  String get emailPasswordHint => 'パスワードを入力してください（6文字以上）';
+
+  @override
+  String get emailPassword => 'パスワード';
+
+  @override
+  String get emailPasswordRequired => 'パスワードを入力してください。';
+
+  @override
+  String get emailPasswordTooShort => 'パスワードは6文字以上にしてください。';
+
+  @override
+  String termsAgreement(String terms, String privacy) {
+    return 'Mettieの$termsと$privacyに同意します。';
+  }
+
+  @override
+  String get emailSignUpButton => 'メールで登録';
+
+  @override
+  String get emailSignInButton => 'メールでログイン';
+
+  @override
+  String get emailHaveAccount => 'アカウントをお持ちの方はログイン';
+
+  @override
+  String get emailNoAccount => 'アカウントをお持ちでない方は新規登録';
 }

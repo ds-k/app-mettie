@@ -18,6 +18,12 @@
 		<string>This app requires photo library access to upload pet photos.</string>
 		<key>FlutterDeepLinkingEnabled</key>
 		<true/>
+		<key>CFBundleLocalizations</key>
+		<array>
+			<string>ko</string>
+			<string>en</string>
+			<string>ja</string>
+		</array>
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleURLTypes</key>

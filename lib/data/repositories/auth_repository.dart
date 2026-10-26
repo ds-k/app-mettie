@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../app_error.dart';
 
 // AuthRepository 인스턴스 제공
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
@@ -55,7 +56,7 @@ class AuthRepository {
         // 캐시된 구버전(서버클라이언트 ID 누락) 세션이 남아있어서 idToken을 못 가져올 수 있음
         // 찌꺼기 세션을 지우고 다음에 다시 시도할 수 있도록 강제 로그아웃
         await GoogleSignIn.instance.signOut();
-        throw '구글 ID 토큰을 찾을 수 없습니다. 다시 시도해주세요.';
+        throw const AppException(AppErrorCode.googleTokenMissing);
       }
 
       // 4. Supabase 연동
@@ -63,13 +64,15 @@ class AuthRepository {
         provider: OAuthProvider.google,
         idToken: idToken,
       );
+    } on AppException {
+      rethrow;
     } catch (e) {
       // 사용자가 직접 취소한 경우는 예외를 던지지 않고 조용히 종료합니다.
       if (e.toString().contains('Canceled') ||
           e.toString().contains('canceled')) {
         return;
       }
-      throw '구글 로그인에 실패했습니다. 다시 시도해주세요.';
+      throw AppException(AppErrorCode.googleSignInFailed, e);
     }
   }
 
@@ -90,7 +93,9 @@ class AuthRepository {
         );
 
         final idToken = credential.identityToken;
-        if (idToken == null) throw '애플 ID 토큰을 찾을 수 없습니다.';
+        if (idToken == null) {
+          throw const AppException(AppErrorCode.appleTokenMissing);
+        }
 
         // 3. Supabase로 ID 토큰 전송하여 세션 생성
         await _client.auth.signInWithIdToken(
@@ -123,9 +128,11 @@ class AuthRepository {
         if (e.code == AuthorizationErrorCode.canceled) {
           return; // 사용자가 취소한 경우 조용히 종료
         }
-        throw '애플 로그인에 실패했습니다: ${e.message}';
+        throw AppException(AppErrorCode.appleSignInFailed, e.message);
+      } on AppException {
+        rethrow;
       } catch (e) {
-        throw '애플 로그인에 실패했습니다. 다시 시도해주세요.';
+        throw AppException(AppErrorCode.appleSignInFailed, e);
       }
     } else {
       await Supabase.instance.client.auth.signInWithOAuth(
@@ -159,7 +166,7 @@ class AuthRepository {
   Future<void> deleteAccount() async {
     try {
       final user = _client.auth.currentUser;
-      if (user == null) throw '로그인된 유저가 없습니다.';
+      if (user == null) throw const AppException(AppErrorCode.notSignedIn);
 
       // 유저가 Apple로 로그인했는지 확인
       // user.appMetadata['providers'] 안에 'apple'이 포함되어 있는지 체크
@@ -191,7 +198,7 @@ class AuthRepository {
       await _client.auth.signOut();
     } catch (e) {
       // 에러 발생 시 강제 로그아웃하지 않고 에러를 던짐
-      throw '회원탈퇴에 실패했습니다. 데이터를 다시 확인해주세요.';
+      throw AppException(AppErrorCode.deleteAccountFailed, e);
     }
   }
 }

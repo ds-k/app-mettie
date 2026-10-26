@@ -740,4 +740,397 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planVetClinic => 'Your vet clinic';
+
+  @override
+  String get errUnknown =>
+      'Something went wrong. Please try again in a moment.';
+
+  @override
+  String get errGoogleToken =>
+      'Couldn\'t get a Google ID token. Please try again.';
+
+  @override
+  String get errGoogleSignIn => 'Google sign-in failed. Please try again.';
+
+  @override
+  String get errAppleToken => 'Couldn\'t get an Apple ID token.';
+
+  @override
+  String get errAppleSignIn => 'Apple sign-in failed. Please try again.';
+
+  @override
+  String get errNotSignedIn => 'Please sign in.';
+
+  @override
+  String get errDeleteAccount =>
+      'Couldn\'t delete your account. Please try again.';
+
+  @override
+  String get errInviteCreate =>
+      'Couldn\'t create an invite code. Check your connection.';
+
+  @override
+  String get errInviteInvalid => 'That invite code isn\'t valid.';
+
+  @override
+  String get errInviteExpired => 'That invite code has expired.';
+
+  @override
+  String get errInviteAlreadyJoined => 'You\'re already in this family.';
+
+  @override
+  String get errJoinFailed =>
+      'Couldn\'t join the family. Check your connection.';
+
+  @override
+  String get errRecordNotFound =>
+      'The record wasn\'t found, or you don\'t have permission to delete it.';
+
+  @override
+  String get errSaveFailed => 'Couldn\'t save.';
+
+  @override
+  String get petDeleteTitle => 'Delete pet';
+
+  @override
+  String get petLeaveTitle => 'Leave family';
+
+  @override
+  String petDeleteBody(String name) {
+    return 'Delete all of $name\'s data? This can\'t be undone.';
+  }
+
+  @override
+  String petLeaveBody(String name) {
+    return 'Leave $name\'s family space?';
+  }
+
+  @override
+  String get petDeleted => 'Deleted.';
+
+  @override
+  String get petLeft => 'You left the family.';
+
+  @override
+  String get petLeave => 'Leave';
+
+  @override
+  String get petManageTitle => 'Manage pets';
+
+  @override
+  String get petAddTooltip => 'Add a pet';
+
+  @override
+  String get petNewTitle => 'Add a new pet';
+
+  @override
+  String get petBasicInfo => 'Basics';
+
+  @override
+  String get petName => 'Name';
+
+  @override
+  String get petNameRequired => 'Enter a name';
+
+  @override
+  String get petSpecies => 'Species';
+
+  @override
+  String get petSex => 'Sex';
+
+  @override
+  String get petBreedOptional => 'Breed (optional)';
+
+  @override
+  String get petNeutered => 'Spayed / neutered';
+
+  @override
+  String get petHealthInfo => 'Health & care';
+
+  @override
+  String get petWeightKg => 'Weight (kg)';
+
+  @override
+  String get petWeightInvalid => 'Enter a valid weight (above 0, up to 150)';
+
+  @override
+  String get petInsulinTypeOptional => 'Insulin type (optional)';
+
+  @override
+  String get petInsulinOther => 'Enter other insulin';
+
+  @override
+  String get petInsulinUnits => 'Units (IU)';
+
+  @override
+  String get petInsulinUnitsInvalid => 'Enter valid units (above 0, up to 150)';
+
+  @override
+  String get petTargetGlucose => 'Target glucose';
+
+  @override
+  String get petSaveAndStart => 'Save and start';
+
+  @override
+  String get roleOwner => 'Owner';
+
+  @override
+  String get roleCoCaregiver => 'Co-caregiver';
+
+  @override
+  String get breedUnknown => 'Unknown breed';
+
+  @override
+  String get familySharing => 'Family sharing';
+
+  @override
+  String get inviteCreate => 'Get invite code';
+
+  @override
+  String get inviteCodeTitle => 'Invite code';
+
+  @override
+  String get inviteCodeBody =>
+      'Copy this code and send it to your family.\nIt\'s valid for 24 hours.';
+
+  @override
+  String get inviteCopy => 'Copy';
+
+  @override
+  String get inviteCopied => 'Invite code copied.';
+
+  @override
+  String get familyJoinTitle => 'Join a family';
+
+  @override
+  String get familyJoinPrompt =>
+      'Enter the 6-character invite code you received.';
+
+  @override
+  String get familyInviteCodeLabel => 'Invite code';
+
+  @override
+  String get familyCodeRequired => 'Enter the 6-character code.';
+
+  @override
+  String get familyJoined => 'You joined the family.';
+
+  @override
+  String get familyJoin => 'Join';
+
+  @override
+  String get familyTitle => 'Family (co-caregivers)';
+
+  @override
+  String get familyIntro =>
+      'Share and manage your pet\'s records with your family in real time.';
+
+  @override
+  String get familyInviteTitle => 'Invite family';
+
+  @override
+  String familyInviteBody(String name) {
+    return 'Invite a partner to $name\'s space. The code is valid for 24 hours.';
+  }
+
+  @override
+  String get familyGetCode => 'Get an invite code';
+
+  @override
+  String get familyJoinBody =>
+      'If a family member sent you a 6-character code, tap below to enter it.';
+
+  @override
+  String get familyEnterCode => 'Enter invite code';
+
+  @override
+  String get settingsAppInfo => 'App info & settings';
+
+  @override
+  String get settingsVersion => 'Version';
+
+  @override
+  String get settingsTerms => 'Terms of Service';
+
+  @override
+  String get settingsPrivacy => 'Privacy Policy';
+
+  @override
+  String get settingsLicenses => 'Open-source licenses';
+
+  @override
+  String get settingsCannotOpenBrowser => 'Couldn\'t open the web browser.';
+
+  @override
+  String get settingsDeleteAccount => 'Delete account';
+
+  @override
+  String get settingsDeleteAccountBody =>
+      'Delete your Mettie account?\nAll pet records and personal data will be deleted immediately and can\'t be recovered.';
+
+  @override
+  String get settingsDeleteAccountConfirm => 'Delete account';
+
+  @override
+  String get accountInfo => 'Account';
+
+  @override
+  String get accountDefaultName => 'User';
+
+  @override
+  String get accountSignOut => 'Sign out';
+
+  @override
+  String get rowOther => 'Other';
+
+  @override
+  String get rowMorning => 'Morning';
+
+  @override
+  String get rowLunch => 'Afternoon';
+
+  @override
+  String get rowEvening => 'Evening';
+
+  @override
+  String get rowNight => 'Night';
+
+  @override
+  String rowPreMeal(String time) {
+    return '$time, before meal';
+  }
+
+  @override
+  String rowPostMeal(String time) {
+    return '$time, after meal';
+  }
+
+  @override
+  String get rowFasting => 'Fasting';
+
+  @override
+  String get rowNadir => 'Nadir (lowest glucose)';
+
+  @override
+  String rowInsulin(String time) {
+    return '$time insulin';
+  }
+
+  @override
+  String rowMeal(String time) {
+    return '$time meal';
+  }
+
+  @override
+  String get rowDeleteTitle => 'Delete record';
+
+  @override
+  String get rowDeleteBody =>
+      'Delete this record?\nDeleted records can\'t be recovered.';
+
+  @override
+  String get rowDeleted => 'Record deleted.';
+
+  @override
+  String get rowFood => 'Food';
+
+  @override
+  String get selectorTitle => 'Choose a pet';
+
+  @override
+  String get selectorEmpty => 'No pets yet.';
+
+  @override
+  String get selectorDeleteAction => 'Delete';
+
+  @override
+  String get loginHeadline => 'Your pet\'s glucose log,\nwith a smart AI guide';
+
+  @override
+  String get loginSubtitle =>
+      'From quick glucose checks to daily notes,\nMettie AI is here to help.';
+
+  @override
+  String get loginWithEmail => 'Continue with email';
+
+  @override
+  String get loginOr => 'or';
+
+  @override
+  String get loginWithApple => 'Continue with Apple';
+
+  @override
+  String get loginWithGoogle => 'Continue with Google';
+
+  @override
+  String get emailAgreeRequired =>
+      'Please agree to the Terms of Service and Privacy Policy.';
+
+  @override
+  String get emailVerifyTitle => 'Verify your email';
+
+  @override
+  String get emailLinkSent => 'We sent you a sign-up link.';
+
+  @override
+  String emailSentTo(String email) {
+    return 'We sent a confirmation link to $email.';
+  }
+
+  @override
+  String get emailCheckInbox =>
+      'Tap the link in the email to finish signing up. (Check your spam folder too.)';
+
+  @override
+  String get emailSignUpTitle => 'Sign up with email';
+
+  @override
+  String get emailSignInTitle => 'Sign in with email';
+
+  @override
+  String get emailNameHint => 'Enter your name';
+
+  @override
+  String get emailName => 'Name';
+
+  @override
+  String get emailNameRequired => 'Enter your name.';
+
+  @override
+  String get emailEmail => 'Email';
+
+  @override
+  String get emailEmailRequired => 'Enter your email.';
+
+  @override
+  String get emailEmailInvalid => 'That doesn\'t look like a valid email.';
+
+  @override
+  String get emailPasswordHint => 'Enter a password (6+ characters)';
+
+  @override
+  String get emailPassword => 'Password';
+
+  @override
+  String get emailPasswordRequired => 'Enter your password.';
+
+  @override
+  String get emailPasswordTooShort => 'Password must be at least 6 characters.';
+
+  @override
+  String termsAgreement(String terms, String privacy) {
+    return 'I agree to Mettie\'s $terms and $privacy.';
+  }
+
+  @override
+  String get emailSignUpButton => 'Sign up with email';
+
+  @override
+  String get emailSignInButton => 'Sign in with email';
+
+  @override
+  String get emailHaveAccount => 'Already have an account? Sign in';
+
+  @override
+  String get emailNoAccount => 'No account? Sign up';
 }

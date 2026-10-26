@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/l10n.dart';
+import '../../../l10n/labels.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:go_router/go_router.dart';
@@ -36,8 +38,8 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
   void _submit() async {
     if (_isSignUpMode && !_agreeToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('이용약관 및 개인정보처리방침에 동의해주세요.'),
+        SnackBar(
+          content: Text(context.l10n.emailAgreeRequired),
           backgroundColor: kBrandError,
         ),
       );
@@ -78,7 +80,7 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                     size: 28,
                   ),
                   const SizedBox(width: 10),
-                  Text('이메일 인증 안내', style: kHeading3.copyWith(color: kInk)),
+                  Text(context.l10n.emailVerifyTitle, style: kHeading3.copyWith(color: kInk)),
                 ],
               ),
               content: Column(
@@ -86,31 +88,38 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '회원가입 링크가 전송되었습니다.',
+                    context.l10n.emailLinkSent,
                     style: kBodyLg.copyWith(
                       fontWeight: FontWeight.bold,
                       color: kInk,
                     ),
                   ),
                   const SizedBox(height: 12),
-                  RichText(
-                    text: TextSpan(
-                      style: kBodyMd.copyWith(color: kCharcoal),
-                      children: [
-                        TextSpan(
-                          text: email,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: kBrandBlueDeep,
-                          ),
+                  Builder(
+                    builder: (context) {
+                      // 언어마다 이메일 위치가 달라서, 자리 표시자로 문장을 나눠 이메일만 굵게 표시한다
+                      final parts = context.l10n.emailSentTo('\u0000').split('\u0000');
+                      return RichText(
+                        text: TextSpan(
+                          style: kBodyMd.copyWith(color: kCharcoal),
+                          children: [
+                            TextSpan(text: parts.first),
+                            TextSpan(
+                              text: email,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: kBrandBlueDeep,
+                              ),
+                            ),
+                            TextSpan(text: parts.last),
+                          ],
                         ),
-                        const TextSpan(text: ' 이메일로 가입 승인을 위한 링크를 발송했습니다.'),
-                      ],
-                    ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    '수신된 이메일의 링크를 클릭하시면 회원가입이 완료됩니다. (스팸 메일함도 함께 확인해주세요.)',
+                    context.l10n.emailCheckInbox,
                     style: kBodyMd.copyWith(color: kSlate),
                   ),
                 ],
@@ -128,7 +137,7 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                       _isSignUpMode = false;
                     });
                   },
-                  child: const Text('확인'),
+                  child: Text(context.l10n.commonConfirm),
                 ),
               ],
             );
@@ -151,10 +160,10 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
 
     ref.listen<AsyncValue<void>>(loginViewModelProvider, (previous, next) {
       if (next is AsyncError) {
-        final errorMsg = next.error.toString();
+        final errorMsg = errorMessage(context.l10n, next.error);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('오류 발생: $errorMsg'),
+            content: Text(errorMsg),
             backgroundColor: kBrandError,
           ),
         );
@@ -184,7 +193,7 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
               onPressed: () => context.pop(),
             ),
             title: Text(
-              _isSignUpMode ? '이메일 회원가입' : '이메일 로그인',
+              _isSignUpMode ? context.l10n.emailSignUpTitle : context.l10n.emailSignInTitle,
               style: kHeading3.copyWith(
                 color: kInk,
                 fontWeight: FontWeight.bold,
@@ -234,9 +243,9 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                               if (_isSignUpMode) ...[
                                 TextFormField(
                                   controller: _nameController,
-                                  decoration: const InputDecoration(
-                                    hintText: '이름을 입력하세요',
-                                    labelText: '이름',
+                                  decoration: InputDecoration(
+                                    hintText: context.l10n.emailNameHint,
+                                    labelText: context.l10n.emailName,
                                     prefixIcon: Icon(
                                       LucideIcons.user,
                                       color: kSlate,
@@ -245,7 +254,7 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                                   ),
                                   validator: (value) {
                                     if (value == null || value.trim().isEmpty) {
-                                      return '이름을 입력해주세요.';
+                                      return context.l10n.emailNameRequired;
                                     }
                                     return null;
                                   },
@@ -255,9 +264,9 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                               TextFormField(
                                 controller: _emailController,
                                 keyboardType: TextInputType.emailAddress,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   hintText: 'example@email.com',
-                                  labelText: '이메일',
+                                  labelText: context.l10n.emailEmail,
                                   prefixIcon: Icon(
                                     LucideIcons.mail,
                                     color: kSlate,
@@ -266,13 +275,13 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                                 ),
                                 validator: (value) {
                                   if (value == null || value.trim().isEmpty) {
-                                    return '이메일을 입력해주세요.';
+                                    return context.l10n.emailEmailRequired;
                                   }
                                   final emailRegExp = RegExp(
                                     r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
                                   );
                                   if (!emailRegExp.hasMatch(value.trim())) {
-                                    return '올바른 이메일 형식이 아닙니다.';
+                                    return context.l10n.emailEmailInvalid;
                                   }
                                   return null;
                                 },
@@ -281,9 +290,9 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                               TextFormField(
                                 controller: _passwordController,
                                 obscureText: true,
-                                decoration: const InputDecoration(
-                                  hintText: '비밀번호를 입력하세요 (6자 이상)',
-                                  labelText: '비밀번호',
+                                decoration: InputDecoration(
+                                  hintText: context.l10n.emailPasswordHint,
+                                  labelText: context.l10n.emailPassword,
                                   prefixIcon: Icon(
                                     LucideIcons.lock,
                                     color: kSlate,
@@ -292,10 +301,10 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                                 ),
                                 validator: (value) {
                                   if (value == null || value.trim().isEmpty) {
-                                    return '비밀번호를 입력해주세요.';
+                                    return context.l10n.emailPasswordRequired;
                                   }
                                   if (value.trim().length < 6) {
-                                    return '비밀번호는 최소 6자 이상이어야 합니다.';
+                                    return context.l10n.emailPasswordTooShort;
                                   }
                                   return null;
                                 },
@@ -326,7 +335,7 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                                             WrapCrossAlignment.center,
                                         children: [
                                           Text(
-                                            'Mettie의 ',
+                                            _agreeParts(context)[0],
                                             style: kCaption.copyWith(
                                               color: kCharcoal,
                                             ),
@@ -347,7 +356,7 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                                               }
                                             },
                                             child: Text(
-                                              '서비스 이용약관',
+                                              context.l10n.settingsTerms,
                                               style: kCaption.copyWith(
                                                 color: kBrandBlue,
                                                 decoration:
@@ -357,7 +366,7 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                                             ),
                                           ),
                                           Text(
-                                            ' 및 ',
+                                            _agreeParts(context)[1],
                                             style: kCaption.copyWith(
                                               color: kCharcoal,
                                             ),
@@ -378,7 +387,7 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                                               }
                                             },
                                             child: Text(
-                                              '개인정보처리방침',
+                                              context.l10n.settingsPrivacy,
                                               style: kCaption.copyWith(
                                                 color: kBrandBlue,
                                                 decoration:
@@ -388,7 +397,7 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                                             ),
                                           ),
                                           Text(
-                                            '에 동의합니다.',
+                                            _agreeParts(context)[2],
                                             style: kCaption.copyWith(
                                               color: kCharcoal,
                                             ),
@@ -410,7 +419,7 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                                   shape: const StadiumBorder(),
                                 ),
                                 child: Text(
-                                  _isSignUpMode ? '이메일로 회원가입' : '이메일로 로그인',
+                                  _isSignUpMode ? context.l10n.emailSignUpButton : context.l10n.emailSignInButton,
                                 ),
                               ),
                               const SizedBox(height: 12),
@@ -425,8 +434,8 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
                                 },
                                 child: Text(
                                   _isSignUpMode
-                                      ? '이미 계정이 있으신가요? 로그인'
-                                      : '계정이 없으신가요? 회원가입',
+                                      ? context.l10n.emailHaveAccount
+                                      : context.l10n.emailNoAccount,
                                   style: kButtonMd.copyWith(
                                     color: kBrandBlueDeep,
                                   ),
@@ -457,5 +466,13 @@ class _EmailLoginViewState extends ConsumerState<EmailLoginView> {
         ),
       ),
     );
+  }
+
+  /// 약관 동의 문장을 [앞, 가운데, 뒤]로 나눈다. 두 링크는 앞·가운데 뒤에 각각 붙는다.
+  List<String> _agreeParts(BuildContext context) {
+    final sentence = context.l10n.termsAgreement('\u0001', '\u0002');
+    final first = sentence.split('\u0001');
+    final second = first.last.split('\u0002');
+    return [first.first, second.first, second.last];
   }
 }

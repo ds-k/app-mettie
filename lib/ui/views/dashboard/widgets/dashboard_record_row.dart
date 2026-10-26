@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../l10n/labels.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -11,29 +13,29 @@ class DashboardRecordRow extends ConsumerWidget {
 
   const DashboardRecordRow({super.key, required this.record});
 
-  String _getRecordTitle(Record record) {
+  String _getRecordTitle(AppLocalizations l, Record record) {
     final hour = record.recordedAt.hour;
-    String timeStr = '기타';
+    final String timeStr;
     if (hour >= 5 && hour < 11) {
-      timeStr = '아침';
+      timeStr = l.rowMorning;
     } else if (hour >= 11 && hour < 16) {
-      timeStr = '점심';
+      timeStr = l.rowLunch;
     } else if (hour >= 16 && hour < 22) {
-      timeStr = '저녁';
+      timeStr = l.rowEvening;
     } else {
-      timeStr = '야간';
+      timeStr = l.rowNight;
     }
 
-    if (record.glucoseType == 'pre_meal') return '$timeStr 식전';
-    if (record.glucoseType == 'post_meal') return '$timeStr 식후';
-    if (record.glucoseType == 'fasting') return '공복';
-    if (record.glucoseType == 'nadir') return '최저 혈당(Nadir)';
+    if (record.glucoseType == 'pre_meal') return l.rowPreMeal(timeStr);
+    if (record.glucoseType == 'post_meal') return l.rowPostMeal(timeStr);
+    if (record.glucoseType == 'fasting') return l.rowFasting;
+    if (record.glucoseType == 'nadir') return l.rowNadir;
 
     if (record.insulinDose != null && record.glucoseValue == null) {
-      return '$timeStr 인슐린';
+      return l.rowInsulin(timeStr);
     }
     if (record.foodAmountG != null && record.glucoseValue == null) {
-      return '$timeStr 식사';
+      return l.rowMeal(timeStr);
     }
 
     return timeStr;
@@ -109,16 +111,16 @@ class DashboardRecordRow extends ConsumerWidget {
         final bool? confirm = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('기록 삭제'),
-            content: const Text('이 기록을 정말 삭제하시겠습니까?\n삭제된 기록은 다시 복구할 수 없습니다.'),
+            title: Text(context.l10n.rowDeleteTitle),
+            content: Text(context.l10n.rowDeleteBody),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('취소', style: TextStyle(color: kSlate)),
+                child: Text(context.l10n.commonCancel, style: const TextStyle(color: kSlate)),
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('삭제', style: TextStyle(color: kBrandError)),
+                child: Text(context.l10n.commonDelete, style: const TextStyle(color: kBrandError)),
               ),
             ],
           ),
@@ -131,14 +133,14 @@ class DashboardRecordRow extends ConsumerWidget {
           if (context.mounted) {
             ScaffoldMessenger.of(
               context,
-            ).showSnackBar(const SnackBar(content: Text('기록이 삭제되었습니다.')));
+            ).showSnackBar(SnackBar(content: Text(context.l10n.rowDeleted)));
           }
           return true;
         } catch (e) {
           if (context.mounted) {
             ScaffoldMessenger.of(
               context,
-            ).showSnackBar(SnackBar(content: Text('삭제 중 오류가 발생했습니다: $e')));
+            ).showSnackBar(SnackBar(content: Text(errorMessage(context.l10n, e))));
           }
           return false;
         }
@@ -172,7 +174,7 @@ class DashboardRecordRow extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _getRecordTitle(record),
+                    _getRecordTitle(context.l10n, record),
                     style: const TextStyle(
                       color: kBrandBlue,
                       fontWeight: FontWeight.bold,
@@ -184,7 +186,7 @@ class DashboardRecordRow extends ConsumerWidget {
                     _buildHighlightBox(
                       icon: LucideIcons.droplet,
                       boxColor: kBrandWarn,
-                      label: '혈당',
+                      label: context.l10n.kindGlucose,
                       value: '${record.glucoseValue}',
                       unit: 'mg/dL',
                     ),
@@ -194,7 +196,7 @@ class DashboardRecordRow extends ConsumerWidget {
                       child: _buildHighlightBox(
                         icon: LucideIcons.syringe,
                         boxColor: kBrandBlue,
-                        label: '인슐린',
+                        label: context.l10n.kindInsulin,
                         value: '${record.insulinDose}',
                         unit: 'IU',
                       ),
@@ -207,7 +209,7 @@ class DashboardRecordRow extends ConsumerWidget {
                       child: _buildHighlightBox(
                         icon: LucideIcons.bone,
                         boxColor: kWarmCoral,
-                        label: '사료',
+                        label: context.l10n.rowFood,
                         value: [
                           if (record.foodBrand != null &&
                               record.foodBrand!.isNotEmpty)
@@ -224,7 +226,7 @@ class DashboardRecordRow extends ConsumerWidget {
                       child: _buildHighlightBox(
                         icon: LucideIcons.activity,
                         boxColor: kCharcoal,
-                        label: '체중',
+                        label: context.l10n.kindWeight,
                         value: '${record.weightKg}',
                         unit: 'kg',
                       ),

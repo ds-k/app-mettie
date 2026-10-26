@@ -6,6 +6,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../l10n/labels.dart';
 import '../../../../data/repositories/auth_repository.dart';
 import '../../../widgets/glass_card.dart';
 
@@ -17,8 +19,8 @@ class ProfileAppSettings extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          '앱 정보 및 설정',
+        Text(
+          context.l10n.settingsAppInfo,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -32,7 +34,7 @@ class ProfileAppSettings extends ConsumerWidget {
             children: [
               ListTile(
                 leading: const Icon(LucideIcons.info, color: kSlate),
-                title: const Text('버전 정보', style: TextStyle(color: kInk)),
+                title: Text(context.l10n.settingsVersion, style: const TextStyle(color: kInk)),
                 trailing: const Text(
                   '1.0.0',
                   style: TextStyle(color: kSlate, fontWeight: FontWeight.bold),
@@ -41,7 +43,7 @@ class ProfileAppSettings extends ConsumerWidget {
               const Divider(height: 1, color: kHairline),
               ListTile(
                 leading: const Icon(LucideIcons.fileText, color: kSlate),
-                title: const Text('이용약관', style: TextStyle(color: kInk)),
+                title: Text(context.l10n.settingsTerms, style: const TextStyle(color: kInk)),
                 trailing: const Icon(
                   LucideIcons.chevronRight,
                   color: kSlate,
@@ -56,7 +58,7 @@ class ProfileAppSettings extends ConsumerWidget {
                   } else {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('웹 브라우저를 열 수 없습니다.')),
+                        SnackBar(content: Text(context.l10n.settingsCannotOpenBrowser)),
                       );
                     }
                   }
@@ -65,7 +67,7 @@ class ProfileAppSettings extends ConsumerWidget {
               const Divider(height: 1, color: kHairline),
               ListTile(
                 leading: const Icon(LucideIcons.shieldAlert, color: kSlate),
-                title: const Text('개인정보처리방침', style: TextStyle(color: kInk)),
+                title: Text(context.l10n.settingsPrivacy, style: const TextStyle(color: kInk)),
                 trailing: const Icon(
                   LucideIcons.chevronRight,
                   color: kSlate,
@@ -80,7 +82,7 @@ class ProfileAppSettings extends ConsumerWidget {
                   } else {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('웹 브라우저를 열 수 없습니다.')),
+                        SnackBar(content: Text(context.l10n.settingsCannotOpenBrowser)),
                       );
                     }
                   }
@@ -89,7 +91,7 @@ class ProfileAppSettings extends ConsumerWidget {
               const Divider(height: 1, color: kHairline),
               ListTile(
                 leading: const Icon(LucideIcons.code, color: kSlate),
-                title: const Text('오픈소스 라이선스', style: TextStyle(color: kInk)),
+                title: Text(context.l10n.settingsLicenses, style: const TextStyle(color: kInk)),
                 trailing: const Icon(
                   LucideIcons.chevronRight,
                   color: kSlate,
@@ -119,8 +121,8 @@ class ProfileAppSettings extends ConsumerWidget {
               const Divider(height: 1, color: kHairline),
               ListTile(
                 leading: const Icon(LucideIcons.userX, color: kBrandError),
-                title: const Text(
-                  '회원 탈퇴',
+                title: Text(
+                  context.l10n.settingsDeleteAccount,
                   style: TextStyle(
                     color: kBrandError,
                     fontWeight: FontWeight.w600,
@@ -130,15 +132,15 @@ class ProfileAppSettings extends ConsumerWidget {
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: const Text('회원 탈퇴'),
-                      content: const Text(
-                        '정말로 Mettie 앱을 탈퇴하시겠습니까?\n기록된 모든 반려동물 데이터와 개인정보가 즉시 삭제되며 복구할 수 없습니다.',
+                      title: Text(context.l10n.settingsDeleteAccount),
+                      content: Text(
+                        context.l10n.settingsDeleteAccountBody,
                       ),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(context),
-                          child: const Text(
-                            '취소',
+                          child: Text(
+                            context.l10n.commonCancel,
                             style: TextStyle(color: kSlate),
                           ),
                         ),
@@ -156,14 +158,14 @@ class ProfileAppSettings extends ConsumerWidget {
                               if (!context.mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text(e.toString()),
+                                  content: Text(errorMessage(context.l10n, e)),
                                   backgroundColor: kBrandError,
                                 ),
                               );
                             }
                           },
-                          child: const Text(
-                            '탈퇴하기',
+                          child: Text(
+                            context.l10n.settingsDeleteAccountConfirm,
                             style: TextStyle(
                               color: kBrandError,
                               fontWeight: FontWeight.bold,

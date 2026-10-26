@@ -724,4 +724,384 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get planVetClinic => '다니는 병원';
+
+  @override
+  String get errUnknown => '문제가 생겼어요. 잠시 후 다시 시도해 주세요.';
+
+  @override
+  String get errGoogleToken => '구글 ID 토큰을 찾을 수 없습니다. 다시 시도해주세요.';
+
+  @override
+  String get errGoogleSignIn => '구글 로그인에 실패했습니다. 다시 시도해주세요.';
+
+  @override
+  String get errAppleToken => '애플 ID 토큰을 찾을 수 없습니다.';
+
+  @override
+  String get errAppleSignIn => '애플 로그인에 실패했습니다. 다시 시도해주세요.';
+
+  @override
+  String get errNotSignedIn => '로그인이 필요합니다.';
+
+  @override
+  String get errDeleteAccount => '회원탈퇴에 실패했습니다. 데이터를 다시 확인해주세요.';
+
+  @override
+  String get errInviteCreate => '초대 코드를 생성할 수 없습니다. 네트워크를 확인해주세요.';
+
+  @override
+  String get errInviteInvalid => '유효하지 않은 초대 코드입니다.';
+
+  @override
+  String get errInviteExpired => '만료된 초대 코드입니다.';
+
+  @override
+  String get errInviteAlreadyJoined => '이미 연결된 가족입니다.';
+
+  @override
+  String get errJoinFailed => '가족 참여에 실패했습니다. 네트워크를 확인해주세요.';
+
+  @override
+  String get errRecordNotFound => '기록을 찾을 수 없거나 삭제할 권한이 없습니다.';
+
+  @override
+  String get errSaveFailed => '저장에 실패했습니다.';
+
+  @override
+  String get petDeleteTitle => '반려동물 삭제';
+
+  @override
+  String get petLeaveTitle => '가족 나가기';
+
+  @override
+  String petDeleteBody(String name) {
+    return '$name의 모든 데이터를 정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.';
+  }
+
+  @override
+  String petLeaveBody(String name) {
+    return '$name의 가족 공간에서 나가시겠습니까?';
+  }
+
+  @override
+  String get petDeleted => '삭제되었습니다.';
+
+  @override
+  String get petLeft => '가족에서 나왔습니다.';
+
+  @override
+  String get petLeave => '나가기';
+
+  @override
+  String get petManageTitle => '반려동물 관리';
+
+  @override
+  String get petAddTooltip => '새 반려동물 등록';
+
+  @override
+  String get petNewTitle => '새로운 반려동물 등록';
+
+  @override
+  String get petBasicInfo => '기본 정보';
+
+  @override
+  String get petName => '이름';
+
+  @override
+  String get petNameRequired => '이름을 입력하세요';
+
+  @override
+  String get petSpecies => '종류';
+
+  @override
+  String get petSex => '성별';
+
+  @override
+  String get petBreedOptional => '품종 (선택)';
+
+  @override
+  String get petNeutered => '중성화 완료';
+
+  @override
+  String get petHealthInfo => '건강 및 관리 정보';
+
+  @override
+  String get petWeightKg => '체중 (kg)';
+
+  @override
+  String get petWeightInvalid => '올바른 체중을 입력하세요 (0 초과, 150 이하)';
+
+  @override
+  String get petInsulinTypeOptional => '인슐린 종류 (선택)';
+
+  @override
+  String get petInsulinOther => '기타 인슐린 직접 입력';
+
+  @override
+  String get petInsulinUnits => '단위 (IU)';
+
+  @override
+  String get petInsulinUnitsInvalid => '올바른 단위(IU)를 입력하세요 (0 초과, 150 이하)';
+
+  @override
+  String get petTargetGlucose => '목표 혈당 설정';
+
+  @override
+  String get petSaveAndStart => '저장하고 시작하기';
+
+  @override
+  String get roleOwner => '보호자';
+
+  @override
+  String get roleCoCaregiver => '공동양육자';
+
+  @override
+  String get breedUnknown => '품종 모름';
+
+  @override
+  String get familySharing => '가족 공유';
+
+  @override
+  String get inviteCreate => '초대 코드 발급';
+
+  @override
+  String get inviteCodeTitle => '초대 코드';
+
+  @override
+  String get inviteCodeBody => '아래 코드를 복사하여 가족에게 전달하세요.\n코드는 24시간 동안 유효합니다.';
+
+  @override
+  String get inviteCopy => '복사하기';
+
+  @override
+  String get inviteCopied => '초대 코드가 복사되었습니다.';
+
+  @override
+  String get familyJoinTitle => '가족 참여하기';
+
+  @override
+  String get familyJoinPrompt => '전달받은 6자리 초대 코드를 입력하세요.';
+
+  @override
+  String get familyInviteCodeLabel => '초대 코드';
+
+  @override
+  String get familyCodeRequired => '6자리 코드를 입력해주세요.';
+
+  @override
+  String get familyJoined => '가족에 성공적으로 참여했습니다.';
+
+  @override
+  String get familyJoin => '참여';
+
+  @override
+  String get familyTitle => '가족 관리 (공동 양육자)';
+
+  @override
+  String get familyIntro => '반려동물 데이터를 가족과 함께 실시간으로 공유하고 관리하세요.';
+
+  @override
+  String get familyInviteTitle => '가족 초대하기';
+
+  @override
+  String familyInviteBody(String name) {
+    return '현재 선택된 반려동물($name)의 공간에 파트너를 초대합니다. 생성된 코드는 24시간 동안 유효합니다.';
+  }
+
+  @override
+  String get familyGetCode => '초대 코드 발급받기';
+
+  @override
+  String get familyJoinBody => '가족에게 전달받은 6자리 초대 코드가 있다면 아래 버튼을 눌러 입력하세요.';
+
+  @override
+  String get familyEnterCode => '초대 코드 입력';
+
+  @override
+  String get settingsAppInfo => '앱 정보 및 설정';
+
+  @override
+  String get settingsVersion => '버전 정보';
+
+  @override
+  String get settingsTerms => '이용약관';
+
+  @override
+  String get settingsPrivacy => '개인정보처리방침';
+
+  @override
+  String get settingsLicenses => '오픈소스 라이선스';
+
+  @override
+  String get settingsCannotOpenBrowser => '웹 브라우저를 열 수 없습니다.';
+
+  @override
+  String get settingsDeleteAccount => '회원 탈퇴';
+
+  @override
+  String get settingsDeleteAccountBody =>
+      '정말로 Mettie 앱을 탈퇴하시겠습니까?\n기록된 모든 반려동물 데이터와 개인정보가 즉시 삭제되며 복구할 수 없습니다.';
+
+  @override
+  String get settingsDeleteAccountConfirm => '탈퇴하기';
+
+  @override
+  String get accountInfo => '계정 정보';
+
+  @override
+  String get accountDefaultName => '사용자';
+
+  @override
+  String get accountSignOut => '로그아웃';
+
+  @override
+  String get rowOther => '기타';
+
+  @override
+  String get rowMorning => '아침';
+
+  @override
+  String get rowLunch => '점심';
+
+  @override
+  String get rowEvening => '저녁';
+
+  @override
+  String get rowNight => '야간';
+
+  @override
+  String rowPreMeal(String time) {
+    return '$time 식전';
+  }
+
+  @override
+  String rowPostMeal(String time) {
+    return '$time 식후';
+  }
+
+  @override
+  String get rowFasting => '공복';
+
+  @override
+  String get rowNadir => '최저 혈당(Nadir)';
+
+  @override
+  String rowInsulin(String time) {
+    return '$time 인슐린';
+  }
+
+  @override
+  String rowMeal(String time) {
+    return '$time 식사';
+  }
+
+  @override
+  String get rowDeleteTitle => '기록 삭제';
+
+  @override
+  String get rowDeleteBody => '이 기록을 정말 삭제하시겠습니까?\n삭제된 기록은 다시 복구할 수 없습니다.';
+
+  @override
+  String get rowDeleted => '기록이 삭제되었습니다.';
+
+  @override
+  String get rowFood => '사료';
+
+  @override
+  String get selectorTitle => '반려동물 선택';
+
+  @override
+  String get selectorEmpty => '등록된 반려동물이 없습니다.';
+
+  @override
+  String get selectorDeleteAction => '삭제하기';
+
+  @override
+  String get loginHeadline => '우리 아이 혈당 기록\n스마트한 AI 가이드';
+
+  @override
+  String get loginSubtitle => '간편한 혈당 체크부터 일상 기록까지\nMettie AI가 도와드립니다.';
+
+  @override
+  String get loginWithEmail => '이메일로 계속하기';
+
+  @override
+  String get loginOr => '또는';
+
+  @override
+  String get loginWithApple => 'Apple로 계속하기';
+
+  @override
+  String get loginWithGoogle => 'Google로 계속하기';
+
+  @override
+  String get emailAgreeRequired => '이용약관 및 개인정보처리방침에 동의해주세요.';
+
+  @override
+  String get emailVerifyTitle => '이메일 인증 안내';
+
+  @override
+  String get emailLinkSent => '회원가입 링크가 전송되었습니다.';
+
+  @override
+  String emailSentTo(String email) {
+    return '$email 이메일로 가입 승인을 위한 링크를 발송했습니다.';
+  }
+
+  @override
+  String get emailCheckInbox =>
+      '수신된 이메일의 링크를 클릭하시면 회원가입이 완료됩니다. (스팸 메일함도 함께 확인해주세요.)';
+
+  @override
+  String get emailSignUpTitle => '이메일 회원가입';
+
+  @override
+  String get emailSignInTitle => '이메일 로그인';
+
+  @override
+  String get emailNameHint => '이름을 입력하세요';
+
+  @override
+  String get emailName => '이름';
+
+  @override
+  String get emailNameRequired => '이름을 입력해주세요.';
+
+  @override
+  String get emailEmail => '이메일';
+
+  @override
+  String get emailEmailRequired => '이메일을 입력해주세요.';
+
+  @override
+  String get emailEmailInvalid => '올바른 이메일 형식이 아닙니다.';
+
+  @override
+  String get emailPasswordHint => '비밀번호를 입력하세요 (6자 이상)';
+
+  @override
+  String get emailPassword => '비밀번호';
+
+  @override
+  String get emailPasswordRequired => '비밀번호를 입력해주세요.';
+
+  @override
+  String get emailPasswordTooShort => '비밀번호는 최소 6자 이상이어야 합니다.';
+
+  @override
+  String termsAgreement(String terms, String privacy) {
+    return 'Mettie의 $terms 및 $privacy에 동의합니다.';
+  }
+
+  @override
+  String get emailSignUpButton => '이메일로 회원가입';
+
+  @override
+  String get emailSignInButton => '이메일로 로그인';
+
+  @override
+  String get emailHaveAccount => '이미 계정이 있으신가요? 로그인';
+
+  @override
+  String get emailNoAccount => '계정이 없으신가요? 회원가입';
 }

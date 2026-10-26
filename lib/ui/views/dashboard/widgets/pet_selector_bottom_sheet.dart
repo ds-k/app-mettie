@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../l10n/labels.dart';
 import '../../../view_models/pet_management_view_model.dart';
 import '../../../view_models/dashboard_view_model.dart';
 
@@ -41,7 +43,7 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                   ),
                 ),
               ),
-              const Padding(
+              Padding(
                 padding: EdgeInsets.only(
                   left: 24,
                   right: 24,
@@ -51,7 +53,7 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                 child: Row(
                   children: [
                     Text(
-                      '반려동물 선택',
+                      context.l10n.selectorTitle,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -68,7 +70,7 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                 child: petsAsync.when(
                   data: (pets) {
                     if (pets.isEmpty) {
-                      return const Center(child: Text('등록된 반려동물이 없습니다.'));
+                      return Center(child: Text(context.l10n.selectorEmpty));
                     }
 
                     // selectedPetId가 null일 땐 첫번째 아이템이 선택된 것으로 간주
@@ -115,7 +117,7 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                               ),
                             ),
                             subtitle: Text(
-                              '${pet.species == 'cat' ? '고양이' : '강아지'} / ${pet.breed ?? '품종 모름'}',
+                              '${pet.species == 'cat' ? context.l10n.speciesCat : context.l10n.speciesDog} / ${pet.breed ?? context.l10n.breedUnknown}',
                               style: const TextStyle(
                                 color: kSlate,
                                 fontSize: 13,
@@ -137,11 +139,11 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                                   onSelected: (value) async {
                                     if (value == 'delete') {
                                       final title = isOwner
-                                          ? '반려동물 삭제'
-                                          : '가족 나가기';
+                                          ? context.l10n.petDeleteTitle
+                                          : context.l10n.petLeaveTitle;
                                       final content = isOwner
-                                          ? '${pet.name}의 모든 데이터를 정말 삭제하시겠습니까?'
-                                          : '${pet.name}의 가족 공간에서 나가시겠습니까?';
+                                          ? context.l10n.petDeleteBody(pet.name)
+                                          : context.l10n.petLeaveBody(pet.name);
 
                                       final notifier = ref.read(
                                         petManagementViewModelProvider.notifier,
@@ -156,8 +158,8 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                                             TextButton(
                                               onPressed: () =>
                                                   Navigator.pop(ctx, false),
-                                              child: const Text(
-                                                '취소',
+                                              child: Text(
+                                                context.l10n.commonCancel,
                                                 style: TextStyle(color: kSlate),
                                               ),
                                             ),
@@ -165,7 +167,7 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                                               onPressed: () =>
                                                   Navigator.pop(ctx, true),
                                               child: Text(
-                                                isOwner ? '삭제' : '나가기',
+                                                isOwner ? context.l10n.commonDelete : context.l10n.petLeave,
                                                 style: const TextStyle(
                                                   color: kBrandError,
                                                   fontWeight: FontWeight.bold,
@@ -188,7 +190,7 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                                     PopupMenuItem(
                                       value: 'delete',
                                       child: Text(
-                                        isOwner ? '삭제하기' : '나가기',
+                                        isOwner ? context.l10n.selectorDeleteAction : context.l10n.petLeave,
                                         style: const TextStyle(
                                           color: kBrandError,
                                         ),
@@ -212,7 +214,7 @@ class PetSelectorBottomSheet extends ConsumerWidget {
                   loading: () => const Center(
                     child: CircularProgressIndicator(color: kBrandBlue),
                   ),
-                  error: (error, stack) => Center(child: Text('오류 발생: $error')),
+                  error: (error, stack) => Center(child: Text(errorMessage(context.l10n, error))),
                 ),
               ),
             ],

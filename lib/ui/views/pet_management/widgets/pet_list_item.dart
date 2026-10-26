@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../../data/models/pet.dart';
 import '../../../widgets/glass_card.dart';
 import '../../../view_models/profile_view_model.dart';
@@ -62,7 +63,7 @@ class PetListItem extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
-                    isOwner ? '보호자' : '공동양육자',
+                    isOwner ? context.l10n.roleOwner : context.l10n.roleCoCaregiver,
                     style: TextStyle(
                       fontSize: 12,
                       color: isOwner ? kBrandBlue : kStone,
@@ -73,12 +74,12 @@ class PetListItem extends ConsumerWidget {
               ],
             ),
             subtitle: Text(
-              "${pet.species == 'cat' ? '고양이' : '강아지'} / ${pet.breed ?? '품종 모름'}",
+              "${pet.species == 'cat' ? context.l10n.speciesCat : context.l10n.speciesDog} / ${pet.breed ?? context.l10n.breedUnknown}",
             ),
             trailing: IconButton(
               icon: const Icon(LucideIcons.trash2, color: kBrandError),
               onPressed: onDeleteOrLeave,
-              tooltip: isOwner ? '삭제' : '나가기',
+              tooltip: isOwner ? context.l10n.commonDelete : context.l10n.petLeave,
             ),
           ),
           const Divider(height: 1, color: kHairline),
@@ -87,8 +88,8 @@ class PetListItem extends ConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  '가족 공유',
+                Text(
+                  context.l10n.familySharing,
                   style: TextStyle(
                     color: kCharcoal,
                     fontWeight: FontWeight.w600,
@@ -96,7 +97,7 @@ class PetListItem extends ConsumerWidget {
                 ),
                 TextButton.icon(
                   icon: const Icon(LucideIcons.userPlus, size: 16),
-                  label: const Text('초대 코드 발급'),
+                  label: Text(context.l10n.inviteCreate),
                   style: TextButton.styleFrom(
                     foregroundColor: kBrandBlue,
                     padding: EdgeInsets.zero,
@@ -115,12 +116,12 @@ class PetListItem extends ConsumerWidget {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
-                          title: const Text('초대 코드'),
+                          title: Text(context.l10n.inviteCodeTitle),
                           content: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Text(
-                                '아래 코드를 복사하여 가족에게 전달하세요.\n코드는 24시간 동안 유효합니다.',
+                              Text(
+                                context.l10n.inviteCodeBody,
                               ),
                               const SizedBox(height: 16),
                               Container(
@@ -143,14 +144,14 @@ class PetListItem extends ConsumerWidget {
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(context),
-                              child: const Text(
-                                '닫기',
+                              child: Text(
+                                context.l10n.commonClose,
                                 style: TextStyle(color: kSlate),
                               ),
                             ),
                             ElevatedButton.icon(
                               icon: const Icon(LucideIcons.copy, size: 18),
-                              label: const Text('복사하기'),
+                              label: Text(context.l10n.inviteCopy),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: kBrandBlue,
                                 foregroundColor: kOnDark,
@@ -158,8 +159,8 @@ class PetListItem extends ConsumerWidget {
                               onPressed: () {
                                 Clipboard.setData(ClipboardData(text: code));
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('초대 코드가 복사되었습니다.'),
+                                  SnackBar(
+                                    content: Text(context.l10n.inviteCopied),
                                   ),
                                 );
                                 Navigator.pop(context);

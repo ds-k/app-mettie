@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../data/constants/veterinary_guidelines.dart';
 import '../../data/models/pet.dart';
+import '../../data/app_error.dart';
 import '../../data/repositories/pet_repository.dart';
 import '../../data/repositories/auth_repository.dart';
 import 'dashboard_view_model.dart';
@@ -19,7 +20,8 @@ final petsProvider = FutureProvider<List<Pet>>((ref) async {
 
 class PetManagementState {
   final bool isLoading;
-  final String? error;
+  /// 화면에서 errorMessage()로 번역해 보여 준다
+  final Object? error;
   final int targetGlucoseMin;
   final int targetGlucoseMax;
 
@@ -32,7 +34,7 @@ class PetManagementState {
 
   PetManagementState copyWith({
     bool? isLoading,
-    String? error,
+    Object? error,
     int? targetGlucoseMin,
     int? targetGlucoseMax,
   }) {
@@ -89,7 +91,7 @@ class PetManagementViewModel extends Notifier<PetManagementState> {
       final repo = ref.read(petRepositoryProvider);
       final currentUser = ref.read(currentUserProvider);
 
-      if (currentUser == null) throw '로그인이 필요합니다.';
+      if (currentUser == null) throw const AppException(AppErrorCode.notSignedIn);
 
       final client = Supabase.instance.client;
 
@@ -144,7 +146,7 @@ class PetManagementViewModel extends Notifier<PetManagementState> {
         conditions: [
           if ((insulinType?.isNotEmpty ?? false) ||
               insulinUnitIu != null ||
-              (diagnosis?.contains('당뇨') ?? false))
+              _mentionsDiabetes(diagnosis))
             'diabetes',
         ],
         insulinConcentration: VeterinaryGuidelines.concentrationOf(insulinType),
@@ -157,7 +159,7 @@ class PetManagementViewModel extends Notifier<PetManagementState> {
       state = state.copyWith(isLoading: false);
       return true;
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      state = state.copyWith(isLoading: false, error: e);
       return false;
     }
   }
@@ -183,8 +185,14 @@ class PetManagementViewModel extends Notifier<PetManagementState> {
       state = state.copyWith(isLoading: false);
       return true;
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      state = state.copyWith(isLoading: false, error: e);
       return false;
     }
   }
+}
+
+/// 직접 입력한 진단명에 당뇨가 들어 있는지 (한국어·영어·일본어)
+bool _mentionsDiabetes(String? diagnosis) {
+  final d = diagnosis?.toLowerCase() ?? '';
+  return d.contains('당뇨') || d.contains('diabet') || d.contains('糖尿');
 }

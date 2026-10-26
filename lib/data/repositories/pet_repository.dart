@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../app_error.dart';
 import '../models/pet.dart';
 
 final petRepositoryProvider = Provider<PetRepository>((ref) {
@@ -98,10 +99,8 @@ class PetRepository {
       });
 
       return code;
-    } on PostgrestException catch (e) {
-      throw '초대 코드 생성 중 데이터베이스 오류가 발생했습니다: ${e.message}';
     } catch (e) {
-      throw '초대 코드를 생성할 수 없습니다. 네트워크를 확인해주세요.';
+      throw AppException(AppErrorCode.inviteCreateFailed, e);
     }
   }
 
@@ -110,16 +109,17 @@ class PetRepository {
       // 보안을 위해 프론트엔드에서 직접 INSERT하지 않고 DB의 검증 함수(RPC)를 호출합니다.
       await _client.rpc('join_family_with_code', params: {'invite_code': code});
     } on PostgrestException catch (e) {
+      // DB 함수 join_family_with_code가 RAISE하는 한국어 메시지로 구분한다
       if (e.message.contains('유효하지 않은')) {
-        throw '유효하지 않은 초대 코드입니다.';
+        throw AppException(AppErrorCode.inviteInvalid, e);
       } else if (e.message.contains('만료된')) {
-        throw '만료된 초대 코드입니다.';
+        throw AppException(AppErrorCode.inviteExpired, e);
       } else if (e.message.contains('이미 연결된')) {
-        throw '이미 연결된 가족입니다.';
+        throw AppException(AppErrorCode.inviteAlreadyJoined, e);
       }
-      throw '가족 참여 처리 중 오류가 발생했습니다.';
+      throw AppException(AppErrorCode.joinFailed, e);
     } catch (e) {
-      throw '가족 참여에 실패했습니다. 네트워크를 확인해주세요.';
+      throw AppException(AppErrorCode.joinFailed, e);
     }
   }
 }

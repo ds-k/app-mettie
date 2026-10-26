@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../../data/repositories/auth_repository.dart';
 import '../../../widgets/glass_card.dart';
 
@@ -16,8 +17,8 @@ class ProfileAccountInfo extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          '계정 정보',
+        Text(
+          context.l10n.accountInfo,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -39,7 +40,7 @@ class ProfileAccountInfo extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      user?.userMetadata?['full_name'] ?? '사용자',
+                      user?.userMetadata?['full_name'] ?? context.l10n.accountDefaultName,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -56,7 +57,7 @@ class ProfileAccountInfo extends ConsumerWidget {
               IconButton(
                 icon: const Icon(LucideIcons.logOut, color: kSlate),
                 onPressed: () => ref.read(authRepositoryProvider).signOut(),
-                tooltip: '로그아웃',
+                tooltip: context.l10n.accountSignOut,
               ),
             ],
           ),

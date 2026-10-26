@@ -238,7 +238,7 @@ class _DiabetesPlanCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    width: 84,
+                    width: 104,
                     child: Text(
                       label,
                       style: const TextStyle(color: kSlate, fontSize: 13),

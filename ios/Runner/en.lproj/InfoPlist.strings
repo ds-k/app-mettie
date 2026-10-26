@@ -1,2 +1,6 @@
 "CFBundleDisplayName" = "Mettie";
 "CFBundleName" = "Mettie";
+"NSCameraUsageDescription" = "Mettie needs camera access to attach photos to your pet's records.";
+"NSPhotoLibraryUsageDescription" = "Mettie needs photo library access to upload pet photos.";
+"NSMicrophoneUsageDescription" = "Mettie needs microphone access for voice recording.";
+"NSLocalNetworkUsageDescription" = "Mettie needs local network access for this feature.";

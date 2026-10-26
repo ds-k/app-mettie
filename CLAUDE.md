@@ -38,6 +38,7 @@ provider 테스트는 `ProviderContainer`에 `authStateProvider`와 저장소 pr
 supabase start -x studio,imgproxy,vector,logflare,supavisor,mailpit,postgres-meta,storage-api,edge-runtime  # 로컬 dev DB (Docker)
 supabase db reset          # 로컬에 마이그레이션 전부 재적용
 supabase test db           # supabase/tests/*.sql (pgTAP) 실행
+./supabase/dev/seed_demo.sh  # 로컬 DB에 데모 가족·펫·14일치 기록 (test@test.test / testtest)
 ```
 
 - 스키마 변경은 `supabase/migrations/`에 파일로 추가하고 **로컬에서 `supabase test db` 통과 후** 운영에 반영한다.
@@ -68,11 +69,23 @@ MVVM + Riverpod 3. 레이어 방향은 `ui/views → ui/view_models → data/rep
 - `RagContextInjector`(`lib/utils/rag_context_injector.dart`)는 벡터 검색이 아니라, 펫 정보 + 최근 기록 + `VeterinaryGuidelines`(인슐린 사전·수의학 가이드라인)를 문자열로 직렬화해 시스템 프롬프트에 넣는 방식이다. 응답 250자 제한 같은 프롬프트 규칙도 여기 있다.
 - `flutter_gemma` 1.x는 모듈이 분리돼 있어 `flutter_gemma_litertlm`을 함께 쓴다. RAG(qdrant) 패키지는 의도적으로 추가하지 않는다 (아래 16KB 이슈).
 
+## 다국어 (한국어·영어·일본어)
+
+- 화면 문자열은 전부 `lib/l10n/app_ko.arb`(템플릿)·`app_en.arb`·`app_ja.arb`에 넣고 `context.l10n.키`로 쓴다(`lib/l10n/l10n.dart`). 코드에 화면 문자열을 직접 쓰지 않는다. ARB를 고치면 `flutter gen-l10n`(또는 `flutter pub get`)으로 `app_localizations*.dart`를 다시 만든다.
+- 세 파일의 키·자리 표시자가 다르면 `test/l10n_test.dart`가 실패한다. 기기 언어가 셋 중 하나가 아니면 영어로 보인다.
+- 문장 안에 값이 들어가면 문자열을 이어 붙이지 말고 ARB 자리 표시자(`{name}`)를 쓴다. 언어마다 어순이 다르다. 링크가 섞인 문장은 자리 표시자에 구분 문자를 넣어 나눈다(`email_login_view.dart`의 `_agreeParts`).
+- DB에는 언어와 무관한 코드만 저장한다(관찰 항목 `symptom_tags`, `glucose_type` 등). 표시 이름은 `lib/l10n/labels.dart`에서 바꾼다. 인슐린은 기존 저장값(`란투스(Lantus)`)을 유지하고 `insulinDisplayName`으로만 현지화한다.
+- 작성자 이름은 `WriterName`(`label`/`subject`)으로 쓴다. 한국어 주격 조사(내가/엄마가)는 `subject`가 처리한다.
+- 저장소는 화면 문구를 `throw`하지 않는다. `AppException(AppErrorCode.xxx)`를 던지고 화면은 `errorMessage(l10n, error)`로 보여 준다.
+- 날짜는 `DateFormat.MMMEd(l10n.localeName)`처럼 언어를 넘겨 만든다. 혈당 단위는 아직 mg/dL만 지원한다(mmol/L은 표시 단계 변환으로 추가 예정).
+- 앱 이름: iOS `ios/Runner/{ko,en,ja}.lproj/InfoPlist.strings`(권한 문구 포함), Android `res/values{,-ko,-ja}/strings.xml`.
+- AI 코치 화면(`ai_coach_view.dart`)과 프롬프트(`rag_context_injector.dart`, `VeterinaryGuidelines`)는 API 전환 때 다국어로 다시 만든다.
+
 ## UI 규칙
 
 - 아이콘은 `lucide_icons_flutter`(`LucideIcons.*`)만 쓴다. Material `Icons.*`는 쓰지 않는다.
 - 폰트는 로컬 에셋 Pretendard(400/500/600/700). 색상과 타이포는 `lib/core/constants/app_colors.dart`, `app_typography.dart`, 테마는 `lib/core/theme/app_theme.dart`.
-- UI 문자열과 코드 주석은 한국어로 쓴다.
+- 코드 주석은 한국어로 쓴다. UI 문자열은 ARB에 둔다.
 
 ## 플랫폼별 주의사항
 

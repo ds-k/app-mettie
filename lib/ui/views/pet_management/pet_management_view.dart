@@ -4,6 +4,8 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/services.dart';
 import '../../view_models/pet_management_view_model.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../l10n/l10n.dart';
+import '../../../l10n/labels.dart';
 import '../../../data/models/pet.dart';
 import '../../../data/constants/veterinary_guidelines.dart';
 import 'widgets/pet_list_item.dart';
@@ -80,7 +82,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            ref.read(petManagementViewModelProvider).error ?? '저장에 실패했습니다.',
+            errorMessage(context.l10n, ref.read(petManagementViewModelProvider).error),
           ),
           backgroundColor: kBrandError,
         ),
@@ -90,10 +92,11 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
 
   void _confirmDeleteOrLeave(Pet pet) {
     final isOwner = pet.role == 'owner';
-    final title = isOwner ? '반려동물 삭제' : '가족 나가기';
+    final l = context.l10n;
+    final title = isOwner ? l.petDeleteTitle : l.petLeaveTitle;
     final content = isOwner
-        ? '${pet.name}의 모든 데이터를 정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.'
-        : '${pet.name}의 가족 공간에서 나가시겠습니까?';
+        ? l.petDeleteBody(pet.name)
+        : l.petLeaveBody(pet.name);
 
     showDialog(
       context: context,
@@ -103,7 +106,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('취소', style: TextStyle(color: kSlate)),
+            child: Text(l.commonCancel, style: const TextStyle(color: kSlate)),
           ),
           TextButton(
             onPressed: () async {
@@ -113,12 +116,12 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                   .deletePetOrLeave(pet);
               if (success && context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(isOwner ? '삭제되었습니다.' : '가족에서 나왔습니다.')),
+                  SnackBar(content: Text(isOwner ? l.petDeleted : l.petLeft)),
                 );
               }
             },
             child: Text(
-              isOwner ? '삭제' : '나가기',
+              isOwner ? l.commonDelete : l.petLeave,
               style: const TextStyle(
                 color: kBrandError,
                 fontWeight: FontWeight.bold,
@@ -134,8 +137,8 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text(
-          '반려동물 관리',
+        title: Text(
+          context.l10n.petManageTitle,
           style: TextStyle(color: kInk, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
@@ -148,7 +151,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                 _isCreatingNew = true;
               });
             },
-            tooltip: '새 반려동물 등록',
+            tooltip: context.l10n.petAddTooltip,
           ),
           const SizedBox(width: 8),
         ],
@@ -188,8 +191,8 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                   onPressed: () => setState(() => _isCreatingNew = false),
                 )
               : null,
-          title: const Text(
-            '새로운 반려동물 등록',
+          title: Text(
+            context.l10n.petNewTitle,
             style: TextStyle(color: kInk, fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
@@ -207,20 +210,20 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                       padding: const EdgeInsets.all(12),
                       color: kBrandError.withValues(alpha: 0.1),
                       child: Text(
-                        state.error!,
+                        errorMessage(context.l10n, state.error),
                         style: const TextStyle(color: kBrandError),
                       ),
                     ),
 
                   // 1. 기본 정보
-                  _buildSectionTitle('기본 정보'),
+                  _buildSectionTitle(context.l10n.petBasicInfo),
                   const SizedBox(height: 12),
                   _buildTextField(
                     controller: _nameController,
-                    label: '이름',
+                    label: context.l10n.petName,
                     icon: LucideIcons.dog,
                     validator: (val) =>
-                        val == null || val.isEmpty ? '이름을 입력하세요' : null,
+                        val == null || val.isEmpty ? context.l10n.petNameRequired : null,
                     inputFormatters: [LengthLimitingTextInputFormatter(20)],
                   ),
                   const SizedBox(height: 16),
@@ -230,7 +233,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                         child: DropdownButtonFormField<String>(
                           initialValue: _species,
                           decoration: _dropdownDecoration(
-                            '종류',
+                            context.l10n.petSpecies,
                             LucideIcons.pawPrint,
                           ),
                           borderRadius: BorderRadius.circular(kRadiusLg),
@@ -238,9 +241,9 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                           menuMaxHeight: 250,
                           style: const TextStyle(fontSize: 13, color: kInk),
                           iconSize: 18,
-                          items: const [
-                            DropdownMenuItem(value: 'dog', child: Text('강아지')),
-                            DropdownMenuItem(value: 'cat', child: Text('고양이')),
+                          items: [
+                            DropdownMenuItem(value: 'dog', child: Text(context.l10n.speciesDog)),
+                            DropdownMenuItem(value: 'cat', child: Text(context.l10n.speciesCat)),
                           ],
                           onChanged: (val) {
                             if (val != null) {
@@ -257,7 +260,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                         child: DropdownButtonFormField<String>(
                           initialValue: _sex,
                           decoration: _dropdownDecoration(
-                            '성별',
+                            context.l10n.petSex,
                             LucideIcons.user,
                           ),
                           borderRadius: BorderRadius.circular(kRadiusLg),
@@ -265,11 +268,11 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                           menuMaxHeight: 250,
                           style: const TextStyle(fontSize: 13, color: kInk),
                           iconSize: 18,
-                          items: const [
-                            DropdownMenuItem(value: 'male', child: Text('수컷')),
+                          items: [
+                            DropdownMenuItem(value: 'male', child: Text(context.l10n.sexMale)),
                             DropdownMenuItem(
                               value: 'female',
-                              child: Text('암컷'),
+                              child: Text(context.l10n.sexFemale),
                             ),
                           ],
                           onChanged: (val) {
@@ -282,7 +285,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                   const SizedBox(height: 16),
                   _buildTextField(
                     controller: _breedController,
-                    label: '품종 (선택)',
+                    label: context.l10n.petBreedOptional,
                     icon: LucideIcons.bookOpen,
                     inputFormatters: [LengthLimitingTextInputFormatter(30)],
                   ),
@@ -291,7 +294,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                     // Fix ink splash issue
                     color: Colors.transparent,
                     child: SwitchListTile(
-                      title: const Text('중성화 완료'),
+                      title: Text(context.l10n.petNeutered),
                       value: _isNeutered,
                       activeThumbColor: kBrandBlue,
                       onChanged: (val) => setState(() => _isNeutered = val),
@@ -302,11 +305,11 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                   const SizedBox(height: 32),
 
                   // 2. 신체 및 건강 정보
-                  _buildSectionTitle('건강 및 관리 정보'),
+                  _buildSectionTitle(context.l10n.petHealthInfo),
                   const SizedBox(height: 12),
                   _buildTextField(
                     controller: _weightController,
-                    label: '체중 (kg)',
+                    label: context.l10n.petWeightKg,
                     icon: LucideIcons.activity,
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
@@ -321,7 +324,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                       if (val != null && val.isNotEmpty) {
                         final weight = double.tryParse(val);
                         if (weight == null || weight <= 0 || weight > 150) {
-                          return '올바른 체중을 입력하세요 (0 초과, 150 이하)';
+                          return context.l10n.petWeightInvalid;
                         }
                       }
                       return null;
@@ -337,7 +340,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                             DropdownButtonFormField<String>(
                               initialValue: _selectedInsulinType,
                               decoration: _dropdownDecoration(
-                                '인슐린 종류 (선택)',
+                                context.l10n.petInsulinTypeOptional,
                                 LucideIcons.syringe,
                               ),
                               borderRadius: BorderRadius.circular(kRadiusLg),
@@ -350,7 +353,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                                     (type) => DropdownMenuItem(
                                       value: type,
                                       child: Text(
-                                        type,
+                                        insulinDisplayName(context.l10n, type),
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
@@ -370,7 +373,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                               const SizedBox(height: 8),
                               _buildTextField(
                                 controller: _insulinTypeController,
-                                label: '기타 인슐린 직접 입력',
+                                label: context.l10n.petInsulinOther,
                                 icon: LucideIcons.penLine,
                               ),
                             ],
@@ -381,7 +384,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                       Expanded(
                         child: _buildTextField(
                           controller: _insulinDoseController,
-                          label: '단위 (IU)',
+                          label: context.l10n.petInsulinUnits,
                           keyboardType: const TextInputType.numberWithOptions(
                             decimal: true,
                           ),
@@ -395,7 +398,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                             if (val != null && val.isNotEmpty) {
                               final dose = double.tryParse(val);
                               if (dose == null || dose <= 0 || dose > 150) {
-                                return '올바른 단위(IU)를 입력하세요 (0 초과, 150 이하)';
+                                return context.l10n.petInsulinUnitsInvalid;
                               }
                             }
                             return null;
@@ -408,7 +411,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                   const SizedBox(height: 32),
 
                   // 3. 목표 혈당 (자동 설정됨)
-                  _buildSectionTitle('목표 혈당 설정'),
+                  _buildSectionTitle(context.l10n.petTargetGlucose),
                   const SizedBox(height: 8),
                   Text(
                     '${state.targetGlucoseMin} ~ ${state.targetGlucoseMax} mg/dL',
@@ -467,8 +470,8 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
                                 strokeWidth: 2,
                               ),
                             )
-                          : const Text(
-                              '저장하고 시작하기',
+                          : Text(
+                              context.l10n.petSaveAndStart,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -579,7 +582,7 @@ class _PetManagementViewState extends ConsumerState<PetManagementView> {
         backgroundColor: Colors.transparent,
         body: Center(
           child: Text(
-            'Error: $err',
+            errorMessage(context.l10n, err),
             style: const TextStyle(color: kBrandError),
           ),
         ),

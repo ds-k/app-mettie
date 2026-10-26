@@ -4,14 +4,15 @@ import 'pet_management_view_model.dart';
 
 class ProfileState {
   final bool isLoading;
-  final String? error;
+  /// 화면에서 errorMessage()로 번역해 보여 준다
+  final Object? error;
   final String? generatedCode;
 
   ProfileState({this.isLoading = false, this.error, this.generatedCode});
 
   ProfileState copyWith({
     bool? isLoading,
-    String? error,
+    Object? error,
     String? generatedCode,
   }) {
     return ProfileState(
@@ -40,7 +41,7 @@ class ProfileViewModel extends Notifier<ProfileState> {
       final code = await repo.createInvitationCode(familyId);
       state = state.copyWith(isLoading: false, generatedCode: code);
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      state = state.copyWith(isLoading: false, error: e);
     }
   }
 
@@ -56,7 +57,7 @@ class ProfileViewModel extends Notifier<ProfileState> {
       state = state.copyWith(isLoading: false);
       return true;
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      state = state.copyWith(isLoading: false, error: e);
       return false;
     }
   }

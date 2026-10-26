@@ -1,2 +1,6 @@
 "CFBundleDisplayName" = "메티";
 "CFBundleName" = "메티";
+"NSCameraUsageDescription" = "반려동물 기록에 사진을 첨부하려면 카메라 접근이 필요합니다.";
+"NSPhotoLibraryUsageDescription" = "반려동물 사진을 올리려면 사진 보관함 접근이 필요합니다.";
+"NSMicrophoneUsageDescription" = "음성으로 기록하려면 마이크 접근이 필요합니다.";
+"NSLocalNetworkUsageDescription" = "로컬 네트워크 기능을 사용하려면 접근이 필요합니다.";

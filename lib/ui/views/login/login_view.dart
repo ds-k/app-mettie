@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../l10n/l10n.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:go_router/go_router.dart';
@@ -51,7 +52,7 @@ class LoginView extends ConsumerWidget {
                               children: [
                                 const SizedBox(height: 80),
                                 Text(
-                                  '우리 아이 혈당 기록\n스마트한 AI 가이드',
+                                  context.l10n.loginHeadline,
                                   textAlign: TextAlign.center,
                                   style: kHeading2.copyWith(
                                     color: kBrandBlueDeep,
@@ -76,7 +77,7 @@ class LoginView extends ConsumerWidget {
                                 ),
                                 const SizedBox(height: 24),
                                 Text(
-                                  '간편한 혈당 체크부터 일상 기록까지\nMettie AI가 도와드립니다.',
+                                  context.l10n.loginSubtitle,
                                   textAlign: TextAlign.center,
                                   style: kBodyMd.copyWith(
                                     color: kSlate,
@@ -99,7 +100,7 @@ class LoginView extends ConsumerWidget {
                                     LucideIcons.mail,
                                     color: kOnDark,
                                   ),
-                                  label: const Text('이메일로 계속하기'),
+                                  label: Text(context.l10n.loginWithEmail),
                                   style: ElevatedButton.styleFrom(
                                     minimumSize: const Size.fromHeight(52),
                                     backgroundColor: kBrandBlue,
@@ -121,7 +122,7 @@ class LoginView extends ConsumerWidget {
                                         horizontal: 16.0,
                                       ),
                                       child: Text(
-                                        '또는',
+                                        context.l10n.loginOr,
                                         style: kCaption.copyWith(color: kSlate),
                                       ),
                                     ),
@@ -148,7 +149,7 @@ class LoginView extends ConsumerWidget {
                                       BlendMode.srcIn,
                                     ),
                                   ),
-                                  label: const Text('Apple로 계속하기'),
+                                  label: Text(context.l10n.loginWithApple),
                                   style: ElevatedButton.styleFrom(
                                     minimumSize: const Size.fromHeight(52),
                                     backgroundColor: kInk,
@@ -171,7 +172,7 @@ class LoginView extends ConsumerWidget {
                                     width: 20,
                                     height: 20,
                                   ),
-                                  label: const Text('Google로 계속하기'),
+                                  label: Text(context.l10n.loginWithGoogle),
                                   style: ElevatedButton.styleFrom(
                                     minimumSize: const Size.fromHeight(52),
                                     backgroundColor: kSurface,

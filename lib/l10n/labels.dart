@@ -1,3 +1,4 @@
+import '../data/app_error.dart';
 import '../domain/glucose.dart';
 import '../utils/korean.dart';
 import 'app_localizations.dart';
@@ -103,3 +104,23 @@ String insulinDisplayName(AppLocalizations l, String stored) =>
       '기타' => l.insulinOther,
       _ => stored,
     };
+
+/// 에러를 사용자 언어의 문구로 바꾼다. 알 수 없는 에러는 원문을 노출하지 않는다.
+String errorMessage(AppLocalizations l, Object? error) {
+  if (error is! AppException) return l.errUnknown;
+  return switch (error.code) {
+    AppErrorCode.googleTokenMissing => l.errGoogleToken,
+    AppErrorCode.googleSignInFailed => l.errGoogleSignIn,
+    AppErrorCode.appleTokenMissing => l.errAppleToken,
+    AppErrorCode.appleSignInFailed => l.errAppleSignIn,
+    AppErrorCode.notSignedIn => l.errNotSignedIn,
+    AppErrorCode.deleteAccountFailed => l.errDeleteAccount,
+    AppErrorCode.inviteCreateFailed => l.errInviteCreate,
+    AppErrorCode.inviteInvalid => l.errInviteInvalid,
+    AppErrorCode.inviteExpired => l.errInviteExpired,
+    AppErrorCode.inviteAlreadyJoined => l.errInviteAlreadyJoined,
+    AppErrorCode.joinFailed => l.errJoinFailed,
+    AppErrorCode.recordNotFound => l.errRecordNotFound,
+    AppErrorCode.saveFailed => l.errSaveFailed,
+  };
+}

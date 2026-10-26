@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/record.dart';
+import '../app_error.dart';
 
 final recordRepositoryProvider = Provider<RecordRepository>((ref) {
   return RecordRepository(Supabase.instance.client);
@@ -96,7 +97,7 @@ class RecordRepository {
         .eq('id', id)
         .select();
     if (response.isEmpty) {
-      throw Exception('기록을 찾을 수 없거나 삭제할 권한이 없습니다.');
+      throw const AppException(AppErrorCode.recordNotFound);
     }
   }
 
