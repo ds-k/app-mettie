@@ -2067,6 +2067,222 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'계정이 없으신가요? 회원가입'**
   String get emailNoAccount;
+
+  /// No description provided for @updateTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'새 버전으로 업데이트해 주세요'**
+  String get updateTitle;
+
+  /// No description provided for @updateBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'안전한 기록을 위해 이 버전은 더 이상 지원하지 않아요. 스토어에서 최신 버전을 받아 주세요.'**
+  String get updateBody;
+
+  /// No description provided for @updateButton.
+  ///
+  /// In ko, this message translates to:
+  /// **'업데이트하기'**
+  String get updateButton;
+
+  /// No description provided for @coachQuota.
+  ///
+  /// In ko, this message translates to:
+  /// **'오늘 {used}/{limit}회'**
+  String coachQuota(int used, int limit);
+
+  /// No description provided for @coachNewChat.
+  ///
+  /// In ko, this message translates to:
+  /// **'새 대화'**
+  String get coachNewChat;
+
+  /// No description provided for @coachContextBefore.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name}의 최근 14일 기록을 참고해 답해요'**
+  String coachContextBefore(String name);
+
+  /// No description provided for @coachContextAfter.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name} · 최근 14일 기록 {count}건 참고'**
+  String coachContextAfter(String name, int count);
+
+  /// No description provided for @coachEmptyTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'무엇이든 물어보세요'**
+  String get coachEmptyTitle;
+
+  /// No description provided for @coachSuggestTrend.
+  ///
+  /// In ko, this message translates to:
+  /// **'이번 주 혈당 좋아진 거 맞아?'**
+  String get coachSuggestTrend;
+
+  /// No description provided for @coachSuggestNadir.
+  ///
+  /// In ko, this message translates to:
+  /// **'nadir는 언제 재야 해?'**
+  String get coachSuggestNadir;
+
+  /// No description provided for @coachSuggestVet.
+  ///
+  /// In ko, this message translates to:
+  /// **'병원에 물어볼 것 정리해 줘'**
+  String get coachSuggestVet;
+
+  /// No description provided for @coachInputHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'메시지 입력'**
+  String get coachInputHint;
+
+  /// No description provided for @coachSend.
+  ///
+  /// In ko, this message translates to:
+  /// **'보내기'**
+  String get coachSend;
+
+  /// No description provided for @coachStop.
+  ///
+  /// In ko, this message translates to:
+  /// **'멈추기'**
+  String get coachStop;
+
+  /// No description provided for @coachDisclaimer.
+  ///
+  /// In ko, this message translates to:
+  /// **'메티는 수의사를 대신하지 않아요. 응급 상황에서는 바로 병원에 연락하세요.'**
+  String get coachDisclaimer;
+
+  /// No description provided for @coachRef.
+  ///
+  /// In ko, this message translates to:
+  /// **'근거 · {time}'**
+  String coachRef(String time);
+
+  /// No description provided for @coachRefused.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 질문에는 답할 수 없어요. 다른 방식으로 물어봐 주세요.'**
+  String get coachRefused;
+
+  /// No description provided for @coachModelError.
+  ///
+  /// In ko, this message translates to:
+  /// **'답변을 받지 못했어요.'**
+  String get coachModelError;
+
+  /// No description provided for @coachRetry.
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 시도'**
+  String get coachRetry;
+
+  /// No description provided for @coachQuotaExceeded.
+  ///
+  /// In ko, this message translates to:
+  /// **'오늘 질문 {limit}회를 모두 썼어요. 내일 다시 이용할 수 있어요.'**
+  String coachQuotaExceeded(int limit);
+
+  /// No description provided for @coachNetworkError.
+  ///
+  /// In ko, this message translates to:
+  /// **'연결에 실패했어요. 네트워크를 확인해 주세요.'**
+  String get coachNetworkError;
+
+  /// No description provided for @coachUnavailable.
+  ///
+  /// In ko, this message translates to:
+  /// **'AI 코치를 잠시 사용할 수 없어요. 잠시 후 다시 시도해 주세요.'**
+  String get coachUnavailable;
+
+  /// No description provided for @coachNoPet.
+  ///
+  /// In ko, this message translates to:
+  /// **'반려동물을 등록하면 AI 코치를 쓸 수 있어요.'**
+  String get coachNoPet;
+
+  /// No description provided for @consentTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'AI 코치를 시작하기 전에'**
+  String get consentTitle;
+
+  /// No description provided for @consentBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'AI 코치는 답변을 만들기 위해 아래 정보를 Anthropic(미국)의 AI 서비스로 보냅니다.'**
+  String get consentBody;
+
+  /// No description provided for @consentItemPet.
+  ///
+  /// In ko, this message translates to:
+  /// **'반려동물 프로필과 당뇨 관리 계획'**
+  String get consentItemPet;
+
+  /// No description provided for @consentItemRecords.
+  ///
+  /// In ko, this message translates to:
+  /// **'최근 14일 기록 (혈당, 인슐린, 식사, 체중, 관찰·메모)'**
+  String get consentItemRecords;
+
+  /// No description provided for @consentItemQuestion.
+  ///
+  /// In ko, this message translates to:
+  /// **'내가 입력한 질문'**
+  String get consentItemQuestion;
+
+  /// No description provided for @consentFooter.
+  ///
+  /// In ko, this message translates to:
+  /// **'보낸 정보는 답변을 만드는 데에만 쓰입니다. 동의는 설정에서 언제든 철회할 수 있어요.'**
+  String get consentFooter;
+
+  /// No description provided for @consentAgree.
+  ///
+  /// In ko, this message translates to:
+  /// **'동의하고 시작하기'**
+  String get consentAgree;
+
+  /// No description provided for @consentPrivacy.
+  ///
+  /// In ko, this message translates to:
+  /// **'개인정보처리방침 보기'**
+  String get consentPrivacy;
+
+  /// No description provided for @settingsAiConsent.
+  ///
+  /// In ko, this message translates to:
+  /// **'AI 코치 데이터 제공'**
+  String get settingsAiConsent;
+
+  /// No description provided for @settingsAiConsentOn.
+  ///
+  /// In ko, this message translates to:
+  /// **'동의함'**
+  String get settingsAiConsentOn;
+
+  /// No description provided for @settingsAiConsentOff.
+  ///
+  /// In ko, this message translates to:
+  /// **'동의 안 함'**
+  String get settingsAiConsentOff;
+
+  /// No description provided for @settingsAiConsentWithdraw.
+  ///
+  /// In ko, this message translates to:
+  /// **'동의 철회'**
+  String get settingsAiConsentWithdraw;
+
+  /// No description provided for @settingsAiConsentWithdrawBody.
+  ///
+  /// In ko, this message translates to:
+  /// **'철회하면 AI 코치를 쓸 수 없어요. 다시 쓰려면 AI 코치 화면에서 동의하면 돼요.'**
+  String get settingsAiConsentWithdrawBody;
 }
 
 class _AppLocalizationsDelegate

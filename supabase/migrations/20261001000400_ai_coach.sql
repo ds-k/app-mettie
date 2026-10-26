@@ -40,7 +40,10 @@ GRANT SELECT ON "public"."app_config" TO anon, authenticated;
 INSERT INTO "public"."app_config" ("key", "value") VALUES
   ('ai_daily_limit_free', '10'),
   ('ai_daily_limit_pro', '100'),
-  ('min_supported_version', '"1.0.0"')
+  ('min_supported_version', '"1.0.0"'),
+  -- 강제 업데이트 화면의 스토어 버튼. 비어 있으면 버튼을 숨긴다
+  ('store_url_ios', '""'),
+  ('store_url_android', '""')
 ON CONFLICT ("key") DO NOTHING;
 
 -- ─── 사용량 ──────────────────────────────────────────────────────────────────

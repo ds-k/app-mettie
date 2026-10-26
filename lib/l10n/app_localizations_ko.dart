@@ -1104,4 +1104,126 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get emailNoAccount => '계정이 없으신가요? 회원가입';
+
+  @override
+  String get updateTitle => '새 버전으로 업데이트해 주세요';
+
+  @override
+  String get updateBody =>
+      '안전한 기록을 위해 이 버전은 더 이상 지원하지 않아요. 스토어에서 최신 버전을 받아 주세요.';
+
+  @override
+  String get updateButton => '업데이트하기';
+
+  @override
+  String coachQuota(int used, int limit) {
+    return '오늘 $used/$limit회';
+  }
+
+  @override
+  String get coachNewChat => '새 대화';
+
+  @override
+  String coachContextBefore(String name) {
+    return '$name의 최근 14일 기록을 참고해 답해요';
+  }
+
+  @override
+  String coachContextAfter(String name, int count) {
+    return '$name · 최근 14일 기록 $count건 참고';
+  }
+
+  @override
+  String get coachEmptyTitle => '무엇이든 물어보세요';
+
+  @override
+  String get coachSuggestTrend => '이번 주 혈당 좋아진 거 맞아?';
+
+  @override
+  String get coachSuggestNadir => 'nadir는 언제 재야 해?';
+
+  @override
+  String get coachSuggestVet => '병원에 물어볼 것 정리해 줘';
+
+  @override
+  String get coachInputHint => '메시지 입력';
+
+  @override
+  String get coachSend => '보내기';
+
+  @override
+  String get coachStop => '멈추기';
+
+  @override
+  String get coachDisclaimer => '메티는 수의사를 대신하지 않아요. 응급 상황에서는 바로 병원에 연락하세요.';
+
+  @override
+  String coachRef(String time) {
+    return '근거 · $time';
+  }
+
+  @override
+  String get coachRefused => '이 질문에는 답할 수 없어요. 다른 방식으로 물어봐 주세요.';
+
+  @override
+  String get coachModelError => '답변을 받지 못했어요.';
+
+  @override
+  String get coachRetry => '다시 시도';
+
+  @override
+  String coachQuotaExceeded(int limit) {
+    return '오늘 질문 $limit회를 모두 썼어요. 내일 다시 이용할 수 있어요.';
+  }
+
+  @override
+  String get coachNetworkError => '연결에 실패했어요. 네트워크를 확인해 주세요.';
+
+  @override
+  String get coachUnavailable => 'AI 코치를 잠시 사용할 수 없어요. 잠시 후 다시 시도해 주세요.';
+
+  @override
+  String get coachNoPet => '반려동물을 등록하면 AI 코치를 쓸 수 있어요.';
+
+  @override
+  String get consentTitle => 'AI 코치를 시작하기 전에';
+
+  @override
+  String get consentBody =>
+      'AI 코치는 답변을 만들기 위해 아래 정보를 Anthropic(미국)의 AI 서비스로 보냅니다.';
+
+  @override
+  String get consentItemPet => '반려동물 프로필과 당뇨 관리 계획';
+
+  @override
+  String get consentItemRecords => '최근 14일 기록 (혈당, 인슐린, 식사, 체중, 관찰·메모)';
+
+  @override
+  String get consentItemQuestion => '내가 입력한 질문';
+
+  @override
+  String get consentFooter =>
+      '보낸 정보는 답변을 만드는 데에만 쓰입니다. 동의는 설정에서 언제든 철회할 수 있어요.';
+
+  @override
+  String get consentAgree => '동의하고 시작하기';
+
+  @override
+  String get consentPrivacy => '개인정보처리방침 보기';
+
+  @override
+  String get settingsAiConsent => 'AI 코치 데이터 제공';
+
+  @override
+  String get settingsAiConsentOn => '동의함';
+
+  @override
+  String get settingsAiConsentOff => '동의 안 함';
+
+  @override
+  String get settingsAiConsentWithdraw => '동의 철회';
+
+  @override
+  String get settingsAiConsentWithdrawBody =>
+      '철회하면 AI 코치를 쓸 수 없어요. 다시 쓰려면 AI 코치 화면에서 동의하면 돼요.';
 }

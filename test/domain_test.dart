@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mettie/data/models/pet.dart';
 import 'package:mettie/data/models/record.dart';
+import 'package:mettie/domain/app_version.dart';
 import 'package:mettie/domain/dosing.dart';
 import 'package:mettie/domain/glucose.dart';
 import 'package:mettie/domain/timeline.dart';
@@ -182,5 +183,13 @@ void main() {
     expect(subjectOf('엄마'), '엄마가');
     expect(subjectOf('지민'), '지민이가');
     expect(subjectOf('Mom'), 'Mom가');
+  });
+
+  test('버전 비교는 숫자 단위로 하고 빌드 번호는 무시한다', () {
+    expect(needsUpdate('1.0.0', '1.1.0'), isTrue);
+    expect(needsUpdate('1.1.0', '1.1.0'), isFalse);
+    expect(needsUpdate('1.10.0', '1.9.3'), isFalse);
+    expect(needsUpdate('1.1.0+13', '1.1.0'), isFalse);
+    expect(needsUpdate('2.0', '1.9.9'), isFalse);
   });
 }

@@ -1133,4 +1133,130 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get emailNoAccount => 'No account? Sign up';
+
+  @override
+  String get updateTitle => 'Please update Mettie';
+
+  @override
+  String get updateBody =>
+      'This version is no longer supported. Get the latest version from the store to keep your records safe.';
+
+  @override
+  String get updateButton => 'Update';
+
+  @override
+  String coachQuota(int used, int limit) {
+    return '$used/$limit today';
+  }
+
+  @override
+  String get coachNewChat => 'New chat';
+
+  @override
+  String coachContextBefore(String name) {
+    return 'Answers use $name\'s last 14 days of records';
+  }
+
+  @override
+  String coachContextAfter(String name, int count) {
+    return '$name · $count records from the last 14 days';
+  }
+
+  @override
+  String get coachEmptyTitle => 'Ask anything';
+
+  @override
+  String get coachSuggestTrend => 'Is the glucose getting better this week?';
+
+  @override
+  String get coachSuggestNadir => 'When should I measure the nadir?';
+
+  @override
+  String get coachSuggestVet => 'What should I ask the vet?';
+
+  @override
+  String get coachInputHint => 'Message';
+
+  @override
+  String get coachSend => 'Send';
+
+  @override
+  String get coachStop => 'Stop';
+
+  @override
+  String get coachDisclaimer =>
+      'Mettie doesn\'t replace your vet. In an emergency, contact a vet right away.';
+
+  @override
+  String coachRef(String time) {
+    return 'Source · $time';
+  }
+
+  @override
+  String get coachRefused =>
+      'I can\'t answer that one. Try asking another way.';
+
+  @override
+  String get coachModelError => 'Couldn\'t get an answer.';
+
+  @override
+  String get coachRetry => 'Try again';
+
+  @override
+  String coachQuotaExceeded(int limit) {
+    return 'You\'ve used all $limit questions for today. You can ask again tomorrow.';
+  }
+
+  @override
+  String get coachNetworkError => 'Couldn\'t connect. Check your network.';
+
+  @override
+  String get coachUnavailable =>
+      'AI Coach is unavailable right now. Please try again later.';
+
+  @override
+  String get coachNoPet => 'Add a pet to use AI Coach.';
+
+  @override
+  String get consentTitle => 'Before you start AI Coach';
+
+  @override
+  String get consentBody =>
+      'To write answers, AI Coach sends the following to Anthropic\'s AI service (United States).';
+
+  @override
+  String get consentItemPet => 'Your pet\'s profile and diabetes care plan';
+
+  @override
+  String get consentItemRecords =>
+      'Records from the last 14 days (glucose, insulin, meals, weight, observations and notes)';
+
+  @override
+  String get consentItemQuestion => 'The questions you type';
+
+  @override
+  String get consentFooter =>
+      'This information is used only to write answers. You can withdraw consent anytime in Settings.';
+
+  @override
+  String get consentAgree => 'Agree and start';
+
+  @override
+  String get consentPrivacy => 'View Privacy Policy';
+
+  @override
+  String get settingsAiConsent => 'AI Coach data sharing';
+
+  @override
+  String get settingsAiConsentOn => 'On';
+
+  @override
+  String get settingsAiConsentOff => 'Off';
+
+  @override
+  String get settingsAiConsentWithdraw => 'Withdraw consent';
+
+  @override
+  String get settingsAiConsentWithdrawBody =>
+      'AI Coach will stop working. To use it again, agree from the AI Coach screen.';
 }

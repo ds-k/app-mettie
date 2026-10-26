@@ -1102,4 +1102,123 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get emailNoAccount => 'アカウントをお持ちでない方は新規登録';
+
+  @override
+  String get updateTitle => '新しいバージョンにアップデートしてください';
+
+  @override
+  String get updateBody => '安全に記録するため、このバージョンはサポートを終了しました。ストアから最新版を入手してください。';
+
+  @override
+  String get updateButton => 'アップデート';
+
+  @override
+  String coachQuota(int used, int limit) {
+    return '今日 $used/$limit回';
+  }
+
+  @override
+  String get coachNewChat => '新しい会話';
+
+  @override
+  String coachContextBefore(String name) {
+    return '$nameの直近14日間の記録を参考に答えます';
+  }
+
+  @override
+  String coachContextAfter(String name, int count) {
+    return '$name・直近14日間の記録$count件を参照';
+  }
+
+  @override
+  String get coachEmptyTitle => 'なんでも聞いてください';
+
+  @override
+  String get coachSuggestTrend => '今週の血糖値はよくなってる？';
+
+  @override
+  String get coachSuggestNadir => 'ナディアはいつ測ればいい？';
+
+  @override
+  String get coachSuggestVet => '病院で聞くことをまとめて';
+
+  @override
+  String get coachInputHint => 'メッセージを入力';
+
+  @override
+  String get coachSend => '送信';
+
+  @override
+  String get coachStop => '停止';
+
+  @override
+  String get coachDisclaimer => 'Mettieは獣医師の代わりではありません。緊急時はすぐに動物病院へ連絡してください。';
+
+  @override
+  String coachRef(String time) {
+    return '根拠・$time';
+  }
+
+  @override
+  String get coachRefused => 'この質問にはお答えできません。別の聞き方をしてみてください。';
+
+  @override
+  String get coachModelError => '回答を取得できませんでした。';
+
+  @override
+  String get coachRetry => '再試行';
+
+  @override
+  String coachQuotaExceeded(int limit) {
+    return '今日の質問$limit回をすべて使いました。明日またご利用いただけます。';
+  }
+
+  @override
+  String get coachNetworkError => '接続できませんでした。通信状況を確認してください。';
+
+  @override
+  String get coachUnavailable => 'AIコーチは現在ご利用いただけません。しばらくしてからお試しください。';
+
+  @override
+  String get coachNoPet => 'ペットを登録するとAIコーチを使えます。';
+
+  @override
+  String get consentTitle => 'AIコーチを始める前に';
+
+  @override
+  String get consentBody => 'AIコーチは回答を作成するため、以下の情報をAnthropic（米国）のAIサービスに送信します。';
+
+  @override
+  String get consentItemPet => 'ペットのプロフィールと糖尿病の管理計画';
+
+  @override
+  String get consentItemRecords => '直近14日間の記録（血糖値、インスリン、食事、体重、観察・メモ）';
+
+  @override
+  String get consentItemQuestion => '入力した質問';
+
+  @override
+  String get consentFooter => '送信した情報は回答の作成にのみ使われます。同意は設定からいつでも撤回できます。';
+
+  @override
+  String get consentAgree => '同意して始める';
+
+  @override
+  String get consentPrivacy => 'プライバシーポリシーを見る';
+
+  @override
+  String get settingsAiConsent => 'AIコーチへのデータ提供';
+
+  @override
+  String get settingsAiConsentOn => '同意済み';
+
+  @override
+  String get settingsAiConsentOff => '未同意';
+
+  @override
+  String get settingsAiConsentWithdraw => '同意を撤回';
+
+  @override
+  String get settingsAiConsentWithdrawBody =>
+      '撤回するとAIコーチは使えなくなります。再度使うには、AIコーチの画面から同意してください。';
 }

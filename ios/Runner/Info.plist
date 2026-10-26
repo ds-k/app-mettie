@@ -8,8 +8,6 @@
 		<true/>
 		<key>UIFileSharingEnabled</key>
 		<false/>
-		<key>NSLocalNetworkUsageDescription</key>
-		<string>This app requires local network access for model inference services.</string>
 		<key>NSCameraUsageDescription</key>
 		<string>This app requires camera access to attach photos to your pet's journal.</string>
 		<key>NSMicrophoneUsageDescription</key>

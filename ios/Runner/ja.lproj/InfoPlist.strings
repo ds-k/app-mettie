@@ -3,4 +3,3 @@
 "NSCameraUsageDescription" = "ペットの記録に写真を添付するためにカメラへのアクセスが必要です。";
 "NSPhotoLibraryUsageDescription" = "ペットの写真をアップロードするために写真ライブラリへのアクセスが必要です。";
 "NSMicrophoneUsageDescription" = "音声で記録するためにマイクへのアクセスが必要です。";
-"NSLocalNetworkUsageDescription" = "この機能を使うためにローカルネットワークへのアクセスが必要です。";
