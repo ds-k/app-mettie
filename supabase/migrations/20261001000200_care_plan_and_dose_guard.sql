@@ -1,4 +1,4 @@
--- 당뇨 관리 계획 필드와 가족 간 중복 투여 차단 (v1.1.0)
+-- 당뇨 관리 계획 필드와 가족 간 중복 투여 차단 함수 (v1.1.0)
 
 -- ─── 관리 계획 ───────────────────────────────────────────────────────────────
 ALTER TABLE "public"."pets"
@@ -71,8 +71,5 @@ BEGIN
 END;
 $$;
 
-DROP TRIGGER IF EXISTS "guard_duplicate_dose" ON "public"."records";
-CREATE TRIGGER "guard_duplicate_dose"
-  BEFORE INSERT OR UPDATE OF "injection_status", "insulin_dose", "recorded_at", "dose_override"
-  ON "public"."records"
-  FOR EACH ROW EXECUTE FUNCTION "public"."guard_duplicate_dose"();
+-- 트리거 연결은 20261001000500_enable_dose_guard.sql에서 한다.
+-- v1.0 앱은 dose_override를 보낼 수 없어서, v1.1이 충분히 보급된 뒤에 운영에 반영한다.
